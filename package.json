@@ -25,7 +25,10 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@reduxjs/toolkit": "^2.9.2",
     "@tailwindcss/vite": "^4.1.16",
+    "@uidotdev/usehooks": "^2.4.1",
+    "electron-store": "^8.2.0",
     "electron-updater": "^6.3.9",
+    "fs-extra": "^11.3.2",
     "react-redux": "^9.2.0",
     "tailwindcss": "^4.1.16"
   },

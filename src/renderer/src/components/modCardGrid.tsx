@@ -1,14 +1,13 @@
+import { ModInfo } from "src/types/modInfo";
 import ModCard from "./modCard";
 
-const ModCardGrid: React.FC = () => {
-
+const ModCardGrid = ({ modInfos }: { modInfos: ModInfo[] }) => {
   return (
     <>
       <div className="flex flex-wrap gap-4 p-4">
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
+        {modInfos.map((modInfo) => (
+          <ModCard key={modInfo.name} modInfo={modInfo} />
+        ))}
       </div>
     </>
   );

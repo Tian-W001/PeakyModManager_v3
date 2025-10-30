@@ -29,6 +29,7 @@ export default defineConfig(
       ...eslintPluginReactHooks.configs.recommended.rules,
       ...eslintPluginReactRefresh.configs.vite.rules,
       "prettier/prettier": ["warn", { semi: true, endOfLine: "auto" }],
+      "@typescript-eslint/explicit-function-return-type": "off",
     },
   },
   eslintConfigPrettier
