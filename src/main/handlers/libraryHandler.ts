@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import { BrowserWindow, dialog, ipcMain } from "electron";
+import { BrowserWindow, dialog, ipcMain, shell } from "electron";
 import store from "../store";
 import { ModInfo } from "../../types/modInfo";
 
@@ -60,3 +60,8 @@ const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryP
     return [];
   }
 };
+
+ipcMain.handle("open-mod-folder", async (_event, modPath: string) => {
+  const fullPath = path.resolve(modPath);
+  await shell.openPath(fullPath);
+});

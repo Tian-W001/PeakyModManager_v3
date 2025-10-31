@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useAppDispatch } from "@renderer/redux/hooks";
-import { editModInfo } from "@renderer/redux/slices/librarySlice";
+import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
+import { editModInfo, selectLibraryPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "src/types/modInfo";
+import path from "path-browserify";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
+  const libraryPath = useAppSelector(selectLibraryPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
 
   const handleModInfoChange = (field: keyof ModInfo, value: string) => {
@@ -26,7 +28,8 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   const handleOpenModFolder = () => {
-    window.electron.ipcRenderer.invoke("open-mod-folder", modInfo.path);
+    if (!libraryPath) return;
+    window.electron.ipcRenderer.invoke("open-mod-folder", path.join(libraryPath, modInfo.name));
   };
 
   return (
@@ -40,7 +43,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           onChange={(e) => handleModInfoChange("description", e.target.value)}
           onBlur={() => handleModInfoBlur("description")}
         />
-        <button onClick={handleOpenModFolder}>
+        <button onClick={handleOpenModFolder} className="mt-4 rounded bg-gray-200 p-2">
           Open Mod Folder
         </button>
         <button onClick={onClose} className="mt-4 rounded bg-gray-200 p-2">
