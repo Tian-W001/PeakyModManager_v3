@@ -30,6 +30,7 @@ export default defineConfig(
       ...eslintPluginReactRefresh.configs.vite.rules,
       "prettier/prettier": ["warn", { semi: true, endOfLine: "auto" }],
       "@typescript-eslint/explicit-function-return-type": "off",
+      "max-len": ["warn", { code: 160 }],
     },
   },
   eslintConfigPrettier

@@ -43,9 +43,7 @@ const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryP
   // For each folder, check if it contains a modinfo.json file
   // If it does, read the modinfo.json file and store the mod information, and return an array of mod information objects
   try {
-    const modFolders = (await fs.readdir(libraryPath)).filter((file) =>
-      fs.statSync(path.join(libraryPath, file)).isDirectory()
-    );
+    const modFolders = (await fs.readdir(libraryPath)).filter((file) => fs.statSync(path.join(libraryPath, file)).isDirectory());
 
     const modInfos: ModInfo[] = modFolders.map((folder) => {
       if (fs.existsSync(path.join(libraryPath, folder, "modinfo.json"))) {

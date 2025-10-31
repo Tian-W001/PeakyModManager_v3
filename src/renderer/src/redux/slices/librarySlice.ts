@@ -1,17 +1,28 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ModInfo } from "src/types/modInfo";
+import storage from "redux-persist/lib/storage";
+import { persistReducer } from "redux-persist";
+import { RootState } from "../store";
 
 export interface libraryState {
+  libraryPath: string | null;
   modInfos: ModInfo[];
 }
 
 const initialState: libraryState = {
+  libraryPath: null,
   modInfos: [],
+};
+
+const libraryPersistConfig = {
+  key: "library",
+  storage,
+  whitelist: ["libraryPath"],
 };
 
 export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string) => {
   const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library", libraryPath);
-  console.log("Loaded mods from thunk:", mods);
+  //console.log("Loaded mods from thunk:", mods);
   return mods;
 });
 
@@ -23,7 +34,22 @@ export const readLibrary = createAsyncThunk("library/read", async () => {
 const librarySlice = createSlice({
   name: "library",
   initialState,
-  reducers: {},
+  reducers: {
+    setLibraryPath: (state, action: PayloadAction<string | null>) => {
+      state.libraryPath = action.payload;
+    },
+    editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
+      const { modName, newModInfo } = action.payload;
+      const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
+      if (modIndex !== -1) {
+        state.modInfos[modIndex] = {
+          ...state.modInfos[modIndex],
+          ...newModInfo,
+        };
+      }
+      console.log("Edited mod info:", state.modInfos[modIndex]);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadLibrary.fulfilled, (state, action) => {
@@ -35,6 +61,13 @@ const librarySlice = createSlice({
   },
 });
 
-export default librarySlice.reducer;
+export default persistReducer(libraryPersistConfig, librarySlice.reducer);
+export const { editModInfo, setLibraryPath } = librarySlice.actions;
 
-export const selectModInfos = (state: { library: libraryState }): ModInfo[] => state.library.modInfos;
+export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
+
+export const selectModInfos = (state: RootState) => state.library.modInfos;
+
+export const selectModByName = (name: string) => (state: RootState) => {
+  return state.library.modInfos.find((mod) => mod.name === name);
+};
