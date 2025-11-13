@@ -1,0 +1,115 @@
+import axios from "axios";
+import { app, BrowserWindow } from "electron";
+import fs from "fs-extra";
+import path from "path";
+import unzipper from "unzipper";
+import log from "electron-log/main";
+
+// Chrome Extention calls peakymodmanager://import?data=<base64(JSON)>
+
+interface ExplorerImportPayload {
+  modName: string;
+  modSource: string;
+  coverImageLink: string;
+  downloadLinks: {
+    filename: string;
+    href: string;
+  }[];
+}
+
+export const explorerImportProtocolScheme: Electron.CustomScheme = {
+  scheme: "peakymodmanager",
+  privileges: {
+    standard: true,
+    secure: true,
+  },
+};
+
+export const registerExplorerImportProtocol = (mainWindow: BrowserWindow) => {
+  // Windows: 检查是否通过 protocol 启动
+  const args = process.argv;
+  log.info("Process args:", args);
+  const protocolUrl = args.find((a) => a.startsWith("peakymodmanager://"));
+  if (protocolUrl) {
+    log.info("Found protocol URL in args:", protocolUrl);
+    handleExplorerImport(protocolUrl, mainWindow);
+  }
+};
+
+export const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
+  log.info("Received URL:", url);
+  try {
+    const data = url.split("data=")[1];
+    if (!data) {
+      throw new Error("No data found in URL");
+    }
+    const base64Str = decodeURIComponent(data);
+    const payload: ExplorerImportPayload = JSON.parse(Buffer.from(base64Str, "base64").toString("utf-8"));
+    // sanitize mod name
+    payload.modName = payload.modName
+      .split("\n")[0]
+      .replace(/[^a-zA-Z0-9_\- ]/g, "")
+      .trim();
+    log.info("Parsed payload:", payload);
+    await downloadMod(payload, mainWindow);
+  } catch (error) {
+    log.error("Error handling explorer import:", error);
+    mainWindow.webContents.send("download-mod-error", {
+      modName: "Unknown",
+      error: error,
+    });
+  }
+};
+
+const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWindow) => {
+  log.info("Downloading mod:", payload.modName);
+  mainWindow.webContents.send("downloading-mod", { modName: payload.modName });
+  const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
+  await fs.ensureDir(modDest);
+  try {
+    for (const link of payload.downloadLinks) {
+      log.info(`Downloading from: ${link.href}`);
+      const fileDest = path.join(modDest, link.filename);
+      const res = await axios.get(link.href, { responseType: "arraybuffer" });
+      if (res.status !== 200) {
+        log.error(`Failed to download from ${link.href}: ${res.statusText}`);
+        throw new Error(`Failed to download ${payload.modName}`);
+      }
+      await fs.writeFile(fileDest, res.data);
+      // unzip
+      if (fileDest.endsWith(".zip")) {
+        mainWindow.webContents.send("unzipping-mod", {
+          modName: payload.modName,
+          filename: link.filename,
+        });
+        await fs
+          .createReadStream(fileDest)
+          .pipe(unzipper.Extract({ path: modDest }))
+          .promise();
+        await fs.remove(fileDest);
+      }
+    }
+
+    // download cover image if provided
+    if (payload.coverImageLink) {
+      try {
+        log.info(`Downloading cover image from: ${payload.coverImageLink}`);
+        const coverDest = path.join(modDest, "cover.jpg");
+        const res = await axios.get(payload.coverImageLink, { responseType: "arraybuffer" });
+        if (res.status === 200) {
+          await fs.writeFile(coverDest, res.data);
+        } else {
+          log.warn(`Failed to download cover image: ${res.statusText}`);
+        }
+      } catch (error) {
+        log.warn("Error downloading cover image:", error);
+      }
+    }
+  } catch (error) {
+    log.error("Error downloading mod:", error);
+    mainWindow.webContents.send("download-mod-error", {
+      modName: payload.modName,
+      error: error,
+    });
+  }
+};

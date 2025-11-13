@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { loadLibrary, selectLibraryPath, setLibraryPath } from "@renderer/redux/slices/librarySlice";
+import { clsx } from "clsx";
 
-const BottomBar: React.FC = () => {
+const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
 
@@ -22,7 +23,7 @@ const BottomBar: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-0 flex h-12 w-full gap-4 bg-cyan-800">
+      <div className={clsx("flex w-full justify-around gap-4 bg-cyan-800", className)} id="bottom-bar">
         <button className="rounded bg-cyan-600 px-4 py-2 font-bold text-white hover:bg-cyan-700">Settings</button>
         <button onClick={handleOnClickRefresh} className="rounded bg-cyan-600 px-4 py-2 font-bold text-white hover:bg-cyan-700">
           Refresh

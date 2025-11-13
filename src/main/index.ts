@@ -1,13 +1,22 @@
-import { app, shell, BrowserWindow } from "electron";
+import { app, shell, BrowserWindow, protocol } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import "./handlers/libraryHandler";
-//import store from "./store";
+import { explorerImportProtocolScheme, handleExplorerImport, registerExplorerImportProtocol } from "./protocols/explorerImport";
+import log from "electron-log/main";
+
+let mainWindow: BrowserWindow | null = null;
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
 
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -22,7 +31,7 @@ function createWindow(): void {
   mainWindow.webContents.openDevTools();
 
   mainWindow.on("ready-to-show", () => {
-    mainWindow.show();
+    mainWindow!.show();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -37,6 +46,27 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  // Register protocol handler after window is created
+  registerExplorerImportProtocol(mainWindow);
+}
+
+// register custom protocols BEFORE app is ready
+protocol.registerSchemesAsPrivileged([explorerImportProtocolScheme]);
+
+const gotlock = app.requestSingleInstanceLock();
+if (!gotlock) {
+  app.quit();
+} else {
+  app.on("second-instance", (_event, argv) => {
+    const url = argv.find((a) => a.startsWith("peakymodmanager://"));
+    log.info("Second instance with URL:", url);
+    if (url && mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+      handleExplorerImport(url, mainWindow);
+    }
+  });
 }
 
 // This method will be called when Electron has finished
@@ -45,6 +75,15 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
+
+  // Set as default protocol client for peakymodmanager://
+  if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient("peakymodmanager", process.execPath, [join(process.cwd(), process.argv[1])]);
+    }
+  } else {
+    app.setAsDefaultProtocolClient("peakymodmanager");
+  }
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
