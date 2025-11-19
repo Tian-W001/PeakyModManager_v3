@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-pulse: pulse 0.8s cubic-bezier(0.25, 0.1, 0.75, 1) infinite;
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 #d9fa00;
+    }
+    40% {
+      box-shadow: 0 0 0 8px #d9fa00;
+    }
+    60% {
+      box-shadow: 0 0 0 0 #d9fa00;
+    }
+    100% {
+      box-shadow: 0 0 0 0 #d9fa00;
+    }
+  }
+}
+
+.iron-border {
+  box-shadow:
+    inset 0 1px 2px #fff3,
+    inset 0 0 0 3px #666,
+    inset 0 0 0 4px #333,
+    inset 0 0 0 5px #000;
+}
+
+button {
+  @apply h-full rounded-full bg-black bg-size-[4px_4px] px-6 font-extrabold text-white transition-all duration-200 not-hover:bg-[repeating-conic-gradient(#000_0%_25%,#141414_0%_50%)] hover:animate-pulse hover:border-[#d9fa00] hover:bg-[#d9fa00] hover:text-black hover:shadow-[0_0_0_4px_#d9fa00];
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

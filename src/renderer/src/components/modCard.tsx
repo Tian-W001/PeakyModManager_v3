@@ -13,7 +13,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
 
   return (
     <>
-      <div onContextMenu={handleOnRightClick} className="h-[300px] w-[200px] rounded-xl bg-amber-600">
+      <div onContextMenu={handleOnRightClick} className="h-[300px] w-[200px] rounded-[30px_0] bg-amber-600">
         {modInfo.name || "Unnamed Mod"}
       </div>
       {isModalOpen && createPortal(<DetailedModal modInfo={modInfo} onClose={() => setIsModalOpen(false)} />, document.body)}

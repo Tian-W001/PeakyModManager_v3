@@ -23,13 +23,13 @@ const BottomBar = ({ className }: { className?: string }) => {
 
   return (
     <>
-      <div className={clsx("flex w-full justify-around gap-4 bg-cyan-800", className)} id="bottom-bar">
-        <button className="rounded bg-cyan-600 px-4 py-2 font-bold text-white hover:bg-cyan-700">Settings</button>
-        <button onClick={handleOnClickRefresh} className="rounded bg-cyan-600 px-4 py-2 font-bold text-white hover:bg-cyan-700">
+      <div className={clsx("flex w-full justify-start gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
+        <button className="iron-border">Settings</button>
+        <button className="iron-border" onClick={handleOnClickRefresh}>
           Refresh
         </button>
-        <button onClick={handleOnClickSelectLibraryPath} className="rounded bg-cyan-600 px-4 py-2 font-bold text-white hover:bg-cyan-700">
-          {libraryPath ? `Library: ${libraryPath}` : "Select Library Path..."}
+        <button className="iron-border" onClick={handleOnClickSelectLibraryPath}>
+          {libraryPath ? `Library: ${libraryPath}` : "Select Library Path"}
         </button>
       </div>
     </>
