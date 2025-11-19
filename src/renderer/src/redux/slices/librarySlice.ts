@@ -3,6 +3,8 @@ import { ModInfo } from "src/types/modInfo";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { RootState } from "../store";
+import { ModType } from "src/types/modType";
+import { Character } from "src/types/character";
 
 export interface libraryState {
   libraryPath: string | null;
@@ -20,7 +22,7 @@ const libraryPersistConfig = {
   whitelist: ["libraryPath"],
 };
 
-export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string) => {
+export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string | null) => {
   const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library", libraryPath);
   //console.log("Loaded mods from thunk:", mods);
   return mods;
@@ -42,10 +44,7 @@ const librarySlice = createSlice({
       const { modName, newModInfo } = action.payload;
       const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
       if (modIndex !== -1) {
-        state.modInfos[modIndex] = {
-          ...state.modInfos[modIndex],
-          ...newModInfo,
-        };
+        Object.assign(state.modInfos[modIndex], newModInfo);
       }
       console.log("Edited mod info:", state.modInfos[modIndex]);
     },
@@ -53,6 +52,7 @@ const librarySlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadLibrary.fulfilled, (state, action) => {
+        console.log("Loaded mods in extraReducers:", action.payload);
         state.modInfos = action.payload;
       })
       .addCase(readLibrary.fulfilled, (state, action) => {
@@ -70,4 +70,12 @@ export const selectModInfos = (state: RootState) => state.library.modInfos;
 
 export const selectModByName = (name: string) => (state: RootState) => {
   return state.library.modInfos.find((mod) => mod.name === name);
+};
+
+export const selectModByType = (modType: ModType) => (state: RootState) => {
+  return state.library.modInfos.filter((mod) => mod.modType === modType);
+};
+
+export const selectModByCharacter = (characterName: Character) => (state: RootState) => {
+  return state.library.modInfos.filter((mod) => mod.modType === "Character" && mod.character === characterName);
 };

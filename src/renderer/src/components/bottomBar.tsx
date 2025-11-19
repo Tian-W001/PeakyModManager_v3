@@ -6,7 +6,7 @@ const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
 
-  const handleOnClickSelectLibraryPath = async (): Promise<void> => {
+  const handleOnClickSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-library-path");
     if (newPath) {
       dispatch(setLibraryPath(newPath));
@@ -15,10 +15,8 @@ const BottomBar = ({ className }: { className?: string }) => {
     }
   };
 
-  const handleOnClickRefresh = async (): Promise<void> => {
-    if (libraryPath) {
-      dispatch(loadLibrary(libraryPath));
-    }
+  const handleOnClickRefresh = async () => {
+    dispatch(loadLibrary(libraryPath));
   };
 
   return (

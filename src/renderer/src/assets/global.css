@@ -27,7 +27,7 @@
 }
 
 button {
-  @apply h-full rounded-full bg-black bg-size-[4px_4px] px-6 font-extrabold text-white transition-all duration-200 not-hover:bg-[repeating-conic-gradient(#000_0%_25%,#141414_0%_50%)] hover:animate-pulse hover:border-[#d9fa00] hover:bg-[#d9fa00] hover:text-black hover:shadow-[0_0_0_4px_#d9fa00];
+  @apply h-full cursor-pointer rounded-full bg-black bg-size-[4px_4px] px-6 font-extrabold text-white transition-all duration-200 not-hover:bg-[repeating-conic-gradient(#000_0%_25%,#141414_0%_50%)] hover:animate-pulse hover:border-[#d9fa00] hover:bg-[#d9fa00] hover:text-black hover:shadow-[0_0_0_4px_#d9fa00];
 }
 
 .no-scrollbar::-webkit-scrollbar {

@@ -2,7 +2,8 @@ import path from "path";
 import fs from "fs-extra";
 import { BrowserWindow, dialog, ipcMain, shell } from "electron";
 import store from "../store";
-import { ModInfo } from "../../types/modInfo";
+import { defaultModInfo, ModInfo } from "../../types/modInfo";
+import { Character } from "../../types/character";
 
 ipcMain.handle("select-library-path", async () => {
   // Open a dialog to select a folder
@@ -26,34 +27,58 @@ ipcMain.handle("read-library", async () => {
   return mods;
 });
 
-const createModInfoFile: (modPath: string) => ModInfo = (modPath) => {
+const createModInfoFile: (modInfoPath: string) => ModInfo = (modInfoPath) => {
   const modInfo: ModInfo = {
-    name: path.basename(modPath),
+    name: path.basename(modInfoPath),
+    modType: "Unknown",
     description: "",
     source: "",
     coverImage: "",
-    lastUpdated: new Date().toISOString(),
   };
-  fs.writeFileSync(path.join(modPath, "modinfo.json"), JSON.stringify(modInfo, null, 2));
+  fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
   return modInfo;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const validateAndFixModInfo = (modInfo: any, modInfoPath: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fixedModInfo: any = { ...defaultModInfo };
+  for (const key in modInfo) {
+    if (key in fixedModInfo) {
+      fixedModInfo[key] = modInfo[key];
+    }
+  }
+  if (fixedModInfo.modType === "Character") {
+    if (!fixedModInfo.character) {
+      fixedModInfo.character = "Unknown" as Character;
+    }
+  }
+  fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
+  return fixedModInfo as ModInfo;
 };
 
 const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryPath: string) => {
   // Read every folder in the given library path
   // For each folder, check if it contains a modinfo.json file
   // If it does, read the modinfo.json file and store the mod information, and return an array of mod information objects
+  if (!libraryPath || !fs.existsSync(libraryPath)) {
+    return [];
+  }
+
   try {
     const modFolders = (await fs.readdir(libraryPath)).filter((file) => fs.statSync(path.join(libraryPath, file)).isDirectory());
 
     const modInfos: ModInfo[] = modFolders.map((folder) => {
-      if (fs.existsSync(path.join(libraryPath, folder, "modinfo.json"))) {
-        const modInfoRaw = fs.readFileSync(path.join(libraryPath, folder, "modinfo.json"), "utf-8");
-        const modInfo: ModInfo = JSON.parse(modInfoRaw);
-        return modInfo;
+      const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
+      if (fs.existsSync(modInfoPath)) {
+        const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
+        //need to validate modInfo here
+        return validateAndFixModInfo(modInfo, modInfoPath);
       } else {
         return createModInfoFile(path.join(libraryPath, folder));
       }
     });
+    store.set("library", modInfos);
     return modInfos;
   } catch (error) {
     console.error("Error loading library:", error);
