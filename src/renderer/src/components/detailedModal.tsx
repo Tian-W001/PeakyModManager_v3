@@ -33,7 +33,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   return (
-    <div className="fixed flex h-full w-full items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-black/50">
       <div className="rounded bg-white p-4">
         <h1>{modInfo.name}</h1>
         <input
