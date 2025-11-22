@@ -18,16 +18,17 @@
   }
 }
 
-.iron-border {
-  box-shadow:
-    inset 0 1px 2px #fff3,
-    inset 0 0 0 3px #666,
-    inset 0 0 0 4px #333,
-    inset 0 0 0 5px #000;
+button {
+  @apply rounded-full px-4 py-2 font-bold text-white;
 }
 
-button {
-  @apply h-full cursor-pointer rounded-full bg-black bg-size-[4px_4px] px-6 font-extrabold text-white transition-all duration-200 not-hover:bg-[repeating-conic-gradient(#000_0%_25%,#141414_0%_50%)] hover:animate-pulse hover:border-[#d9fa00] hover:bg-[#d9fa00] hover:text-black hover:shadow-[0_0_0_4px_#d9fa00];
+@layer utilities {
+  .iron-border {
+    @apply shadow-[inset_0_1px_2px_#fff3,inset_0_0_0_3px_#666,inset_0_0_0_4px_#333,inset_0_0_0_5px_#000];
+  }
+  .chess-background {
+    @apply bg-[repeating-conic-gradient(#000_0%_25%,#141414_0%_50%)] bg-size-[4px_4px];
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
