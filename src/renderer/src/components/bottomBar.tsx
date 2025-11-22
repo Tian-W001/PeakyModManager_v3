@@ -22,11 +22,11 @@ const BottomBar = ({ className }: { className?: string }) => {
   return (
     <>
       <div className={clsx("flex w-full justify-start gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
-        <button className="iron-border chess-background">Settings</button>
-        <button className="iron-border chess-background" onClick={handleOnClickRefresh}>
+        <button className="">Settings</button>
+        <button className="" onClick={handleOnClickRefresh}>
           Refresh
         </button>
-        <button className="iron-border chess-background" onClick={handleOnClickSelectLibraryPath}>
+        <button className="" onClick={handleOnClickSelectLibraryPath}>
           {libraryPath ? `Library: ${libraryPath}` : "Select Library Path"}
         </button>
       </div>

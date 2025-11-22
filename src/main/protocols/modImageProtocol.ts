@@ -26,7 +26,7 @@ export const registerModImageProtocol = () => {
       });
     } catch (e) {
       log.error("Error handling mod-image protocol:", e);
-      return new Response(`${request} not found`, { status: 404 });
+      return new Response(null, { status: 404 });
     }
   });
 };
