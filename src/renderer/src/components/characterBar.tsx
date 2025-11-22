@@ -35,12 +35,12 @@ const CharacterBar = ({ className }: { className?: string }) => {
       >
         <h1> {"<"} </h1>
         <div
-          className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] bg-black py-1 *:first:pl-0.5 *:last:pr-0.5"
+          className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] border-4 bg-black shadow-[4px_1px_0px_#ffffff19,-4px_-1px_0px_#00000051]"
           id="character-bar-images-container"
           onWheel={handleScroll}
         >
           {imageNameList.toReversed().map((character) => (
-            <div key={character} className="-mx-1 h-full shrink-0 snap-start -scroll-m-0.5" id="character-bar-image-container">
+            <div key={character} className="-mx-1 h-full shrink-0 snap-start -scroll-m-2" id="character-bar-image-container">
               <img src={getCharacterImageSrc(character)} alt={character} className="h-full skew-x-[25.3deg]" />
             </div>
           ))}
