@@ -1,10 +1,11 @@
 import { app, shell, BrowserWindow, protocol } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import log from "electron-log/main";
 import icon from "../../resources/icon.png?asset";
 import "./handlers/libraryHandler";
-import { explorerImportProtocolScheme, handleExplorerImport, registerExplorerImportProtocol } from "./protocols/explorerImport";
-import log from "electron-log/main";
+import { explorerImportProtocolScheme, handleExplorerImport, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
+import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -49,10 +50,10 @@ function createWindow(): void {
 
   // Register protocol handler after window is created
   registerExplorerImportProtocol(mainWindow);
+  registerModImageProtocol();
 }
 
-// register custom protocols BEFORE app is ready
-protocol.registerSchemesAsPrivileged([explorerImportProtocolScheme]);
+protocol.registerSchemesAsPrivileged([explorerImportProtocolScheme, modImageProtocolScheme]);
 
 const gotlock = app.requestSingleInstanceLock();
 if (!gotlock) {

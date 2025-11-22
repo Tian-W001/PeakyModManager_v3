@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ModType, modTypeList } from "../../../types/modType";
+import { ModType, modTypeList } from "../../../shared/modType";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 

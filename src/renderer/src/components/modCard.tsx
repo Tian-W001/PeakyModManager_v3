@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModInfo } from "src/types/modInfo";
+import { ModInfo } from "src/shared/modInfo";
 import DetailedModal from "./detailedModal";
 import { createPortal } from "react-dom";
 

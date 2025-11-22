@@ -1,4 +1,4 @@
-import { ModInfo } from "src/types/modInfo";
+import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
 

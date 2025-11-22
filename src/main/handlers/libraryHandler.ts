@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs-extra";
 import { BrowserWindow, dialog, ipcMain, shell } from "electron";
 import store from "../store";
-import { defaultModInfo, ModInfo } from "../../types/modInfo";
-import { Character } from "../../types/character";
+import { defaultModInfo, ModInfo } from "../../shared/modInfo";
+import { Character } from "../../shared/character";
 
 ipcMain.handle("select-library-path", async () => {
   // Open a dialog to select a folder

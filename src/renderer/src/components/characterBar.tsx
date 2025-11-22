@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Character, characterNameList } from "../../../types/character";
+import { Character, characterNameList } from "../../../shared/character";
 
 const imageNameList = [...characterNameList, "All"] as const;
 const imageModules = import.meta.glob("@renderer/assets/character_images/*.png", {

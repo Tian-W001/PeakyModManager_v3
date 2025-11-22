@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Character } from "src/types/character";
-import { ModType } from "src/types/modType";
+import { Character } from "src/shared/character";
+import { ModType } from "src/shared/modType";
 
 export interface uiState {
   selectedMenuItem: ModType | "All";
