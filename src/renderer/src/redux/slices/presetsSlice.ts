@@ -74,10 +74,26 @@ export const presetsSlice = createSlice({
         }
       }
     },
+    renamePreset: (state, action: PayloadAction<{ oldName: string; newName: string }>) => {
+      const { oldName, newName } = action.payload;
+      if (oldName === DEFAULT_PRESET_NAME || newName === DEFAULT_PRESET_NAME) {
+        return;
+      }
+      if (state.presets.some((preset) => preset.name === newName)) {
+        return;
+      }
+      const preset = state.presets.find((preset) => preset.name === oldName);
+      if (preset) {
+        preset.name = newName;
+        if (state.currentPresetName === oldName) {
+          state.currentPresetName = newName;
+        }
+      }
+    },
   },
 });
 
-export const { addPreset, removePreset, setCurrentPreset, applyMods } = presetsSlice.actions;
+export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset } = presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 
 export const selectAllPresetNames = (state: { presets: PresetsState }) =>
