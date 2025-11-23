@@ -1,19 +1,19 @@
 import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
+import { ModState } from "@shared/modState";
 
-const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
-  // const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-  //   event.preventDefault();
-  // };
-
-  // const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-  //   event.preventDefault();
-  //   const files = event.dataTransfer.files;
-  //   // Handle the dropped files here
-  //   console.log("Dropped files:", files);
-  // };
-
+const ModCardGrid = ({
+  modInfos,
+  diffList,
+  appendToDiffList,
+  className,
+}: {
+  modInfos: ModInfo[];
+  diffList: { modName: string; newState: ModState }[];
+  appendToDiffList: (modName: string, newState: Extract<ModState, "Enabled" | "Disabled">) => void;
+  className?: string;
+}) => {
   return (
     <>
       <div
@@ -23,7 +23,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         )}
       >
         {modInfos.map((modInfo) => (
-          <ModCard key={modInfo.name} modInfo={modInfo} />
+          <ModCard key={modInfo.name} modInfo={modInfo} diffList={diffList} appendToDiffList={appendToDiffList} />
         ))}
       </div>
     </>

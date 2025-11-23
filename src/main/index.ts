@@ -4,7 +4,11 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import log from "electron-log/main";
 import icon from "../../resources/icon.png?asset";
 import "./handlers/libraryHandler";
-import { explorerImportProtocolScheme, handleExplorerImport, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
+import {
+  explorerImportProtocolScheme,
+  handleExplorerImport,
+  registerExplorerImportProtocol,
+} from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 
 let mainWindow: BrowserWindow | null = null;

@@ -58,7 +58,9 @@ const CharacterBar = ({ className }: { className?: string }) => {
               id="character-bar-image-container"
               onClick={() => handleSelectCharacter(character)}
             >
-              {selectedCharacter === character && <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />}
+              {selectedCharacter === character && (
+                <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />
+              )}
               <img src={getCharacterImageSrc(character)} alt={character} className="h-full skew-x-[25.3deg]" />
             </div>
           ))}

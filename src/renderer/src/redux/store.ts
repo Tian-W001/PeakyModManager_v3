@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
+import persistStore from "redux-persist/es/persistStore";
 import libraryReducer from "./slices/librarySlice";
 import uiReducer from "./slices/uiSlice";
-import persistStore from "redux-persist/es/persistStore";
+import presetsReducer from "./slices/presetsSlice";
 
 const store = configureStore({
   reducer: {
     library: libraryReducer,
     ui: uiReducer,
+    presets: presetsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

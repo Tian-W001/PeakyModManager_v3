@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
-import path from "path-browserify";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { characterNameList } from "@shared/character";
 
@@ -47,7 +46,10 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   return (
     <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
-      <div className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white" id="modal-container">
+      <div
+        className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
+        id="modal-container"
+      >
         <div className={`h-full w-[40%] bg-gray-200`} id="left-section">
           <img
             src={`mod-image://${modInfo.name}/${modInfo.coverImage}`}
@@ -89,7 +91,10 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 </option>
               ))}
             </select>
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white" id="mod-source">
+            <div
+              className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white"
+              id="mod-source"
+            >
               <span className="">Source</span>
               <input
                 className="flex-1 text-right font-bold text-white"
@@ -99,7 +104,10 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               />
             </div>
           </div>
-          <div className="relative bottom-0 flex h-auto w-full flex-row items-center justify-around gap-8 p-4 *:flex-1" id="bottom-buttons-section">
+          <div
+            className="relative bottom-0 flex h-auto w-full flex-row items-center justify-around gap-8 p-4 *:flex-1"
+            id="bottom-buttons-section"
+          >
             <button onClick={handleOpenModFolder} className="iron-border chess-background">
               Open Mod Folder
             </button>

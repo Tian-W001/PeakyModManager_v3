@@ -1,8 +1,17 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { loadLibrary, selectLibraryPath, setLibraryPath } from "@renderer/redux/slices/librarySlice";
+import { ModState } from "@shared/modState";
 import { clsx } from "clsx";
 
-const BottomBar = ({ className }: { className?: string }) => {
+const BottomBar = ({
+  diffList,
+  onApplyChanges,
+  className,
+}: {
+  diffList: { modName: string; newState: ModState }[];
+  onApplyChanges: () => void;
+  className?: string;
+}) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
 
@@ -29,6 +38,11 @@ const BottomBar = ({ className }: { className?: string }) => {
         <button className="" onClick={handleOnClickSelectLibraryPath}>
           {libraryPath ? `Library: ${libraryPath}` : "Select Library Path"}
         </button>
+        {diffList.length > 0 && (
+          <button className="bg-zzzYellow rounded px-4 text-black" onClick={onApplyChanges}>
+            Apply Changes ({diffList.length})
+          </button>
+        )}
       </div>
     </>
   );

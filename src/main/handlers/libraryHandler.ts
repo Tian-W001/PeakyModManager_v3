@@ -78,7 +78,9 @@ const loadLibrary = async () => {
   if (!libraryPath) return [];
 
   try {
-    const modFolders = (await fs.readdir(libraryPath)).filter((file) => fs.statSync(path.join(libraryPath, file)).isDirectory());
+    const modFolders = (await fs.readdir(libraryPath)).filter((file) =>
+      fs.statSync(path.join(libraryPath, file)).isDirectory()
+    );
 
     const modInfos: ModInfo[] = modFolders.map((folder) => {
       const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
