@@ -16,12 +16,13 @@
       box-shadow: 0 0 0 0 #d9fa00;
     }
   }
+  --color-zzzYellow: #d9fa00;
   --iron-border: inset 0 1px 2px #fff3, inset 0 0 0 3px #666, inset 0 0 0 4px #333, inset 0 0 0 5px #000;
   --chess-background: repeating-conic-gradient(#000 0% 25%, #141414 0% 50%);
 }
 
 button {
-  @apply rounded-full px-4 py-2 font-bold shadow-(--iron-border) not-hover:bg-(image:--chess-background) not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-pulse hover:bg-[#d9fa00];
+  @apply hover:bg-zzzYellow rounded-full px-4 py-2 font-bold shadow-(--iron-border) transition-all not-hover:bg-(image:--chess-background) not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-pulse hover:text-black;
 }
 
 .no-scrollbar::-webkit-scrollbar {

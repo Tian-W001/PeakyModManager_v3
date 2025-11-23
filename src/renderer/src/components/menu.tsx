@@ -17,16 +17,23 @@ const Menu = ({ className }: { className?: string }) => {
   return (
     <div className={clsx("flex justify-center p-6", className)} id="menu-area">
       <div
-        className="m-0.5 flex w-full flex-col items-center gap-2 rounded-2xl bg-linear-to-b from-[#3a3a3a] to-[#272727] p-4 text-white ring-2 ring-white"
+        className="m-0.5 flex w-full flex-col items-center gap-4 rounded-2xl bg-linear-to-b from-[#3a3a3a] to-[#272727] p-4 text-white ring-2 ring-black"
         id="menu-container"
       >
         <div className="flex h-8 w-full items-center justify-center rounded-full bg-gray-500" id="menu-upper-button">
           <FaCaretUp className="h-full translate-y-0.5" />
         </div>
-        <div className="flex w-full flex-1 flex-col items-center bg-black" id="menu-items-container">
-          {menuItems.map((modType: ModType | "All") => (
-            <div className="m-1 flex w-full cursor-pointer items-center justify-center rounded p-2" key={modType} onClick={() => handleMenuItemClick(modType)}>
-              {modType === selectedMenuItem ? <strong>{modType}</strong> : modType}
+        <div
+          className="no-scrollbar flex w-full flex-1 flex-col items-center gap-0.5 overflow-x-hidden overflow-y-auto rounded-2xl border-8 border-black bg-black"
+          id="menu-items-container"
+        >
+          {menuItems.map((menuItem) => (
+            <div
+              className={`m-1 flex h-14 w-full shrink-0 cursor-pointer items-center justify-center rounded-xl p-2 text-xl font-extrabold transition-all ${menuItem === selectedMenuItem ? "bg-zzzYellow text-black" : ""}`}
+              key={menuItem}
+              onClick={() => handleMenuItemClick(menuItem)}
+            >
+              {menuItem}
             </div>
           ))}
         </div>

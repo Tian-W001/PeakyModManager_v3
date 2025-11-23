@@ -3,6 +3,7 @@ import { Character, characterNameList } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
+import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
 
 const imageNameList = [...characterNameList, "All"] as const;
 const imageModules = import.meta.glob("@renderer/assets/character_images/*.png", {
@@ -44,7 +45,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
         className="flex size-full flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
       >
-        <h1> {"<"} </h1>
+        <TiChevronLeft color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
         <div
           className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] border-4 bg-black shadow-[4px_1px_0px_#ffffff19,-4px_-1px_0px_#00000051]"
           id="character-bar-images-container"
@@ -62,7 +63,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
             </div>
           ))}
         </div>
-        <h1> {">"} </h1>
+        <TiChevronRight color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
       </div>
     </div>
   );
