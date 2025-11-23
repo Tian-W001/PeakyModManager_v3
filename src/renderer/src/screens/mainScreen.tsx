@@ -4,16 +4,18 @@ import Menu from "@renderer/components/menu";
 import ModCardGrid from "@renderer/components/modCardGrid";
 import CharacterBar from "@renderer/components/characterBar";
 import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
+import { selectSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 
 const MainScreen: React.FC = () => {
   const selectedModInfos = useAppSelector(selectModTypeFilteredModCards);
+  const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
 
   return (
     <div className="flex h-screen w-screen flex-col bg-[url('@renderer/assets/zzz_site_background.webp')]" id="main-screen">
       <div className="flex min-h-0 flex-1 flex-row" id="content-area">
         <Menu className="w-[350px]" />
         <div className="flex h-full flex-1 flex-col py-4" id="card-grid-area">
-          <CharacterBar className="h-18 max-w-[80%]" />
+          {selectedMenuItem === "Character" && <CharacterBar className="h-18 max-w-[80%]" />}
           <ModCardGrid modInfos={selectedModInfos} className="h-full w-full flex-1" />
         </div>
       </div>

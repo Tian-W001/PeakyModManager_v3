@@ -16,18 +16,31 @@ ipcMain.handle("select-library-path", async () => {
   return result.canceled ? null : result.filePaths[0];
 });
 
-ipcMain.handle("load-library", async (_event, libraryPath: string) => {
-  const mods = await loadLibrary(libraryPath);
-  store.set("library", mods);
+ipcMain.handle("get-library-path", async () => {
+  return store.get("libraryPath", null) as string | null;
+});
+
+ipcMain.handle("set-library-path", async (_event, libraryPath: string | null) => {
+  store.set("libraryPath", libraryPath);
+  console.log("Library path set to:", libraryPath);
+});
+
+ipcMain.handle("load-library", async () => {
+  const mods = await loadLibrary();
   return mods;
 });
 
-ipcMain.handle("read-library", async () => {
-  const mods: ModInfo[] = store.get("library", []) as ModInfo[];
-  return mods;
+ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return;
+
+  const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
+  if (fs.existsSync(modInfoPath)) {
+    fs.writeFileSync(modInfoPath, JSON.stringify(newModInfo, null, 2));
+  }
 });
 
-const createModInfoFile: (modInfoPath: string) => ModInfo = (modInfoPath) => {
+const createModInfoFile = (modInfoPath: string) => {
   const modInfo: ModInfo = {
     name: path.basename(modInfoPath),
     modType: "Unknown",
@@ -57,13 +70,12 @@ const validateAndFixModInfo = (modInfo: any, modInfoPath: string) => {
   return fixedModInfo as ModInfo;
 };
 
-const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryPath: string) => {
-  // Read every folder in the given library path
+const loadLibrary = async () => {
+  // Read every folder in library
   // For each folder, check if it contains a modinfo.json file
-  // If it does, read the modinfo.json file and store the mod information, and return an array of mod information objects
-  if (!libraryPath || !fs.existsSync(libraryPath)) {
-    return [];
-  }
+  // If it does, read the modinfo.json file, and return an array of mod information objects
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return [];
 
   try {
     const modFolders = (await fs.readdir(libraryPath)).filter((file) => fs.statSync(path.join(libraryPath, file)).isDirectory());
@@ -78,7 +90,6 @@ const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryP
         return createModInfoFile(path.join(libraryPath, folder));
       }
     });
-    store.set("library", modInfos);
     return modInfos;
   } catch (error) {
     console.error("Error loading library:", error);
@@ -86,7 +97,9 @@ const loadLibrary: (libraryPath: string) => Promise<ModInfo[]> = async (libraryP
   }
 };
 
-ipcMain.handle("open-mod-folder", async (_event, modPath: string) => {
-  const fullPath = path.resolve(modPath);
+ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return;
+  const fullPath = path.resolve(libraryPath, modName);
   await shell.openPath(fullPath);
 });

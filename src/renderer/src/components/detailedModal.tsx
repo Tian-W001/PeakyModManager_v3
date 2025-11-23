@@ -5,6 +5,7 @@ import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import path from "path-browserify";
 import defaultCover from "@renderer/assets/default_cover.jpg";
+import { characterNameList } from "@shared/character";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -41,17 +42,15 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   const handleOpenModFolder = () => {
     if (!libraryPath) return;
-    window.electron.ipcRenderer.invoke("open-mod-folder", path.join(libraryPath, modInfo.name));
+    window.electron.ipcRenderer.invoke("open-mod-folder", modInfo.name);
   };
-
-  console.log("image src:", `mod-image://local/${libraryPath}/${modInfo.name}/${modInfo.coverImage}`);
 
   return (
     <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
       <div className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white" id="modal-container">
         <div className={`h-full w-[40%] bg-gray-200`} id="left-section">
           <img
-            src={`mod-image://local/${libraryPath}/${modInfo.name}/${modInfo.coverImage}`}
+            src={`mod-image://${modInfo.name}/${modInfo.coverImage}`}
             alt="Cover"
             className="h-full w-full object-cover"
             onError={(e) => (e.currentTarget.src = defaultCover)}
@@ -79,9 +78,25 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 </option>
               ))}
             </select>
+            <select
+              className="mt-2 w-full rounded-full border bg-black px-2 py-1 font-bold text-white"
+              value={localModInfo.character}
+              onChange={(e) => handleModInfoChange("character", e.target.value)}
+            >
+              {characterNameList.map((character) => (
+                <option key={character} value={character}>
+                  {character}
+                </option>
+              ))}
+            </select>
             <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white" id="mod-source">
               <span className="">Source</span>
-              <input className="flex-1 text-right font-bold text-white" value={modInfo.source || "Unknown Source"} />
+              <input
+                className="flex-1 text-right font-bold text-white"
+                value={localModInfo.source || "Unknown Source"}
+                onChange={(e) => handleModInfoChange("source", e.target.value)}
+                onBlur={() => handleModInfoBlur("source")}
+              />
             </div>
           </div>
           <div className="relative bottom-0 flex h-auto w-full flex-row items-center justify-around gap-8 p-4 *:flex-1" id="bottom-buttons-section">

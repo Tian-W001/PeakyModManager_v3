@@ -1,5 +1,8 @@
 import clsx from "clsx";
 import { Character, characterNameList } from "../../../shared/character";
+import charActiveMask from "@renderer/assets/character_active_mask.png";
+import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
+import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
 
 const imageNameList = [...characterNameList, "All"] as const;
 const imageModules = import.meta.glob("@renderer/assets/character_images/*.png", {
@@ -17,6 +20,9 @@ const getCharacterImageSrc = (character: Character | "All") => {
 };
 
 const CharacterBar = ({ className }: { className?: string }) => {
+  const dispatch = useAppDispatch();
+  const selectedCharacter = useAppSelector(selectSelectedCharacter);
+
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
     const scrollAmount = event.deltaY;
@@ -27,10 +33,15 @@ const CharacterBar = ({ className }: { className?: string }) => {
     });
   };
 
+  const handleSelectCharacter = (character: Character | "All") => {
+    console.log("Selected character:", character);
+    dispatch(setSelectedCharacter(character));
+  };
+
   return (
     <div className={clsx("flex items-center p-2", className)}>
       <div
-        className="flex size-full flex-row items-center justify-between gap-4 rounded-full bg-slate-400 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
+        className="flex size-full flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
       >
         <h1> {"<"} </h1>
@@ -40,7 +51,13 @@ const CharacterBar = ({ className }: { className?: string }) => {
           onWheel={handleScroll}
         >
           {imageNameList.toReversed().map((character) => (
-            <div key={character} className="-mx-1 h-full shrink-0 snap-start -scroll-m-2" id="character-bar-image-container">
+            <div
+              key={character}
+              className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
+              id="character-bar-image-container"
+              onClick={() => handleSelectCharacter(character)}
+            >
+              {selectedCharacter === character && <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />}
               <img src={getCharacterImageSrc(character)} alt={character} className="h-full skew-x-[25.3deg]" />
             </div>
           ))}

@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import MainScreen from "./screens/mainScreen";
-import { readLibrary } from "./redux/slices/librarySlice";
 import { useAppDispatch } from "./redux/hooks";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -8,8 +7,6 @@ function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(readLibrary());
-
     window.electron.ipcRenderer.on("downloading-mod", (_, { modName }) => {
       toast.loading(`Downloading ${modName}...`, { id: modName });
     });

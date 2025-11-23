@@ -19,17 +19,12 @@ const initialState: libraryState = {
 const libraryPersistConfig = {
   key: "library",
   storage,
-  whitelist: ["libraryPath"],
+  whitelist: ["libraryPath", "modInfos"],
 };
 
 export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string | null) => {
   const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library", libraryPath);
   //console.log("Loaded mods from thunk:", mods);
-  return mods;
-});
-
-export const readLibrary = createAsyncThunk("library/read", async () => {
-  const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("read-library");
   return mods;
 });
 
@@ -39,6 +34,7 @@ const librarySlice = createSlice({
   reducers: {
     setLibraryPath: (state, action: PayloadAction<string | null>) => {
       state.libraryPath = action.payload;
+      window.electron.ipcRenderer.invoke("set-library-path", action.payload);
     },
     editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
       const { modName, newModInfo } = action.payload;
@@ -46,18 +42,15 @@ const librarySlice = createSlice({
       if (modIndex !== -1) {
         Object.assign(state.modInfos[modIndex], newModInfo);
       }
+      window.electron.ipcRenderer.invoke("edit-mod-info", modName, { ...state.modInfos[modIndex] });
       console.log("Edited mod info:", state.modInfos[modIndex]);
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(loadLibrary.fulfilled, (state, action) => {
-        console.log("Loaded mods in extraReducers:", action.payload);
-        state.modInfos = action.payload;
-      })
-      .addCase(readLibrary.fulfilled, (state, action) => {
-        state.modInfos = action.payload;
-      });
+    builder.addCase(loadLibrary.fulfilled, (state, action) => {
+      console.log("Loaded mods in extraReducers:", action.payload);
+      state.modInfos = action.payload;
+    });
   },
 });
 
@@ -65,17 +58,13 @@ export default persistReducer(libraryPersistConfig, librarySlice.reducer);
 export const { editModInfo, setLibraryPath } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
-
 export const selectModInfos = (state: RootState) => state.library.modInfos;
-
 export const selectModByName = (name: string) => (state: RootState) => {
   return state.library.modInfos.find((mod) => mod.name === name);
 };
-
 export const selectModByType = (modType: ModType) => (state: RootState) => {
   return state.library.modInfos.filter((mod) => mod.modType === modType);
 };
-
 export const selectModByCharacter = (characterName: Character) => (state: RootState) => {
   return state.library.modInfos.filter((mod) => mod.modType === "Character" && mod.character === characterName);
 };

@@ -3,6 +3,7 @@ import path from "path";
 import log from "electron-log";
 import mime from "mime-types";
 import fs from "fs-extra";
+import store from "../store";
 
 export const modImageProtocolScheme: Electron.CustomScheme = {
   scheme: "mod-image",
@@ -13,10 +14,18 @@ export const modImageProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerModImageProtocol = () => {
+  // renderer calls mod-image://{modName}/{imageFileName}
   protocol.handle("mod-image", async (request) => {
     try {
+      const libraryPath = store.get("libraryPath", null) as string | null;
+      if (!libraryPath) {
+        throw new Error("Library path is not set");
+      }
       const url = new URL(request.url);
-      const modImagePath = decodeURIComponent(url.pathname).replace(/^\//, "");
+      const modName = url.hostname;
+      const imageFileName = url.pathname.slice(1); // Remove leading '/'
+
+      const modImagePath = path.join(libraryPath, modName, imageFileName);
       const ext = path.extname(modImagePath).toLowerCase();
       const mimeType = mime.lookup(ext);
       const buffer = await fs.readFile(modImagePath);

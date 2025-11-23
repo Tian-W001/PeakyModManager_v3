@@ -16,7 +16,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
   return (
     <>
-      <div className={clsx("flex flex-wrap items-start justify-start gap-4 overflow-x-hidden overflow-y-auto p-4 [scrollbar-gutter:stable]", className)}>
+      <div
+        className={clsx(
+          "flex flex-wrap items-start justify-start gap-4 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]",
+          className
+        )}
+      >
         {modInfos.map((modInfo) => (
           <ModCard key={modInfo.name} modInfo={modInfo} />
         ))}
