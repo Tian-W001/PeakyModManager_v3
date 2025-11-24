@@ -27,6 +27,35 @@ ipcMain.handle("select-file", async () => {
   return result.canceled ? null : result.filePaths[0];
 });
 
+ipcMain.handle("select-image", async () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (!win) return null;
+  const result = await dialog.showOpenDialog(win, {
+    properties: ["openFile"],
+    filters: [{ name: "Images", extensions: ["jpg", "png", "jpeg", "webp"] }],
+    title: "Select Cover Image",
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return null;
+
+  const modPath = path.join(libraryPath, modName);
+  const ext = path.extname(imagePath);
+  const newCoverName = `cover${ext}`;
+  const destPath = path.join(modPath, newCoverName);
+
+  try {
+    await fs.copy(imagePath, destPath);
+    return newCoverName;
+  } catch (error) {
+    console.error("Error importing mod cover:", error);
+    return null;
+  }
+});
+
 ipcMain.handle("get-library-path", async () => {
   return store.get("libraryPath", null) as string | null;
 });

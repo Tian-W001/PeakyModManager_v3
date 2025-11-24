@@ -44,19 +44,60 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     window.electron.ipcRenderer.invoke("open-mod-folder", modInfo.name);
   };
 
+  const handleSetCover = async () => {
+    const imagePath = await window.electron.ipcRenderer.invoke("select-image");
+    if (imagePath) {
+      const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
+      if (newCoverName) {
+        handleModInfoChange("coverImage", newCoverName);
+        dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: newCoverName } }));
+      }
+    }
+  };
+
+  const handleRemoveCover = async () => {
+    handleModInfoChange("coverImage", "");
+    dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: "" } }));
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
       <div
         className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
         id="modal-container"
       >
-        <div className={`h-full w-[40%] bg-gray-200`} id="left-section">
+        <div className="group relative h-full w-[40%] bg-gray-200" id="left-section">
           <img
-            src={`mod-image://${modInfo.name}/${modInfo.coverImage}`}
+            src={`mod-image://${modInfo.name}/${localModInfo.coverImage}`}
             alt="Cover"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-all duration-300 group-hover:blur"
             onError={(e) => (e.currentTarget.src = defaultCover)}
           />
+          <div className="absolute inset-0 hidden flex-col items-center justify-center gap-4 group-hover:flex">
+            {localModInfo.coverImage ? (
+              <>
+                <button
+                  onClick={handleRemoveCover}
+                  className="rounded bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
+                >
+                  Remove Cover
+                </button>
+                <button
+                  onClick={handleSetCover}
+                  className="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                >
+                  Change Cover
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleSetCover}
+                className="rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-700"
+              >
+                Set Cover
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex h-full flex-1 flex-col justify-between gap-2 bg-gray-300" id="right-section">
           <h1>{modInfo.name}</h1>
