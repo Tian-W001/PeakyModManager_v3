@@ -5,13 +5,24 @@ import store from "../store";
 import { defaultModInfo, ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
 
-ipcMain.handle("select-library-path", async () => {
+ipcMain.handle("select-path", async () => {
   // Open a dialog to select a folder
   const win = BrowserWindow.getFocusedWindow();
   if (!win) return null;
   const result = await dialog.showOpenDialog(win, {
     properties: ["openDirectory"],
-    title: "Select Library Path",
+    title: "Select Path",
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+ipcMain.handle("select-file", async () => {
+  // Open a dialog to select a file
+  const win = BrowserWindow.getFocusedWindow();
+  if (!win) return null;
+  const result = await dialog.showOpenDialog(win, {
+    properties: ["openFile"],
+    title: "Select File",
   });
   return result.canceled ? null : result.filePaths[0];
 });
@@ -23,6 +34,15 @@ ipcMain.handle("get-library-path", async () => {
 ipcMain.handle("set-library-path", async (_event, libraryPath: string | null) => {
   store.set("libraryPath", libraryPath);
   console.log("Library path set to:", libraryPath);
+});
+
+ipcMain.handle("get-target-path", async () => {
+  return store.get("targetPath", null) as string | null;
+});
+
+ipcMain.handle("set-target-path", async (_event, targetPath: string | null) => {
+  store.set("targetPath", targetPath);
+  console.log("Target path set to:", targetPath);
 });
 
 ipcMain.handle("load-library", async () => {
@@ -104,4 +124,38 @@ ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
   if (!libraryPath) return;
   const fullPath = path.resolve(libraryPath, modName);
   await shell.openPath(fullPath);
+});
+
+ipcMain.handle("apply-mod-changes", async (_event, changes: { modName: string; enabled: boolean }[]) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  const targetPath = store.get("targetPath", null) as string | null;
+
+  if (!libraryPath || !targetPath) {
+    console.error("Library path or Target path is not set.");
+    return;
+  }
+
+  for (const { modName, enabled } of changes) {
+    const sourcePath = path.join(libraryPath, modName);
+    const destPath = path.join(targetPath, modName);
+
+    try {
+      if (enabled) {
+        if (fs.existsSync(sourcePath)) {
+          await fs.ensureDir(targetPath);
+          // Remove existing if it exists to ensure clean link
+          if (fs.existsSync(destPath)) {
+            await fs.remove(destPath);
+          }
+          await fs.ensureSymlink(sourcePath, destPath, "junction");
+        }
+      } else {
+        if (fs.existsSync(destPath)) {
+          await fs.remove(destPath);
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to apply change for mod ${modName}:`, error);
+    }
+  }
 });

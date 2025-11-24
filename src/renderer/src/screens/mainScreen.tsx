@@ -36,13 +36,13 @@ const MainScreen: React.FC = () => {
     });
   };
 
-  const handleApplyChanges = () => {
+  const handleApplyChanges = async () => {
     const modsToApply = diffList.map((diff) => ({
       modName: diff.modName,
       enabled: diff.newState === "Enabled",
     }));
-    console.log("Applying mods:", modsToApply);
     dispatch(applyMods(modsToApply));
+    await window.electron.ipcRenderer.invoke("apply-mod-changes", modsToApply);
     setDiffList([]);
   };
 

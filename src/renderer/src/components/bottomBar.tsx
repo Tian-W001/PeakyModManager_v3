@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { loadLibrary, selectLibraryPath, setLibraryPath } from "@renderer/redux/slices/librarySlice";
+import { loadLibrary, selectLibraryPath, setLibraryPath, setTargetPath } from "@renderer/redux/slices/librarySlice";
 import { ModState } from "@shared/modState";
 import { clsx } from "clsx";
 
@@ -14,13 +14,19 @@ const BottomBar = ({
 }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
+  //const targetPath = useAppSelector(selectTargetPath);
 
   const handleOnClickSelectLibraryPath = async () => {
-    const newPath: string | null = await window.electron.ipcRenderer.invoke("select-library-path");
+    const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setLibraryPath(newPath));
-      const mods = await window.electron.ipcRenderer.invoke("load-library", newPath);
-      console.log("Loaded mods:", mods);
+    }
+  };
+
+  const handleOnClickSelectTargetPath = async () => {
+    const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
+    if (newPath) {
+      dispatch(setTargetPath(newPath));
     }
   };
 
@@ -36,13 +42,14 @@ const BottomBar = ({
           Refresh
         </button>
         <button className="" onClick={handleOnClickSelectLibraryPath}>
-          {libraryPath ? `Library: ${libraryPath}` : "Select Library Path"}
+          Select Library
         </button>
-        {diffList.length > 0 && (
-          <button className="bg-zzzYellow rounded px-4 text-black" onClick={onApplyChanges}>
-            Apply Changes ({diffList.length})
-          </button>
-        )}
+        <button className="" onClick={handleOnClickSelectTargetPath}>
+          Select Target Dir
+        </button>
+        <button className="bg-zzzYellow rounded px-4 text-black" onClick={onApplyChanges}>
+          Apply {diffList.length ? `(${diffList.length})` : ""}
+        </button>
       </div>
     </>
   );

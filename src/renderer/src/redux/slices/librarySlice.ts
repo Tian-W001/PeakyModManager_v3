@@ -8,18 +8,20 @@ import { Character } from "src/shared/character";
 
 export interface libraryState {
   libraryPath: string | null;
+  targetPath: string | null;
   modInfos: ModInfo[];
 }
 
 const initialState: libraryState = {
   libraryPath: null,
+  targetPath: null,
   modInfos: [],
 };
 
 const libraryPersistConfig = {
   key: "library",
   storage,
-  whitelist: ["libraryPath", "modInfos"],
+  whitelist: ["libraryPath", "targetPath", "modInfos"],
 };
 
 export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string | null) => {
@@ -35,6 +37,10 @@ const librarySlice = createSlice({
     setLibraryPath: (state, action: PayloadAction<string | null>) => {
       state.libraryPath = action.payload;
       window.electron.ipcRenderer.invoke("set-library-path", action.payload);
+    },
+    setTargetPath: (state, action: PayloadAction<string | null>) => {
+      state.targetPath = action.payload;
+      window.electron.ipcRenderer.invoke("set-target-path", action.payload);
     },
     editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
       const { modName, newModInfo } = action.payload;
@@ -55,9 +61,10 @@ const librarySlice = createSlice({
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, setLibraryPath } = librarySlice.actions;
+export const { editModInfo, setLibraryPath, setTargetPath } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
+export const selectTargetPath = (state: RootState) => state.library.targetPath;
 export const selectModInfos = (state: RootState) => state.library.modInfos;
 export const selectModByName = (name: string) => (state: RootState) => {
   return state.library.modInfos.find((mod) => mod.name === name);
