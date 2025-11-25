@@ -1,0 +1,55 @@
+{
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "close": "关闭",
+    "delete": "删除",
+    "remove": "移除",
+    "edit": "编辑",
+    "add": "添加",
+    "refresh": "刷新",
+    "settings": "设置",
+    "apply": "应用"
+  },
+  "settings": {
+    "title": "设置",
+    "libraryPath": "库路径",
+    "targetPath": "目标路径",
+    "clickToSetPath": "点击设置路径",
+    "backup": "备份",
+    "backupTooltip": "将预设信息备份到当前库目录",
+    "backupSuccess": "预设备份成功！",
+    "backupFail": "预设备份失败。",
+    "testAlert": "测试弹窗",
+    "testAlertMessage": "这是一个测试弹窗！"
+  },
+  "modDetails": {
+    "description": "描述",
+    "source": "来源",
+    "unknownSource": "未知来源",
+    "removeCover": "移除封面",
+    "changeCover": "更换封面",
+    "setCover": "设置封面",
+    "deleteMod": "删除模组",
+    "openModFolder": "打开模组文件夹",
+    "deleteConfirm": "确定要删除 {{name}} 吗？"
+  },
+  "presets": {
+    "managePresets": "管理预设",
+    "newPresetName": "新预设名称",
+    "deleteConfirm": "确定要删除预设 \"{{name}}\" 吗？"
+  },
+  "modCard": {
+    "noDescription": "无描述"
+  },
+  "modTypes": {
+    "All": "全部",
+    "Character": "角色",
+    "NPC": "NPC",
+    "UI": "界面",
+    "Script-Tools": "脚本/工具",
+    "Misc": "杂项",
+    "Unknown": "未知"
+  }
+}

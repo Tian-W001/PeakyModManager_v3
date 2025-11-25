@@ -3,11 +3,13 @@ import { ModType, modTypeList } from "../../../shared/modType";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 const menuItems = ["All", ...modTypeList] as const;
 
 const Menu = ({ className }: { className?: string }) => {
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
+  const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
   const handleMenuItemClick = (modType: ModType | "All") => {
@@ -33,7 +35,7 @@ const Menu = ({ className }: { className?: string }) => {
               key={menuItem}
               onClick={() => handleMenuItemClick(menuItem)}
             >
-              {menuItem}
+              {t(`modTypes.${menuItem}`)}
             </div>
           ))}
         </div>

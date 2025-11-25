@@ -7,6 +7,7 @@ import { useAppSelector } from "@renderer/redux/hooks";
 import { selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
 import SmoothCornerPatch from "./CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
+import { useTranslation } from "react-i18next";
 
 // Load avatar images
 const modTypeImages = import.meta.glob("../assets/avatars/modType_avatars/*", { eager: true });
@@ -63,6 +64,7 @@ const ModCard = ({
   appendToDiffList: (modName: string, enable: boolean) => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const isEnabledInPreset = useAppSelector(selectModIsEnabled(modInfo.name));
 
@@ -118,7 +120,7 @@ const ModCard = ({
           </div>
           <div className="flex-1 p-3 py-1.5">
             <h2 className="text-xl font-bold text-white">{modInfo.name}</h2>
-            <p className="text-s font-bold text-[#888]">{modInfo.description || "No description"}</p>
+            <p className="text-s font-bold text-[#888]">{modInfo.description || t("modCard.noDescription")}</p>
           </div>
         </div>
       </div>

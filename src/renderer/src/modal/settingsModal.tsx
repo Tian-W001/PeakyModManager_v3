@@ -10,6 +10,7 @@ import {
 import { FaTimes } from "react-icons/fa";
 import { selectAllPresets } from "@renderer/redux/slices/presetsSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
+import { useTranslation } from "react-i18next";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -18,6 +19,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const modInfos = useAppSelector(selectModInfos);
   const presets = useAppSelector(selectAllPresets);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { t, i18n } = useTranslation();
 
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
@@ -47,14 +49,20 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     });
     const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
     if (success) {
-      showAlert("Presets backed up successfully!", undefined, [{ name: "Confirm", f: hideAlert }]);
+      showAlert(t("settings.backupSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
     } else {
-      showAlert("Failed to backup presets.", undefined, [{ name: "Confirm", f: hideAlert }]);
+      showAlert(t("settings.backupFail"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
     }
   };
 
   const handleOnClickTestButton = () => {
-    showAlert("Test Alert", "This is a test alert!", [{ name: "Confirm", f: hideAlert }]);
+    showAlert(t("settings.testAlert"), t("settings.testAlertMessage"), [{ name: t("common.confirm"), f: hideAlert }]);
+  };
+
+  const handleSwitchLanguage = () => {
+    const newLang = i18n.language === "en" ? "zh" : "en";
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("app_lang", newLang);
   };
 
   return (
@@ -62,7 +70,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
         <div className="flex h-[70%] w-[70%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
           <div className="flex items-center justify-between bg-gray-300 p-4">
-            <h2 className="text-xl font-bold">Settings</h2>
+            <h2 className="text-xl font-bold">{t("settings.title")}</h2>
             <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
               <FaTimes size={24} />
             </button>
@@ -71,10 +79,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           <div className="flex flex-col gap-4 p-6">
             {/* Library Path */}
             <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
-              <span className="whitespace-nowrap">Library Path</span>
+              <span className="whitespace-nowrap">{t("settings.libraryPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
-                value={libraryPath || "Click to set path"}
+                value={libraryPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectLibraryPath}
               />
@@ -82,10 +90,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
             {/* Target Path */}
             <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
-              <span className="whitespace-nowrap">Target Path</span>
+              <span className="whitespace-nowrap">{t("settings.targetPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
-                value={targetPath || "Click to set path"}
+                value={targetPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectTargetPath}
               />
@@ -97,15 +105,25 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 onClick={handleBackupPresets}
                 className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
               >
-                Backup
+                {t("settings.backup")}
               </button>
               <button
                 onClick={handleOnClickTestButton}
                 className="iron-border bg-green-600 px-4 py-2 text-white hover:bg-green-700"
               >
-                Test Alert
+                {t("settings.testAlert")}
               </button>
-              <span className="text-sm text-gray-600">Backup presets information into current Library dir</span>
+              <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>
+            </div>
+
+            {/* Language Switch */}
+            <div className="flex flex-row items-center gap-4">
+              <button
+                onClick={handleSwitchLanguage}
+                className="iron-border bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+              >
+                {i18n.language === "en" ? "Language: English" : "语言: 中文"}
+              </button>
             </div>
           </div>
         </div>

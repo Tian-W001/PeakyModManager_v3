@@ -5,11 +5,13 @@ import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { characterNameList } from "@shared/character";
+import { useTranslation } from "react-i18next";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
+  const { t } = useTranslation();
 
   const handleModInfoChange = (field: keyof ModInfo, value: string) => {
     setLocalModInfo((prev) => ({
@@ -45,7 +47,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   const handleDeleteMod = async () => {
-    const confirmed = confirm(`Are you sure you want to delete ${modInfo.name}?`);
+    const confirmed = confirm(t("modDetails.deleteConfirm", { name: modInfo.name }));
     if (confirmed) {
       const success = await window.electron.ipcRenderer.invoke("delete-mod", modInfo.name);
       if (success) {
@@ -137,13 +139,13 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                   onClick={handleRemoveCover}
                   className="rounded bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
                 >
-                  Remove Cover
+                  {t("modDetails.removeCover")}
                 </button>
                 <button
                   onClick={handleSetCover}
                   className="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
                 >
-                  Change Cover
+                  {t("modDetails.changeCover")}
                 </button>
               </>
             ) : (
@@ -151,7 +153,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 onClick={handleSetCover}
                 className="rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-700"
               >
-                Set Cover
+                {t("modDetails.setCover")}
               </button>
             )}
           </div>
@@ -162,7 +164,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
             <input
               type="text"
               value={localModInfo.description}
-              placeholder="Description"
+              placeholder={t("modDetails.description")}
               className="min-h-20 w-full rounded-2xl border bg-black font-bold text-white"
               onChange={(e) => handleModInfoChange("description", e.target.value)}
               onBlur={() => handleModInfoBlur("description")}
@@ -193,10 +195,10 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white"
               id="mod-source"
             >
-              <span className="">Source</span>
+              <span className="">{t("modDetails.source")}</span>
               <input
                 className="flex-1 text-right font-bold text-white"
-                value={localModInfo.source || "Unknown Source"}
+                value={localModInfo.source || t("modDetails.unknownSource")}
                 onChange={(e) => handleModInfoChange("source", e.target.value)}
                 onBlur={() => handleModInfoBlur("source")}
               />
@@ -206,17 +208,17 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
       </div>
       <div className="flex w-[70%] flex-row items-center justify-between gap-4" id="outside-buttons-container">
         <button onClick={handleDeleteMod} className="iron-border bg-red-600 text-white hover:bg-red-700">
-          Delete Mod
+          {t("modDetails.deleteMod")}
         </button>
         <div className="flex flex-row gap-4">
           <button onClick={handleOpenModFolder} className="iron-border chess-background">
-            Open Mod Folder
+            {t("modDetails.openModFolder")}
           </button>
           <button onClick={onClose} className="iron-border chess-background">
-            Close
+            {t("common.close")}
           </button>
           <button onClick={saveModInfoChanges} className="iron-border chess-background">
-            Save
+            {t("common.save")}
           </button>
         </div>
       </div>

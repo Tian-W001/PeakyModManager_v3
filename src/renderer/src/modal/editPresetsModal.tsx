@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { addPreset, removePreset, renamePreset, selectAllPresetNames } from "@renderer/redux/slices/presetsSlice";
 import { FaTrash, FaEdit, FaCheck, FaTimes } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -9,6 +10,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   const [newPresetName, setNewPresetName] = useState("");
   const [editingPresetName, setEditingPresetName] = useState<string | null>(null);
   const [tempPresetName, setTempPresetName] = useState("");
+  const { t } = useTranslation();
 
   const handleAddPreset = () => {
     if (newPresetName.trim()) {
@@ -18,7 +20,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleRemovePreset = (name: string) => {
-    if (confirm(`Are you sure you want to delete preset "${name}"?`)) {
+    if (confirm(t("presets.deleteConfirm", { name }))) {
       dispatch(removePreset(name));
     }
   };
@@ -45,7 +47,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
     <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
       <div className="flex h-[60%] w-[40%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
         <div className="flex items-center justify-between bg-gray-300 p-4">
-          <h2 className="text-xl font-bold">Manage Presets</h2>
+          <h2 className="text-xl font-bold">{t("presets.managePresets")}</h2>
           <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
             <FaTimes size={24} />
           </button>
@@ -57,14 +59,14 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
               type="text"
               value={newPresetName}
               onChange={(e) => setNewPresetName(e.target.value)}
-              placeholder="New Preset Name"
+              placeholder={t("presets.newPresetName")}
               className="flex-1 rounded border border-gray-400 px-2 py-1"
             />
             <button
               onClick={handleAddPreset}
               className="rounded bg-blue-600 px-4 py-1 font-bold text-white hover:bg-blue-700"
             >
-              Add
+              {t("common.add")}
             </button>
           </div>
 

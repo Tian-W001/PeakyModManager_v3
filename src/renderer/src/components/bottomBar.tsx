@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import SettingsModal from "../modal/settingsModal";
+import { useTranslation } from "react-i18next";
 
 const BottomBar = ({
   diffList,
@@ -17,6 +18,7 @@ const BottomBar = ({
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleOnClickRefresh = async () => {
     dispatch(loadLibrary(libraryPath));
@@ -26,14 +28,14 @@ const BottomBar = ({
     <>
       <div className={clsx("flex justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
         <button className="w-50" onClick={() => setIsSettingsModalOpen(true)}>
-          Settings
+          {t("common.settings")}
         </button>
         <button className="w-50" onClick={handleOnClickRefresh}>
-          Refresh
+          {t("common.refresh")}
         </button>
 
         <button className="bg-zzzYellow w-50 rounded px-4 text-black" onClick={onApplyChanges}>
-          Apply {diffList.length ? `(${diffList.length})` : ""}
+          {t("common.apply")} {diffList.length ? `(${diffList.length})` : ""}
         </button>
       </div>
       {isSettingsModalOpen &&

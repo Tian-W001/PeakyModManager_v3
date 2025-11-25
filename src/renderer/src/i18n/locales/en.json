@@ -1,0 +1,55 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "delete": "Delete",
+    "remove": "Remove",
+    "edit": "Edit",
+    "add": "Add",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "apply": "Apply"
+  },
+  "settings": {
+    "title": "Settings",
+    "libraryPath": "Library Path",
+    "targetPath": "Target Path",
+    "clickToSetPath": "Click to set path",
+    "backup": "Backup",
+    "backupTooltip": "Backup presets information into current Library dir",
+    "backupSuccess": "Presets backed up successfully!",
+    "backupFail": "Failed to backup presets.",
+    "testAlert": "Test Alert",
+    "testAlertMessage": "This is a test alert!"
+  },
+  "modDetails": {
+    "description": "Description",
+    "source": "Source",
+    "unknownSource": "Unknown Source",
+    "removeCover": "Remove Cover",
+    "changeCover": "Change Cover",
+    "setCover": "Set Cover",
+    "deleteMod": "Delete Mod",
+    "openModFolder": "Open Mod Folder",
+    "deleteConfirm": "Are you sure you want to delete {{name}}?"
+  },
+  "presets": {
+    "managePresets": "Manage Presets",
+    "newPresetName": "New Preset Name",
+    "deleteConfirm": "Are you sure you want to delete preset \"{{name}}\"?"
+  },
+  "modCard": {
+    "noDescription": "No description"
+  },
+  "modTypes": {
+    "All": "All",
+    "Character": "Character",
+    "NPC": "NPC",
+    "UI": "UI",
+    "Script-Tools": "Script-Tools",
+    "Misc": "Misc",
+    "Unknown": "Unknown"
+  }
+}
