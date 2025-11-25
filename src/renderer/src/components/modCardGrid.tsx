@@ -28,7 +28,7 @@ const ModCardGrid = ({
 
   return (
     <div className={clsx("relative h-full", className)}>
-      <div className="flex h-full w-full flex-wrap items-start justify-start gap-4 overflow-x-hidden overflow-y-auto [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
+      <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
         {modInfos.map((modInfo) => (
           <ModCard key={modInfo.name} modInfo={modInfo} diffList={diffList} appendToDiffList={appendToDiffList} />
         ))}
