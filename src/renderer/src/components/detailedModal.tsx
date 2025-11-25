@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { editModInfo, selectLibraryPath } from "@renderer/redux/slices/librarySlice";
+import { editModInfo, selectLibraryPath, loadLibrary } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
@@ -44,6 +44,17 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     window.electron.ipcRenderer.invoke("open-mod-folder", modInfo.name);
   };
 
+  const handleDeleteMod = async () => {
+    const confirmed = confirm(`Are you sure you want to delete ${modInfo.name}?`);
+    if (confirmed) {
+      const success = await window.electron.ipcRenderer.invoke("delete-mod", modInfo.name);
+      if (success) {
+        dispatch(loadLibrary(null));
+        onClose();
+      }
+    }
+  };
+
   const handleSetCover = async () => {
     const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
     console.log("Selected cover image path:", imagePath);
@@ -78,7 +89,9 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         return;
       }
       console.log("Dropped file:", file);
-      const imagePath = window.api.getFilePath(file);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const imagePath = file.path;
       console.log("Dropped image path:", imagePath);
 
       if (imagePath) {
@@ -97,9 +110,12 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
+    <div
+      className="fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 bg-black/80"
+      id="modal-overlay"
+    >
       <div
-        className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
+        className="flex size-[70%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
         id="modal-container"
       >
         <div
@@ -186,20 +202,22 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               />
             </div>
           </div>
-          <div
-            className="relative bottom-0 flex h-auto w-full flex-row items-center justify-around gap-8 p-4 *:flex-1"
-            id="bottom-buttons-section"
-          >
-            <button onClick={handleOpenModFolder} className="iron-border chess-background">
-              Open Mod Folder
-            </button>
-            <button onClick={onClose} className="iron-border chess-background">
-              Close
-            </button>
-            <button onClick={saveModInfoChanges} className="iron-border chess-background">
-              Save
-            </button>
-          </div>
+        </div>
+      </div>
+      <div className="flex w-[70%] flex-row items-center justify-between gap-4" id="outside-buttons-container">
+        <button onClick={handleDeleteMod} className="iron-border bg-red-600 text-white hover:bg-red-700">
+          Delete Mod
+        </button>
+        <div className="flex flex-row gap-4">
+          <button onClick={handleOpenModFolder} className="iron-border chess-background">
+            Open Mod Folder
+          </button>
+          <button onClick={onClose} className="iron-border chess-background">
+            Close
+          </button>
+          <button onClick={saveModInfoChanges} className="iron-border chess-background">
+            Save
+          </button>
         </div>
       </div>
     </div>

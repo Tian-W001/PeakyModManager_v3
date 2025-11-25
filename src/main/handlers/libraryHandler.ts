@@ -95,6 +95,20 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   }
 });
 
+ipcMain.handle("delete-mod", async (_event, modName: string) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return false;
+
+  const modPath = path.join(libraryPath, modName);
+  try {
+    await fs.remove(modPath);
+    return true;
+  } catch (error) {
+    console.error("Error deleting mod:", error);
+    return false;
+  }
+});
+
 ipcMain.handle("get-library-path", async () => {
   return store.get("libraryPath", null) as string | null;
 });
