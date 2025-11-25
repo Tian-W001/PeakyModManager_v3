@@ -23,8 +23,19 @@ export const registerModImageProtocol = () => {
       }
       const url = new URL(request.url);
       const pathname = decodeURIComponent(url.pathname);
-
       const modImagePath = path.join(libraryPath, pathname);
+
+      // Check if path is a directory or doesn't exist
+      try {
+        const stats = await fs.stat(modImagePath);
+        if (stats.isDirectory()) {
+          return new Response(null, { status: 404 });
+        }
+      } catch {
+        // File doesn't exist
+        return new Response(null, { status: 404 });
+      }
+
       const ext = path.extname(modImagePath).toLowerCase();
       const mimeType = mime.lookup(ext);
       const buffer = await fs.readFile(modImagePath);
