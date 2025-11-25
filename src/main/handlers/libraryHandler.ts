@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import { BrowserWindow, dialog, ipcMain, shell, webUtils } from "electron";
+import { BrowserWindow, dialog, ipcMain, shell } from "electron";
 import store from "../store";
 import { defaultModInfo, ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
@@ -73,6 +73,28 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
   }
 });
 
+ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return false;
+
+  try {
+    const stats = await fs.stat(sourcePath);
+    if (!stats.isDirectory()) {
+      console.error("Imported path is not a directory:", sourcePath);
+      return false;
+    }
+
+    const modName = path.basename(sourcePath);
+    const destPath = path.join(libraryPath, modName);
+
+    await fs.copy(sourcePath, destPath);
+    return createModInfoFile(destPath);
+  } catch (error) {
+    console.error("Error importing mod:", error);
+    return false;
+  }
+});
+
 ipcMain.handle("get-library-path", async () => {
   return store.get("libraryPath", null) as string | null;
 });
@@ -106,14 +128,15 @@ ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModI
   }
 });
 
-const createModInfoFile = (modInfoPath: string) => {
+const createModInfoFile = (modPath: string) => {
   const modInfo: ModInfo = {
-    name: path.basename(modInfoPath),
+    name: path.basename(modPath),
     modType: "Unknown",
     description: "",
     source: "",
     coverImage: "",
   };
+  const modInfoPath = path.join(modPath, "modinfo.json");
   fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
   return modInfo;
 };

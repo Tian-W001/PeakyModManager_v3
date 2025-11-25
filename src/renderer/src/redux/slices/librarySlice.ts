@@ -42,6 +42,12 @@ const librarySlice = createSlice({
       state.targetPath = action.payload;
       window.electron.ipcRenderer.invoke("set-target-path", action.payload);
     },
+    addModInfo: (state, action: PayloadAction<ModInfo>) => {
+      state.modInfos.push(action.payload);
+    },
+    removeModInfo: (state, action: PayloadAction<string>) => {
+      state.modInfos = state.modInfos.filter((mod) => mod.name !== action.payload);
+    },
     editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
       const { modName, newModInfo } = action.payload;
       const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
@@ -61,7 +67,7 @@ const librarySlice = createSlice({
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, setLibraryPath, setTargetPath } = librarySlice.actions;
+export const { editModInfo, setLibraryPath, setTargetPath, addModInfo, removeModInfo } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;

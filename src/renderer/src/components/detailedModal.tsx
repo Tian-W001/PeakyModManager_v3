@@ -46,6 +46,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   const handleSetCover = async () => {
     const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
+    console.log("Selected cover image path:", imagePath);
     if (imagePath) {
       const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
       if (newCoverName) {
@@ -61,7 +62,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
     e.stopPropagation();
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -109,7 +109,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           onDragOver={handleDragOver}
         >
           <img
-            src={`mod-image://${modInfo.name}/${localModInfo.coverImage}`}
+            src={`mod-image://local/${modInfo.name}/${localModInfo.coverImage}`}
             alt="Cover"
             className="h-full w-full object-cover transition-all duration-300 group-hover:blur"
             onError={(e) => (e.currentTarget.src = defaultCover)}

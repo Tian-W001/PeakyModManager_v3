@@ -74,7 +74,7 @@ const ModCard = ({
         className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-[350px] flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333]`}
       >
         <img
-          src={`${`mod-image://${modInfo.name}/${modInfo.coverImage}`}`}
+          src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
           alt={modInfo.name}
           className="h-[55%] w-full object-cover"
         />

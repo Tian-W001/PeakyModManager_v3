@@ -14,7 +14,7 @@ export const modImageProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerModImageProtocol = () => {
-  // renderer calls mod-image://{modName}/{imageFileName}
+  // renderer calls mod-image:///{modName}/{imageFileName} (ignore hostname)
   protocol.handle("mod-image", async (request) => {
     try {
       const libraryPath = store.get("libraryPath", null) as string | null;
@@ -22,10 +22,9 @@ export const registerModImageProtocol = () => {
         throw new Error("Library path is not set");
       }
       const url = new URL(request.url);
-      const modName = decodeURIComponent(url.hostname);
-      const imageFileName = decodeURIComponent(url.pathname.slice(1)); // Remove leading '/'
+      const pathname = decodeURIComponent(url.pathname);
 
-      const modImagePath = path.join(libraryPath, modName, imageFileName);
+      const modImagePath = path.join(libraryPath, pathname);
       const ext = path.extname(modImagePath).toLowerCase();
       const mimeType = mime.lookup(ext);
       const buffer = await fs.readFile(modImagePath);
