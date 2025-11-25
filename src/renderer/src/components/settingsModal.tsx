@@ -9,6 +9,9 @@ import {
 } from "@renderer/redux/slices/librarySlice";
 import { FaTimes } from "react-icons/fa";
 import { selectAllPresets } from "@renderer/redux/slices/presetsSlice";
+import { useState } from "react";
+import AlertModal, { AlertAction } from "./alertModal";
+import { createPortal } from "react-dom";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -16,6 +19,9 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const targetPath = useAppSelector(selectTargetPath);
   const modInfos = useAppSelector(selectModInfos);
   const presets = useAppSelector(selectAllPresets);
+  const [alertConfig, setAlertConfig] = useState<{ title: string; message?: string; actions: AlertAction[] } | null>(
+    null
+  );
 
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
@@ -39,62 +45,91 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       modInfos.forEach((mod) => {
         presetMods[mod.name] = preset.mods.includes(mod.name);
       });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       backupData.Presets[preset.name] = presetMods;
     });
     const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
     if (success) {
-      alert("Presets backed up successfully!");
+      setAlertConfig({
+        title: "Presets backed up successfully!",
+        actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
+      });
     } else {
-      alert("Failed to backup presets.");
+      setAlertConfig({
+        title: "Failed to backup presets.",
+        actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
+      });
     }
   };
 
+  const handleOnClickTestButton = () => {
+    setAlertConfig({
+      title: "Test Alert",
+      message: "This is a test alert!",
+      actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
+    });
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
-      <div className="flex w-[50%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
-        <div className="flex items-center justify-between bg-gray-300 p-4">
-          <h2 className="text-xl font-bold">Settings</h2>
-          <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
-            <FaTimes size={24} />
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-4 p-6">
-          {/* Library Path */}
-          <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
-            <span className="whitespace-nowrap">Library Path</span>
-            <input
-              className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
-              value={libraryPath || "Click to set path"}
-              readOnly
-              onClick={handleSelectLibraryPath}
-            />
-          </div>
-
-          {/* Target Path */}
-          <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
-            <span className="whitespace-nowrap">Target Path</span>
-            <input
-              className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
-              value={targetPath || "Click to set path"}
-              readOnly
-              onClick={handleSelectTargetPath}
-            />
-          </div>
-
-          {/* Backup Button */}
-          <div className="flex flex-row items-center gap-4">
-            <button
-              onClick={handleBackupPresets}
-              className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              Backup
+    <>
+      <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
+        <div className="flex h-[70%] w-[70%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
+          <div className="flex items-center justify-between bg-gray-300 p-4">
+            <h2 className="text-xl font-bold">Settings</h2>
+            <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
+              <FaTimes size={24} />
             </button>
-            <span className="text-sm text-gray-600">Backup presets information into current Library dir</span>
+          </div>
+
+          <div className="flex flex-col gap-4 p-6">
+            {/* Library Path */}
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
+              <span className="whitespace-nowrap">Library Path</span>
+              <input
+                className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
+                value={libraryPath || "Click to set path"}
+                readOnly
+                onClick={handleSelectLibraryPath}
+              />
+            </div>
+
+            {/* Target Path */}
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
+              <span className="whitespace-nowrap">Target Path</span>
+              <input
+                className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
+                value={targetPath || "Click to set path"}
+                readOnly
+                onClick={handleSelectTargetPath}
+              />
+            </div>
+
+            {/* Backup Button */}
+            <div className="flex flex-row items-center gap-4">
+              <button
+                onClick={handleBackupPresets}
+                className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              >
+                Backup
+              </button>
+              <button
+                onClick={handleOnClickTestButton}
+                className="iron-border bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+              >
+                Test Alert
+              </button>
+              <span className="text-sm text-gray-600">Backup presets information into current Library dir</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {alertConfig &&
+        createPortal(
+          <AlertModal title={alertConfig.title} message={alertConfig.message} actions={alertConfig.actions} />,
+          document.body
+        )}
+    </>
   );
 };
 

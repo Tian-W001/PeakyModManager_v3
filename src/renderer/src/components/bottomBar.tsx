@@ -24,15 +24,15 @@ const BottomBar = ({
 
   return (
     <>
-      <div className={clsx("flex w-full justify-start gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
-        <button className="" onClick={() => setIsSettingsModalOpen(true)}>
+      <div className={clsx("flex justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
+        <button className="w-50" onClick={() => setIsSettingsModalOpen(true)}>
           Settings
         </button>
-        <button className="" onClick={handleOnClickRefresh}>
+        <button className="w-50" onClick={handleOnClickRefresh}>
           Refresh
         </button>
 
-        <button className="bg-zzzYellow rounded px-4 text-black" onClick={onApplyChanges}>
+        <button className="bg-zzzYellow w-50 rounded px-4 text-black" onClick={onApplyChanges}>
           Apply {diffList.length ? `(${diffList.length})` : ""}
         </button>
       </div>
