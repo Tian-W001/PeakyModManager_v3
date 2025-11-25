@@ -80,7 +80,7 @@ const ModCard = ({
         />
         <div className="flex w-full flex-1 flex-col">
           <div className="flex flex-row items-center">
-            <div className="flex flex-col items-center justify-start">
+            <div className="relative flex flex-col items-center justify-start">
               <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
               <div
                 className={`absolute aspect-square -translate-y-[50%] rounded-full bg-blue-500 ring-2 ring-[#333]`}
