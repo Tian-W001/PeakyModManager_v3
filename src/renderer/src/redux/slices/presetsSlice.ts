@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { RootState } from "../store";
 
 export interface Preset {
   name: string;
@@ -96,8 +97,13 @@ export const presetsSlice = createSlice({
 export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset } = presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 
-export const selectAllPresetNames = (state: { presets: PresetsState }) =>
-  state.presets.presets.map((preset) => preset.name);
+// export const selectAllPresetNames = (state: { presets: PresetsState }) =>
+//   state.presets.presets.map((preset) => preset.name);
+export const selectAllPresetNames = createSelector(
+  (state: RootState) => state.presets.presets,
+  (presets) => presets.map((preset) => preset.name)
+);
+
 export const selectCurrentPresetName = (state: { presets: PresetsState }) => state.presets.currentPresetName;
 export const selectModNamesInCurrentPreset = (state: { presets: PresetsState }) => {
   const currentPreset = state.presets.presets.find((preset) => preset.name === state.presets.currentPresetName);
