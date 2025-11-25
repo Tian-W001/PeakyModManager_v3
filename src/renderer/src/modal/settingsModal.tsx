@@ -9,9 +9,7 @@ import {
 } from "@renderer/redux/slices/librarySlice";
 import { FaTimes } from "react-icons/fa";
 import { selectAllPresets } from "@renderer/redux/slices/presetsSlice";
-import { useState } from "react";
-import AlertModal, { AlertAction } from "./alertModal";
-import { createPortal } from "react-dom";
+import { useAlertModal } from "../hooks/useAlertModal";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -19,9 +17,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const targetPath = useAppSelector(selectTargetPath);
   const modInfos = useAppSelector(selectModInfos);
   const presets = useAppSelector(selectAllPresets);
-  const [alertConfig, setAlertConfig] = useState<{ title: string; message?: string; actions: AlertAction[] } | null>(
-    null
-  );
+  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
 
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
@@ -51,24 +47,14 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     });
     const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
     if (success) {
-      setAlertConfig({
-        title: "Presets backed up successfully!",
-        actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
-      });
+      showAlert("Presets backed up successfully!", undefined, [{ name: "Confirm", f: hideAlert }]);
     } else {
-      setAlertConfig({
-        title: "Failed to backup presets.",
-        actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
-      });
+      showAlert("Failed to backup presets.", undefined, [{ name: "Confirm", f: hideAlert }]);
     }
   };
 
   const handleOnClickTestButton = () => {
-    setAlertConfig({
-      title: "Test Alert",
-      message: "This is a test alert!",
-      actions: [{ name: "Confirm", f: () => setAlertConfig(null) }],
-    });
+    showAlert("Test Alert", "This is a test alert!", [{ name: "Confirm", f: hideAlert }]);
   };
 
   return (
@@ -124,11 +110,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
       </div>
-      {alertConfig &&
-        createPortal(
-          <AlertModal title={alertConfig.title} message={alertConfig.message} actions={alertConfig.actions} />,
-          document.body
-        )}
+      <RenderAlert />
     </>
   );
 };

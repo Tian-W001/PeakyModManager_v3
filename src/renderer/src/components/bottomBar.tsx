@@ -3,7 +3,7 @@ import { loadLibrary, selectLibraryPath } from "@renderer/redux/slices/librarySl
 import { clsx } from "clsx";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import SettingsModal from "./settingsModal";
+import SettingsModal from "../modal/settingsModal";
 
 const BottomBar = ({
   diffList,

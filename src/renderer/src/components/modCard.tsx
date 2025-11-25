@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ModInfo } from "src/shared/modInfo";
-import DetailedModal from "./detailedModal";
+import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
 import { useAppSelector } from "@renderer/redux/hooks";

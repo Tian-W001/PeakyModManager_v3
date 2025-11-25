@@ -6,7 +6,7 @@ import { FaAngleUp, FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectAllPresetNames, selectCurrentPresetName, setCurrentPreset } from "@renderer/redux/slices/presetsSlice";
 import { createPortal } from "react-dom";
-import EditPresetsModal from "./editPresetsModal";
+import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
 import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 
