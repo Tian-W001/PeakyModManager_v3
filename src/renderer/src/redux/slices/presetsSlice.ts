@@ -58,19 +58,18 @@ export const presetsSlice = createSlice({
         state.currentPresetName = targetPresetName;
       }
     },
-    applyMods: (state, action: PayloadAction<{ modName: string; enabled: boolean }[]>) => {
+    applyMods: (state, action: PayloadAction<{ modName: string; enable: boolean }[]>) => {
       const currentPreset = state.presets.find((preset) => preset.name === state.currentPresetName);
       if (!currentPreset) {
         return;
       }
       const modsStatus = action.payload;
-      for (const { modName, enabled } of modsStatus) {
+      for (const { modName, enable } of modsStatus) {
         const exists = currentPreset.mods.includes(modName);
-        console.log(`Mod: ${modName}, Enabled: ${enabled}, Exists in Preset: ${exists}`);
-        if (enabled && !exists) {
+        if (enable && !exists) {
           currentPreset.mods.push(modName);
         }
-        if (!enabled && exists) {
+        if (!enable && exists) {
           currentPreset.mods = currentPreset.mods.filter((name) => name !== modName);
         }
       }

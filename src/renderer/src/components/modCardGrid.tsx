@@ -1,7 +1,6 @@
 import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
-import { ModState } from "@shared/modState";
 import { useState } from "react";
 import { FaAngleUp, FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
@@ -18,8 +17,8 @@ const ModCardGrid = ({
   className,
 }: {
   modInfos: ModInfo[];
-  diffList: { modName: string; newState: ModState }[];
-  appendToDiffList: (modName: string, newState: Extract<ModState, "Enabled" | "Disabled">) => void;
+  diffList: { modName: string; enable: boolean }[];
+  appendToDiffList: (modName: string, enable: boolean) => void;
   className?: string;
 }) => {
   const dispatch = useAppDispatch();

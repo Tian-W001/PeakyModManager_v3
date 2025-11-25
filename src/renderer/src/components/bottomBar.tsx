@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { loadLibrary, selectLibraryPath } from "@renderer/redux/slices/librarySlice";
-import { ModState } from "@shared/modState";
 import { clsx } from "clsx";
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -11,7 +10,7 @@ const BottomBar = ({
   onApplyChanges,
   className,
 }: {
-  diffList: { modName: string; newState: ModState }[];
+  diffList: { modName: string; enable: boolean }[];
   onApplyChanges: () => void;
   className?: string;
 }) => {

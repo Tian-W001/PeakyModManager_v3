@@ -31,8 +31,8 @@ const ModCard = ({
   appendToDiffList,
 }: {
   modInfo: ModInfo;
-  diffList: { modName: string; newState: ModState }[];
-  appendToDiffList: (modName: string, newState: Extract<ModState, "Enabled" | "Disabled">) => void;
+  diffList: { modName: string; enable: boolean }[];
+  appendToDiffList: (modName: string, enable: boolean) => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,18 +40,12 @@ const ModCard = ({
 
   const diffEntry = diffList.find((diff) => diff.modName === modInfo.name);
   const currentModState: ModState = diffEntry
-    ? diffEntry.newState === "Enabled"
+    ? diffEntry.enable
       ? "WillEnable"
       : "WillDisable"
     : isEnabledInPreset
       ? "Enabled"
       : "Disabled";
-
-  // if (diffEntry) {
-  //   currentModState = diffEntry.newState === "Enabled" ? "WillEnable" : "WillDisable";
-  // } else {
-  //   currentModState = isEnabledInPreset ? "Enabled" : "Disabled";
-  // }
 
   const handleOnRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,9 +54,9 @@ const ModCard = ({
 
   const handleOnClick = () => {
     if (currentModState === "Enabled" || currentModState === "WillEnable") {
-      appendToDiffList(modInfo.name, "Disabled");
+      appendToDiffList(modInfo.name, false);
     } else {
-      appendToDiffList(modInfo.name, "Enabled");
+      appendToDiffList(modInfo.name, true);
     }
   };
 

@@ -5,45 +5,41 @@ import ModCardGrid from "@renderer/components/modCardGrid";
 import CharacterBar from "@renderer/components/characterBar";
 import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
 import { selectSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
-import { useState } from "react";
-import { ModState } from "@shared/modState";
-import { applyMods } from "@renderer/redux/slices/presetsSlice";
+import { applyMods, selectCurrentPresetName, selectModNamesInCurrentPreset } from "@renderer/redux/slices/presetsSlice";
+import { useDiffList } from "../hooks/useDiffList";
+import { useEffect, useRef } from "react";
 
 const MainScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const selectedModInfos = useAppSelector(selectModTypeFilteredModCards);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
+  const currentPresetName = useAppSelector(selectCurrentPresetName);
+  const currentPresetMods = useAppSelector(selectModNamesInCurrentPreset);
 
-  const [diffList, setDiffList] = useState<{ modName: string; newState: ModState }[]>([]);
+  const { diffList, appendToDiffList, clearDiffList } = useDiffList();
+  const prevPresetNameRef = useRef(currentPresetName);
 
-  const appendToDiffList = (modName: string, newState: Extract<ModState, "Enabled" | "Disabled">) => {
-    //before appending, check if modName already exists in diffList,
-    //if it does, and newState is opposite of existing state, remove it from diffList
-    setDiffList((prevDiffList) => {
-      const existingIndex = prevDiffList.findIndex((item) => item.modName === modName);
-      if (existingIndex !== -1) {
-        const existingItem = prevDiffList[existingIndex];
-        if (existingItem.newState !== newState) {
-          const newDiffList = [...prevDiffList];
-          newDiffList.splice(existingIndex, 1);
-          return newDiffList;
-        } else {
-          return prevDiffList;
-        }
-      } else {
-        return [...prevDiffList, { modName, newState }];
-      }
-    });
-  };
+  useEffect(() => {
+    if (prevPresetNameRef.current !== currentPresetName) {
+      // Preset switched!
+      const applyPreset = async () => {
+        await window.electron.ipcRenderer.invoke("clear-target-path");
+        const changes = currentPresetMods.map((modName) => ({
+          modName,
+          enable: true,
+        }));
+        await window.electron.ipcRenderer.invoke("apply-mods", changes);
+      };
+      applyPreset();
+      clearDiffList();
+      prevPresetNameRef.current = currentPresetName;
+    }
+  }, [currentPresetName, currentPresetMods, clearDiffList]);
 
   const handleApplyChanges = async () => {
-    const modsToApply = diffList.map((diff) => ({
-      modName: diff.modName,
-      enabled: diff.newState === "Enabled",
-    }));
-    dispatch(applyMods(modsToApply));
-    await window.electron.ipcRenderer.invoke("apply-mod-changes", modsToApply);
-    setDiffList([]);
+    dispatch(applyMods(diffList));
+    await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+    clearDiffList();
   };
 
   return (

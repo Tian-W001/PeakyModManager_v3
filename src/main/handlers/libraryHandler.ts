@@ -109,6 +109,16 @@ ipcMain.handle("delete-mod", async (_event, modName: string) => {
   }
 });
 
+ipcMain.handle("clear-target-path", async () => {
+  const targetPath = store.get("targetPath", null) as string | null;
+  if (!targetPath) return;
+  try {
+    await fs.emptyDir(targetPath);
+  } catch (error) {
+    console.error("Error clearing target path:", error);
+  }
+});
+
 ipcMain.handle("get-library-path", async () => {
   return store.get("libraryPath", null) as string | null;
 });
@@ -209,7 +219,7 @@ ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
   await shell.openPath(fullPath);
 });
 
-ipcMain.handle("apply-mod-changes", async (_event, changes: { modName: string; enabled: boolean }[]) => {
+ipcMain.handle("apply-mods", async (_event, changes: { modName: string; enable: boolean }[]) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
 
@@ -218,12 +228,12 @@ ipcMain.handle("apply-mod-changes", async (_event, changes: { modName: string; e
     return;
   }
 
-  for (const { modName, enabled } of changes) {
+  for (const { modName, enable } of changes) {
     const sourcePath = path.join(libraryPath, modName);
     const destPath = path.join(targetPath, modName);
 
     try {
-      if (enabled) {
+      if (enable) {
         if (fs.existsSync(sourcePath)) {
           await fs.ensureDir(targetPath);
           // Remove existing if it exists to ensure clean link
