@@ -14,7 +14,7 @@ export const modImageProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerModImageProtocol = () => {
-  // renderer calls mod-image:///{modName}/{imageFileName} (ignore hostname)
+  // renderer calls mod-image://local/{modName}/{imageFileName} (ignore hostname)
   protocol.handle("mod-image", async (request) => {
     try {
       const libraryPath = store.get("libraryPath", null) as string | null;

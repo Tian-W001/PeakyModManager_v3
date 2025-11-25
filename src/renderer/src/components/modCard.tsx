@@ -6,6 +6,34 @@ import { ModState } from "@shared/modState";
 import { useAppSelector } from "@renderer/redux/hooks";
 import { selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
 import SmoothCornerPatch from "./CurvePatch";
+import defaultCover from "@renderer/assets/default_cover.jpg";
+
+// Load avatar images
+const modTypeImages = import.meta.glob("../assets/avatars/modType_avatars/*", { eager: true });
+const characterImages = import.meta.glob("../assets/avatars/character_avatars/*", { eager: true });
+const getFileName = (path: string) => path.split("/").pop()?.split(".")[0];
+const modTypeMap: Record<string, string> = {};
+for (const path in modTypeImages) {
+  const name = getFileName(path);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (name) modTypeMap[name] = (modTypeImages[path] as any).default;
+}
+const characterMap: Record<string, string> = {};
+for (const path in characterImages) {
+  const name = getFileName(path);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (name) characterMap[name] = (characterImages[path] as any).default;
+}
+const getAvatarUrl = (modInfo: ModInfo) => {
+  if (modInfo.modType === "Character" && modInfo.character && characterMap[modInfo.character]) {
+    return characterMap[modInfo.character];
+  }
+  if (modTypeMap[modInfo.modType]) {
+    return modTypeMap[modInfo.modType];
+  }
+
+  return modTypeMap["Unknown"];
+};
 
 const R = 24; // Avatar Radius
 const r = 30; // Fillet Radius
@@ -71,12 +99,15 @@ const ModCard = ({
           src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
           alt={modInfo.name}
           className="h-[55%] w-full object-cover"
+          onError={(e) => (e.currentTarget.src = defaultCover)}
         />
         <div className="flex w-full flex-1 flex-col">
           <div className="flex flex-row items-center">
             <div className="relative flex flex-col items-center justify-start">
               <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
-              <div
+              <img
+                src={getAvatarUrl(modInfo)}
+                alt="Avatar"
                 className={`absolute aspect-square -translate-y-[50%] rounded-full bg-blue-500 ring-2 ring-[#333]`}
                 style={{ width: 2 * R }}
               />
