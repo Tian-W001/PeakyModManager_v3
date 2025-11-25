@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Character } from "src/shared/character";
 import { ModType } from "src/shared/modType";
+import { RootState } from "../store";
 
 export interface uiState {
   selectedMenuItem: ModType | "All";
@@ -25,8 +26,8 @@ const uiSlice = createSlice({
   },
 });
 
-export const selectSelectedMenuItem = (state: { ui: uiState }) => state.ui.selectedMenuItem;
-export const selectSelectedCharacter = (state: { ui: uiState }) => state.ui.selectedCharacter;
+export const selectSelectedMenuItem = (state: RootState) => state.ui.selectedMenuItem;
+export const selectSelectedCharacter = (state: RootState) => state.ui.selectedCharacter;
 
 export default uiSlice.reducer;
 export const { setSelectedMenuItem, setSelectedCharacter } = uiSlice.actions;

@@ -96,6 +96,7 @@ export const presetsSlice = createSlice({
 export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset } = presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 
+export const selectAllPresets = (state: RootState) => state.presets.presets;
 // export const selectAllPresetNames = (state: { presets: PresetsState }) =>
 //   state.presets.presets.map((preset) => preset.name);
 export const selectAllPresetNames = createSelector(
@@ -103,12 +104,12 @@ export const selectAllPresetNames = createSelector(
   (presets) => presets.map((preset) => preset.name)
 );
 
-export const selectCurrentPresetName = (state: { presets: PresetsState }) => state.presets.currentPresetName;
-export const selectModNamesInCurrentPreset = (state: { presets: PresetsState }) => {
+export const selectCurrentPresetName = (state: RootState) => state.presets.currentPresetName;
+export const selectModNamesInCurrentPreset = (state: RootState) => {
   const currentPreset = state.presets.presets.find((preset) => preset.name === state.presets.currentPresetName);
   return currentPreset ? currentPreset.mods : [];
 };
-export const selectModIsEnabled = (modName: string) => (state: { presets: PresetsState }) => {
+export const selectModIsEnabled = (modName: string) => (state: RootState) => {
   const currentPreset = state.presets.presets.find((preset) => preset.name === state.presets.currentPresetName);
   return currentPreset ? currentPreset.mods.includes(modName) : false;
 };

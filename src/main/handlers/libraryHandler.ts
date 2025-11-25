@@ -119,6 +119,21 @@ ipcMain.handle("clear-target-path", async () => {
   }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ipcMain.handle("backup-presets", async (_event, backupData: any) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return false;
+
+  const backupFilePath = path.join(libraryPath, "Presets_Backup.json");
+  try {
+    await fs.writeJson(backupFilePath, backupData, { spaces: 2 });
+    return true;
+  } catch (error) {
+    console.error("Error backing up presets:", error);
+    return false;
+  }
+});
+
 ipcMain.handle("get-library-path", async () => {
   return store.get("libraryPath", null) as string | null;
 });

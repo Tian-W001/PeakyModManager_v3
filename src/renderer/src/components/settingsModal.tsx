@@ -2,16 +2,20 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   loadLibrary,
   selectLibraryPath,
+  selectModInfos,
   selectTargetPath,
   setLibraryPath,
   setTargetPath,
 } from "@renderer/redux/slices/librarySlice";
 import { FaTimes } from "react-icons/fa";
+import { selectAllPresets } from "@renderer/redux/slices/presetsSlice";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const targetPath = useAppSelector(selectTargetPath);
+  const modInfos = useAppSelector(selectModInfos);
+  const presets = useAppSelector(selectAllPresets);
 
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
@@ -25,6 +29,23 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setTargetPath(newPath));
+    }
+  };
+
+  const handleBackupPresets = async () => {
+    const backupData = { Presets: {} };
+    presets.forEach((preset) => {
+      const presetMods: Record<string, boolean> = {};
+      modInfos.forEach((mod) => {
+        presetMods[mod.name] = preset.mods.includes(mod.name);
+      });
+      backupData.Presets[preset.name] = presetMods;
+    });
+    const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
+    if (success) {
+      alert("Presets backed up successfully!");
+    } else {
+      alert("Failed to backup presets.");
     }
   };
 
@@ -59,6 +80,17 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
               readOnly
               onClick={handleSelectTargetPath}
             />
+          </div>
+
+          {/* Backup Button */}
+          <div className="flex flex-row items-center gap-4">
+            <button
+              onClick={handleBackupPresets}
+              className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Backup
+            </button>
+            <span className="text-sm text-gray-600">Backup presets information into current Library dir</span>
           </div>
         </div>
       </div>
