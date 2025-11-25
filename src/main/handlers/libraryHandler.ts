@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import { BrowserWindow, dialog, ipcMain, shell } from "electron";
+import { BrowserWindow, dialog, ipcMain, shell, webUtils } from "electron";
 import store from "../store";
 import { defaultModInfo, ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
@@ -27,12 +27,20 @@ ipcMain.handle("select-file", async () => {
   return result.canceled ? null : result.filePaths[0];
 });
 
-ipcMain.handle("select-image", async () => {
+ipcMain.handle("select-cover", async (_event, modName: string) => {
   const win = BrowserWindow.getFocusedWindow();
   if (!win) return null;
+
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  let defaultPath;
+  if (libraryPath && modName) {
+    defaultPath = path.join(libraryPath, modName);
+  }
+
   const result = await dialog.showOpenDialog(win, {
+    defaultPath,
     properties: ["openFile"],
-    filters: [{ name: "Images", extensions: ["jpg", "png", "jpeg", "webp"] }],
+    filters: [{ name: "Images", extensions: ["jpg", "png", "jpeg", "webp", "gif"] }],
     title: "Select Cover Image",
   });
   return result.canceled ? null : result.filePaths[0];
@@ -43,8 +51,17 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
   if (!libraryPath) return null;
 
   const modPath = path.join(libraryPath, modName);
+
+  // Check if the image is already inside the mod folder
+  const relativePath = path.relative(modPath, imagePath);
+  const isInside = !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
+
+  if (isInside) {
+    return relativePath;
+  }
+
   const ext = path.extname(imagePath);
-  const newCoverName = `cover${ext}`;
+  const newCoverName = `preview${ext}`;
   const destPath = path.join(modPath, newCoverName);
 
   try {

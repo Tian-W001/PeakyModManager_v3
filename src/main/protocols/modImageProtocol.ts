@@ -22,8 +22,8 @@ export const registerModImageProtocol = () => {
         throw new Error("Library path is not set");
       }
       const url = new URL(request.url);
-      const modName = url.hostname;
-      const imageFileName = url.pathname.slice(1); // Remove leading '/'
+      const modName = decodeURIComponent(url.hostname);
+      const imageFileName = decodeURIComponent(url.pathname.slice(1)); // Remove leading '/'
 
       const modImagePath = path.join(libraryPath, modName, imageFileName);
       const ext = path.extname(modImagePath).toLowerCase();

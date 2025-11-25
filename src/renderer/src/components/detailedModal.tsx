@@ -45,7 +45,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   const handleSetCover = async () => {
-    const imagePath = await window.electron.ipcRenderer.invoke("select-image");
+    const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
     if (imagePath) {
       const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
       if (newCoverName) {
@@ -60,13 +60,54 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: "" } }));
   };
 
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      e.preventDefault();
+      const item = e.dataTransfer.items[0];
+      // Check if it is an image
+      if (item.kind !== "file" || !item.webkitGetAsEntry()?.isFile) {
+        console.log("Not a file");
+        return;
+      }
+      const file = item.getAsFile() as File;
+      if (!file.type.startsWith("image/")) {
+        console.log("Not an image file");
+        return;
+      }
+      console.log("Dropped file:", file);
+      const imagePath = window.api.getFilePath(file);
+      console.log("Dropped image path:", imagePath);
+
+      if (imagePath) {
+        const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
+        if (newCoverName) {
+          handleModInfoChange("coverImage", newCoverName);
+          dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: newCoverName } }));
+        }
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
       <div
         className="flex size-[80%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
         id="modal-container"
       >
-        <div className="group relative h-full w-[40%] bg-gray-200" id="left-section">
+        <div
+          className="group relative h-full w-[40%] bg-gray-200"
+          id="left-section"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <img
             src={`mod-image://${modInfo.name}/${localModInfo.coverImage}`}
             alt="Cover"
