@@ -19,14 +19,14 @@ const Menu = ({ className }: { className?: string }) => {
   return (
     <div className={clsx("flex justify-center p-6", className)} id="menu-area">
       <div
-        className="m-0.5 flex w-full flex-col items-center gap-4 rounded-2xl bg-linear-to-b from-[#3a3a3a] to-[#272727] p-4 text-white ring-2 ring-black"
+        className="m-0.5 flex w-full flex-col items-center gap-3 rounded-2xl border-3 border-black bg-linear-to-br from-[#3a3a3a] to-[#272727] p-3 text-white outline-3 outline-white/30"
         id="menu-container"
       >
-        <div className="flex h-8 w-full items-center justify-center rounded-full bg-gray-500" id="menu-upper-button">
-          <FaCaretUp className="h-full translate-y-0.5" />
+        <div className="menu-button flex h-8 w-full items-center justify-center" id="menu-upper-button">
+          <FaCaretUp className="h-full translate-y-0.5 text-inherit" />
         </div>
         <div
-          className="no-scrollbar flex w-full flex-1 flex-col items-center gap-0.5 overflow-x-hidden overflow-y-auto rounded-2xl border-8 border-black bg-black"
+          className="no-scrollbar flex w-full flex-1 flex-col items-center gap-0.5 overflow-x-hidden overflow-y-auto rounded-2xl border-8 border-black bg-black shadow-[2px_1px_0px_#ffffff19,-2px_-1px_0px_#00000051]"
           id="menu-items-container"
         >
           {menuItems.map((menuItem) => (
@@ -39,8 +39,8 @@ const Menu = ({ className }: { className?: string }) => {
             </div>
           ))}
         </div>
-        <div className="flex h-8 w-full items-center justify-center rounded-full bg-gray-500" id="menu-lower-button">
-          <FaCaretDown className="h-full -translate-y-0.5" />
+        <div className="menu-button flex h-8 w-full items-center justify-center" id="menu-lower-button">
+          <FaCaretDown className="h-full -translate-y-0.5" color="#aaa" />
         </div>
       </div>
     </div>

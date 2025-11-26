@@ -25,6 +25,10 @@ button {
   @apply hover:bg-zzzYellow rounded-full bg-black px-4 py-2 font-bold shadow-(--iron-border) transition-all not-hover:bg-(image:--chess-background) not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-pulse hover:text-black;
 }
 
+.menu-button {
+  @apply rounded-full bg-[#555] text-[#aaa] inset-shadow-[3px_2px_2px_#ffffff19,-3px_-2px_2px_#00000051] transition-all hover:text-white;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
