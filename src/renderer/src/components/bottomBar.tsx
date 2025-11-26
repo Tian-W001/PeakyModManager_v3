@@ -26,7 +26,7 @@ const BottomBar = ({
 
   return (
     <>
-      <div className={clsx("flex justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
+      <div className={clsx("flex items-center justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
         <button className="w-50" onClick={() => setIsSettingsModalOpen(true)}>
           {t("common.settings")}
         </button>

@@ -118,11 +118,8 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
             {/* Language Switch */}
             <div className="flex flex-row items-center gap-4">
-              <button
-                onClick={handleSwitchLanguage}
-                className="iron-border bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
-              >
-                {i18n.language === "en" ? "Language: English" : "语言: 中文"}
+              <button onClick={handleSwitchLanguage} className="w-30">
+                {i18n.language === "en" ? "English" : "中文"}
               </button>
             </div>
           </div>

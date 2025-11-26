@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
 import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
+import { FaCaretUp } from "react-icons/fa6";
 
 const ModCardGrid = ({
   modInfos,
@@ -70,10 +71,7 @@ const ModCardGrid = ({
             {allPresetNames.map((name) => (
               <button
                 key={name}
-                className={clsx(
-                  "rounded px-4 py-1 text-left hover:bg-gray-700",
-                  name === currentPresetName && "text-zzzYellow"
-                )}
+                className={clsx("", name === currentPresetName && "text-zzzYellow")}
                 onClick={() => {
                   dispatch(setCurrentPreset(name));
                   setIsDropdownOpen(false);
@@ -85,18 +83,18 @@ const ModCardGrid = ({
           </div>
         )}
         <div className="flex items-center gap-2">
-          <button
-            className="bg-zzzYellow flex size-10 items-center justify-center rounded-full text-black shadow-lg transition-colors hover:bg-yellow-400"
-            onClick={() => setIsEditPresetsModalOpen(true)}
-          >
+          <button className="" onClick={() => setIsEditPresetsModalOpen(true)}>
             <FaPlus />
           </button>
           <button
-            className="bg-zzzYellow flex items-center gap-2 rounded-full px-4 py-2 text-black shadow-lg transition-colors hover:bg-yellow-400"
+            className="bg-zzzYellow flex aspect-square w-auto items-center justify-around gap-2 rounded-full px-4 py-2 text-black shadow-lg transition-colors hover:bg-yellow-400"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <FaAngleUp className={clsx("transition-transform", isDropdownOpen && "rotate-180")} />
-            <span className="font-bold">{currentPresetName}</span>
+            <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
+            <FaCaretUp
+              className="transition-transform"
+              style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+            />
           </button>
         </div>
       </div>
