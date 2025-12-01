@@ -21,6 +21,11 @@
     "backupTooltip": "Backup presets information into current Library dir",
     "backupSuccess": "Presets backed up successfully!",
     "backupFail": "Failed to backup presets.",
+    "restore": "Restore",
+    "restoreConfirm": "Are you sure you want to restore presets? This will overwrite your current presets.",
+    "restoreTooltip": "Restore presets from backup file",
+    "restoreSuccess": "Presets restored successfully!",
+    "restoreFail": "Failed to restore presets or backup file not found.",
     "testAlert": "Test Alert",
     "testAlertMessage": "This is a test alert!"
   },
@@ -47,8 +52,9 @@
     "All": "All",
     "Character": "Character",
     "NPC": "NPC",
+    "Environment": "Environment",
     "UI": "UI",
-    "Script-Tools": "Script-Tools",
+    "Script-Tool": "Script/Tool",
     "Misc": "Misc",
     "Unknown": "Unknown"
   }

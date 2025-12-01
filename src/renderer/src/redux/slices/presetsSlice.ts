@@ -90,10 +90,36 @@ export const presetsSlice = createSlice({
         }
       }
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    restorePresets: (state, action: PayloadAction<any>) => {
+      const backupData = action.payload;
+      if (!backupData || !backupData.Presets) return;
+
+      const newPresets: Preset[] = [];
+      for (const [name, modsMap] of Object.entries(backupData.Presets)) {
+        const mods: string[] = [];
+        const map = modsMap as Record<string, boolean>;
+        for (const [modName, enabled] of Object.entries(map)) {
+          if (enabled) {
+            mods.push(modName);
+          }
+        }
+        newPresets.push({ name, mods });
+      }
+
+      if (newPresets.length > 0) {
+        state.presets = newPresets;
+        // Ensure currentPresetName is valid
+        if (!state.presets.some((p) => p.name === state.currentPresetName)) {
+          state.currentPresetName = state.presets[0].name;
+        }
+      }
+    },
   },
 });
 
-export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset } = presetsSlice.actions;
+export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset, restorePresets } =
+  presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 
 export const selectAllPresets = (state: RootState) => state.presets.presets;

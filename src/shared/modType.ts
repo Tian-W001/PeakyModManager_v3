@@ -1,4 +1,4 @@
-const modTypeList = ["Character", "NPC", "UI", "Script-Tools", "Misc", "Unknown"] as const;
+const modTypeList = ["Character", "NPC", "Environment", "UI", "Script-Tool", "Misc", "Unknown"] as const;
 type ModType = (typeof modTypeList)[number];
 
 export { modTypeList };

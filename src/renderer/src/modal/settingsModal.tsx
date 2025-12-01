@@ -8,7 +8,7 @@ import {
   setTargetPath,
 } from "@renderer/redux/slices/librarySlice";
 import { FaTimes } from "react-icons/fa";
-import { selectAllPresets } from "@renderer/redux/slices/presetsSlice";
+import { selectAllPresets, restorePresets, selectModNamesInCurrentPreset } from "@renderer/redux/slices/presetsSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +18,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const targetPath = useAppSelector(selectTargetPath);
   const modInfos = useAppSelector(selectModInfos);
   const presets = useAppSelector(selectAllPresets);
+  const currentPresetMods = useAppSelector(selectModNamesInCurrentPreset);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const { t, i18n } = useTranslation();
 
@@ -43,8 +44,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       modInfos.forEach((mod) => {
         presetMods[mod.name] = preset.mods.includes(mod.name);
       });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       backupData.Presets[preset.name] = presetMods;
     });
     const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
@@ -53,6 +52,35 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     } else {
       showAlert(t("settings.backupFail"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
     }
+  };
+
+  const handleRestorePresets = async () => {
+    const restoreData = async () => {
+      const backupData = await window.electron.ipcRenderer.invoke("restore-presets");
+      if (backupData) {
+        dispatch(restorePresets(backupData));
+      }
+    };
+    const applyRestore = async () => {
+      await window.electron.ipcRenderer.invoke("clear-target-path");
+      const changes = currentPresetMods.map((modName) => ({
+        modName,
+        enable: true,
+      }));
+      await window.electron.ipcRenderer.invoke("apply-mods", changes);
+    };
+    showAlert(t("settings.restoreConfirm"), undefined, [
+      { name: t("common.cancel"), f: hideAlert },
+      {
+        name: t("common.confirm"),
+        f: () => {
+          restoreData();
+          applyRestore();
+          hideAlert();
+        },
+      },
+    ]);
+    showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
   };
 
   const handleOnClickTestButton = () => {
@@ -106,6 +134,12 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
               >
                 {t("settings.backup")}
+              </button>
+              <button
+                onClick={handleRestorePresets}
+                className="iron-border bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+              >
+                {t("settings.restore")}
               </button>
               <button
                 onClick={handleOnClickTestButton}

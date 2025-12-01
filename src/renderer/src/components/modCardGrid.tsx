@@ -2,7 +2,7 @@ import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
 import { useState } from "react";
-import { FaAngleUp, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectAllPresetNames, selectCurrentPresetName, setCurrentPreset } from "@renderer/redux/slices/presetsSlice";
 import { createPortal } from "react-dom";

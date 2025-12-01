@@ -21,6 +21,11 @@
     "backupTooltip": "将预设信息备份到当前库目录",
     "backupSuccess": "预设备份成功！",
     "backupFail": "预设备份失败。",
+    "restore": "恢复",
+    "restoreTooltip": "从备份文件恢复预设",
+    "restoreConfirm": "确定要恢复预设吗？这将覆盖您当前的预设。",
+    "restoreSuccess": "预设恢复成功！",
+    "restoreFail": "恢复预设失败或未找到备份文件。",
     "testAlert": "测试弹窗",
     "testAlertMessage": "这是一个测试弹窗！"
   },
@@ -47,8 +52,9 @@
     "All": "全部",
     "Character": "角色",
     "NPC": "NPC",
-    "UI": "界面",
-    "Script-Tools": "脚本/工具",
+    "Environment": "环境",
+    "UI": "UI",
+    "Script-Tool": "脚本/工具",
     "Misc": "杂项",
     "Unknown": "未知"
   }
