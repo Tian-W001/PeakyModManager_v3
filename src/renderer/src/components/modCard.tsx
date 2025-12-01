@@ -8,6 +8,7 @@ import { selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
 import SmoothCornerPatch from "./CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
+import { useIntersectionObserver } from "@uidotdev/usehooks";
 
 // Load avatar images
 const modTypeImages = import.meta.glob("../assets/avatars/modType_avatars/*", { eager: true });
@@ -77,6 +78,12 @@ const ModCard = ({
       ? "Enabled"
       : "Disabled";
 
+  const [ref, entry] = useIntersectionObserver({
+    threshold: 0,
+    root: null,
+    rootMargin: "0px",
+  });
+
   const handleOnRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsModalOpen(true);
@@ -93,36 +100,41 @@ const ModCard = ({
   return (
     <>
       <div
+        ref={ref}
         onClick={handleOnClick}
         onContextMenu={handleOnRightClick}
         className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-[350px] flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333]`}
       >
-        <img
-          src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
-          alt={modInfo.name}
-          className="h-[55%] w-full object-cover"
-          onError={(e) => (e.currentTarget.src = defaultCover)}
-        />
-        <div className="flex w-full flex-1 flex-col">
-          <div className="flex flex-row items-center">
-            <div className="relative flex flex-col items-center justify-start">
-              <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
-              <img
-                src={getAvatarUrl(modInfo)}
-                alt="Avatar"
-                className={`absolute aspect-square -translate-y-[50%] rounded-full bg-blue-500 ring-2 ring-[#333]`}
-                style={{ width: 2 * R }}
-              />
+        {entry?.isIntersecting && (
+          <>
+            <img
+              src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
+              alt={modInfo.name}
+              className="h-[55%] w-full object-cover"
+              onError={(e) => (e.currentTarget.src = defaultCover)}
+            />
+            <div className="flex w-full flex-1 flex-col">
+              <div className="flex flex-row items-center">
+                <div className="relative flex flex-col items-center justify-start">
+                  <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
+                  <img
+                    src={getAvatarUrl(modInfo)}
+                    alt="Avatar"
+                    className={`absolute aspect-square -translate-y-[50%] rounded-full bg-blue-500 ring-2 ring-[#333]`}
+                    style={{ width: 2 * R }}
+                  />
+                </div>
+                <span className={`mr-4 -ml-4 flex-1 font-bold text-[#666] shadow-[0_2px_0_#666]`}>
+                  {modInfo.modType === "Character" ? modInfo.character : modInfo.modType}
+                </span>
+              </div>
+              <div className="flex-1 p-3 py-1.5">
+                <h2 className="text-xl font-bold text-white">{modInfo.name}</h2>
+                <p className="text-s font-bold text-[#888]">{modInfo.description || t("modCard.noDescription")}</p>
+              </div>
             </div>
-            <span className={`mr-4 -ml-4 flex-1 font-bold text-[#666] shadow-[0_2px_0_#666]`}>
-              {modInfo.modType === "Character" ? modInfo.character : modInfo.modType}
-            </span>
-          </div>
-          <div className="flex-1 p-3 py-1.5">
-            <h2 className="text-xl font-bold text-white">{modInfo.name}</h2>
-            <p className="text-s font-bold text-[#888]">{modInfo.description || t("modCard.noDescription")}</p>
-          </div>
-        </div>
+          </>
+        )}
       </div>
       {isModalOpen &&
         createPortal(<DetailedModal modInfo={modInfo} onClose={() => setIsModalOpen(false)} />, document.body)}
