@@ -198,20 +198,21 @@ const createModInfoFile = (modPath: string) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateAndFixModInfo = (modInfo: any, modInfoPath: string) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fixedModInfo: any = { ...defaultModInfo };
+  const fixedModInfo: ModInfo = { ...defaultModInfo };
   for (const key in modInfo) {
     if (key in fixedModInfo) {
       fixedModInfo[key] = modInfo[key];
     }
   }
   if (fixedModInfo.modType === "Character") {
-    if (!fixedModInfo.character) {
-      fixedModInfo.character = "Unknown" as Character;
+    if (modInfo.character) {
+      fixedModInfo.character = modInfo.character as Character;
+    } else {
+      fixedModInfo.character = "Unknown";
     }
   }
   fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
-  return fixedModInfo as ModInfo;
+  return fixedModInfo;
 };
 
 const loadLibrary = async () => {

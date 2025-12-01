@@ -180,17 +180,19 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 </option>
               ))}
             </select>
-            <select
-              className="mt-2 w-full rounded-full border bg-black px-2 py-1 font-bold text-white"
-              value={localModInfo.character}
-              onChange={(e) => handleModInfoChange("character", e.target.value)}
-            >
-              {characterNameList.map((character) => (
-                <option key={character} value={character}>
-                  {character}
-                </option>
-              ))}
-            </select>
+            {localModInfo.modType === "Character" && (
+              <select
+                className="mt-2 w-full rounded-full border bg-black px-2 py-1 font-bold text-white"
+                value={localModInfo.character}
+                onChange={(e) => handleModInfoChange("character", e.target.value)}
+              >
+                {characterNameList.map((character) => (
+                  <option key={character} value={character}>
+                    {t(`characters.fullnames.${character}`)}
+                  </option>
+                ))}
+              </select>
+            )}
             <div
               className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white"
               id="mod-source"

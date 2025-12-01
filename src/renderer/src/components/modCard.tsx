@@ -125,7 +125,9 @@ const ModCard = ({
                   />
                 </div>
                 <span className={`mr-4 -ml-4 flex-1 font-bold text-[#666] shadow-[0_2px_0_#666]`}>
-                  {modInfo.modType === "Character" ? modInfo.character : modInfo.modType}
+                  {modInfo.modType === "Character"
+                    ? t(`characters.nicknames.${modInfo.character}`)
+                    : t(`modTypes.${modInfo.modType}`)}
                 </span>
               </div>
               <div className="flex-1 p-3 py-1.5">
