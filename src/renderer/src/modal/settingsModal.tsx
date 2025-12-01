@@ -61,6 +61,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
         dispatch(restorePresets(backupData));
       }
     };
+
     const applyRestore = async () => {
       await window.electron.ipcRenderer.invoke("clear-target-path");
       const changes = currentPresetMods.map((modName) => ({
@@ -69,18 +70,20 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       }));
       await window.electron.ipcRenderer.invoke("apply-mods", changes);
     };
+
     showAlert(t("settings.restoreConfirm"), undefined, [
       { name: t("common.cancel"), f: hideAlert },
       {
         name: t("common.confirm"),
-        f: () => {
-          restoreData();
-          applyRestore();
+        f: async () => {
+          await restoreData();
+          await applyRestore();
           hideAlert();
+
+          showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
         },
       },
     ]);
-    showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
   };
 
   const handleOnClickTestButton = () => {

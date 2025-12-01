@@ -2,7 +2,7 @@ import React from "react";
 
 export interface AlertAction {
   name: string;
-  f: () => void;
+  f: () => void | Promise<void>;
 }
 
 interface AlertModalProps {
