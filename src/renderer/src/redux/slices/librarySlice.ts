@@ -36,11 +36,9 @@ const librarySlice = createSlice({
   reducers: {
     setLibraryPath: (state, action: PayloadAction<string | null>) => {
       state.libraryPath = action.payload;
-      window.electron.ipcRenderer.invoke("set-library-path", action.payload);
     },
     setTargetPath: (state, action: PayloadAction<string | null>) => {
       state.targetPath = action.payload;
-      window.electron.ipcRenderer.invoke("set-target-path", action.payload);
     },
     addModInfo: (state, action: PayloadAction<ModInfo>) => {
       state.modInfos.push(action.payload);

@@ -1,7 +1,8 @@
 import { app, shell, BrowserWindow, protocol } from "electron";
-import { join } from "path";
+import path, { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import log from "electron-log/main";
+import { installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
 import icon from "../../resources/icon.png?asset";
 import "./handlers/libraryHandler";
 import {
@@ -12,6 +13,11 @@ import {
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 
 let mainWindow: BrowserWindow | null = null;
+
+if (process.env.NODE_ENV === "development") {
+  const devUserDataPath = path.join(app.getPath("userData"), "dev");
+  app.setPath("userData", devUserDataPath);
+}
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -30,6 +36,7 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
+      devTools: process.env.NODE_ENV === "development",
     },
   });
 
@@ -78,6 +85,10 @@ if (!gotlock) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+    .then(([redux, react]) => console.log(`Added Extensions:  ${redux.name}, ${react.name}`))
+    .catch((err) => console.log("An error occurred: ", err));
+
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
 

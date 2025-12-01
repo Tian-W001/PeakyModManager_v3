@@ -3,8 +3,8 @@ import { ModInfo } from "src/shared/modInfo";
 import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
-import { useAppSelector } from "@renderer/redux/hooks";
-import { selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
+import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
+import { addToDiffList, selectModDiffState, selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
 import SmoothCornerPatch from "./CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
@@ -55,28 +55,15 @@ const getBorderStyle = (modState: ModState) => {
   }
 };
 
-const ModCard = ({
-  modInfo,
-  diffList,
-  appendToDiffList,
-}: {
-  modInfo: ModInfo;
-  diffList: { modName: string; enable: boolean }[];
-  appendToDiffList: (modName: string, enable: boolean) => void;
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isEnabledInPreset = useAppSelector(selectModIsEnabled(modInfo.name));
-
-  const diffEntry = diffList.find((diff) => diff.modName === modInfo.name);
-  const currentModState: ModState = diffEntry
-    ? diffEntry.enable
-      ? "WillEnable"
-      : "WillDisable"
-    : isEnabledInPreset
-      ? "Enabled"
-      : "Disabled";
+  const diffEntry = useAppSelector(selectModDiffState(modInfo.name));
+  const currentModState: ModState =
+    diffEntry !== null ? (diffEntry ? "WillEnable" : "WillDisable") : isEnabledInPreset ? "Enabled" : "Disabled";
 
   const [ref, entry] = useIntersectionObserver({
     threshold: 0,
@@ -91,9 +78,9 @@ const ModCard = ({
 
   const handleOnClick = () => {
     if (currentModState === "Enabled" || currentModState === "WillEnable") {
-      appendToDiffList(modInfo.name, false);
+      dispatch(addToDiffList({ [modInfo.name]: false })); // Enabled -> WillDisable, WillEnable -> Disabled
     } else {
-      appendToDiffList(modInfo.name, true);
+      dispatch(addToDiffList({ [modInfo.name]: true })); //  Disabled -> WillEnable, WillDisable -> Enabled
     }
   };
 

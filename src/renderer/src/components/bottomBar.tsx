@@ -5,23 +5,23 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import SettingsModal from "../modal/settingsModal";
 import { useTranslation } from "react-i18next";
+import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
 
-const BottomBar = ({
-  diffList,
-  onApplyChanges,
-  className,
-}: {
-  diffList: { modName: string; enable: boolean }[];
-  onApplyChanges: () => void;
-  className?: string;
-}) => {
+const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const libraryPath = useAppSelector(selectLibraryPath);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const { t } = useTranslation();
+  const diffList = useAppSelector(selectDiffList);
 
   const handleOnClickRefresh = async () => {
     dispatch(loadLibrary(libraryPath));
+  };
+
+  const handleApplyChanges = async () => {
+    dispatch(applyMods(diffList));
+    await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+    dispatch(clearDiffList());
   };
 
   return (
@@ -34,8 +34,8 @@ const BottomBar = ({
           {t("common.refresh")}
         </button>
 
-        <button className="bg-zzzYellow w-50 rounded px-4 text-black" onClick={onApplyChanges}>
-          {t("common.apply")} {diffList.length ? `(${diffList.length})` : ""}
+        <button className="w-50" onClick={handleApplyChanges}>
+          {t("common.apply")} {Object.keys(diffList).length ? `(${Object.keys(diffList).length})` : ""}
         </button>
       </div>
       {isSettingsModalOpen &&

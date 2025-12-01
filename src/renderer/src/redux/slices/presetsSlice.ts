@@ -3,21 +3,21 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { RootState } from "../store";
 
-export interface Preset {
-  name: string;
-  mods: string[];
-}
+export type Presets = Record<string, string[]>; //<presetName, modNames[]>
+export type DiffList = Record<string, boolean>; //<modName, enable>
 
 export interface PresetsState {
-  presets: Preset[];
+  presets: Presets;
   currentPresetName: string;
+  diffList: Record<string, boolean>;
 }
 
 const DEFAULT_PRESET_NAME = "Default Preset";
 
 const initialState: PresetsState = {
-  presets: [{ name: DEFAULT_PRESET_NAME, mods: [] }],
+  presets: { [DEFAULT_PRESET_NAME]: [] },
   currentPresetName: DEFAULT_PRESET_NAME,
+  diffList: {},
 };
 
 const presetsPresistConfig = {
@@ -32,45 +32,62 @@ export const presetsSlice = createSlice({
   reducers: {
     addPreset: (state, action: PayloadAction<string>) => {
       const newPresetName = action.payload;
-      if (state.presets.some((preset) => preset.name === newPresetName)) {
+      if (state.presets[newPresetName]) {
         return;
       }
-      state.presets.push({ name: newPresetName, mods: [] });
+      state.presets[newPresetName] = [];
     },
     removePreset: (state, action: PayloadAction<string>) => {
       const targetPresetName = action.payload;
       if (targetPresetName === DEFAULT_PRESET_NAME) {
         return;
       }
-      const index = state.presets.findIndex((preset) => preset.name === targetPresetName);
-      if (index === -1) {
+      if (!state.presets[targetPresetName]) {
         return;
       }
+      delete state.presets[targetPresetName];
+
       if (state.currentPresetName === targetPresetName) {
-        const newIndex = Math.max(0, index - 1);
-        state.currentPresetName = state.presets[newIndex].name;
+        state.currentPresetName = DEFAULT_PRESET_NAME;
       }
-      state.presets.splice(index, 1);
+    },
+    setPresets: (state, action: PayloadAction<Presets>) => {
+      const backupData = action.payload;
+      if (!backupData) return;
+
+      state.presets = backupData;
+      if (!state.presets[DEFAULT_PRESET_NAME]) {
+        state.presets[DEFAULT_PRESET_NAME] = [];
+      }
+      if (!state.presets[state.currentPresetName]) {
+        state.currentPresetName = DEFAULT_PRESET_NAME;
+      }
     },
     setCurrentPreset: (state, action: PayloadAction<string>) => {
+      // temporarily move currentPreset infos to diffList
       const targetPresetName = action.payload;
-      if (state.presets.some((preset) => preset.name === targetPresetName)) {
+      if (state.presets[targetPresetName]) {
         state.currentPresetName = targetPresetName;
+        state.diffList = state.presets[targetPresetName].reduce<DiffList>((acc, modName) => {
+          acc[modName] = true;
+          return acc;
+        }, {});
+        state.presets[state.currentPresetName] = [];
       }
     },
-    applyMods: (state, action: PayloadAction<{ modName: string; enable: boolean }[]>) => {
-      const currentPreset = state.presets.find((preset) => preset.name === state.currentPresetName);
+    applyMods: (state, action: PayloadAction<DiffList>) => {
+      console.log("Applying mods to preset:", action.payload);
+      const currentPreset = state.presets[state.currentPresetName];
       if (!currentPreset) {
         return;
       }
-      const modsStatus = action.payload;
-      for (const { modName, enable } of modsStatus) {
-        const exists = currentPreset.mods.includes(modName);
-        if (enable && !exists) {
-          currentPreset.mods.push(modName);
-        }
-        if (!enable && exists) {
-          currentPreset.mods = currentPreset.mods.filter((name) => name !== modName);
+      const diffList = action.payload;
+      for (const [modName, enable] of Object.entries(diffList)) {
+        const index = currentPreset.indexOf(modName);
+        if (enable && index === -1) {
+          currentPreset.push(modName);
+        } else if (!enable && index !== -1) {
+          currentPreset.splice(index, 1);
         }
       }
     },
@@ -79,63 +96,65 @@ export const presetsSlice = createSlice({
       if (oldName === DEFAULT_PRESET_NAME || newName === DEFAULT_PRESET_NAME) {
         return;
       }
-      if (state.presets.some((preset) => preset.name === newName)) {
+      if (state.presets[newName]) {
         return;
       }
-      const preset = state.presets.find((preset) => preset.name === oldName);
-      if (preset) {
-        preset.name = newName;
+      const mods = state.presets[oldName];
+      if (mods) {
+        state.presets[newName] = mods;
+        delete state.presets[oldName];
         if (state.currentPresetName === oldName) {
           state.currentPresetName = newName;
         }
       }
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    restorePresets: (state, action: PayloadAction<any>) => {
-      const backupData = action.payload;
-      if (!backupData || !backupData.Presets) return;
-
-      const newPresets: Preset[] = [];
-      for (const [name, modsMap] of Object.entries(backupData.Presets)) {
-        const mods: string[] = [];
-        const map = modsMap as Record<string, boolean>;
-        for (const [modName, enabled] of Object.entries(map)) {
-          if (enabled) {
-            mods.push(modName);
-          }
-        }
-        newPresets.push({ name, mods });
-      }
-
-      if (newPresets.length > 0) {
-        state.presets = newPresets;
-        // Ensure currentPresetName is valid
-        if (!state.presets.some((p) => p.name === state.currentPresetName)) {
-          state.currentPresetName = state.presets[0].name;
+    addToDiffList: (state, action: PayloadAction<DiffList>) => {
+      const newDiffList = action.payload;
+      for (const [modName, enable] of Object.entries(newDiffList)) {
+        if (state.diffList[modName] === undefined) {
+          state.diffList[modName] = enable;
+        } else if (state.diffList[modName] !== enable) {
+          delete state.diffList[modName];
         }
       }
+    },
+    clearDiffList: (state) => {
+      state.diffList = {};
     },
   },
 });
 
-export const { addPreset, removePreset, setCurrentPreset, applyMods, renamePreset, restorePresets } =
-  presetsSlice.actions;
+export const {
+  addPreset,
+  removePreset,
+  setPresets,
+  setCurrentPreset,
+  applyMods,
+  renamePreset,
+  addToDiffList,
+  clearDiffList,
+} = presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 
 export const selectAllPresets = (state: RootState) => state.presets.presets;
-// export const selectAllPresetNames = (state: { presets: PresetsState }) =>
-//   state.presets.presets.map((preset) => preset.name);
+
 export const selectAllPresetNames = createSelector(
   (state: RootState) => state.presets.presets,
-  (presets) => presets.map((preset) => preset.name)
+  (presets) => Object.keys(presets)
 );
 
 export const selectCurrentPresetName = (state: RootState) => state.presets.currentPresetName;
-export const selectModNamesInCurrentPreset = (state: RootState) => {
-  const currentPreset = state.presets.presets.find((preset) => preset.name === state.presets.currentPresetName);
-  return currentPreset ? currentPreset.mods : [];
-};
+
+export const selectCurrentPresetMods = (state: RootState) =>
+  state.presets.presets[state.presets.currentPresetName] || [];
+
 export const selectModIsEnabled = (modName: string) => (state: RootState) => {
-  const currentPreset = state.presets.presets.find((preset) => preset.name === state.presets.currentPresetName);
-  return currentPreset ? currentPreset.mods.includes(modName) : false;
+  const currentPresetMods = state.presets.presets[state.presets.currentPresetName];
+  return currentPresetMods ? currentPresetMods.includes(modName) : false;
+};
+
+export const selectDiffList = (state: RootState) => state.presets.diffList;
+
+export const selectModDiffState = (modName: string) => (state: RootState) => {
+  return state.presets.diffList[modName] !== undefined ? state.presets.diffList[modName] : null;
 };

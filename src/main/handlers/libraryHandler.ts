@@ -119,8 +119,7 @@ ipcMain.handle("clear-target-path", async () => {
   }
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-ipcMain.handle("backup-presets", async (_event, backupData: any) => {
+ipcMain.handle("backup-presets", async (_event, backupData: Record<string, string[]>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return false;
 
@@ -141,7 +140,7 @@ ipcMain.handle("restore-presets", async () => {
   const backupFilePath = path.join(libraryPath, "Presets_Backup.json");
   try {
     if (await fs.pathExists(backupFilePath)) {
-      return await fs.readJson(backupFilePath);
+      return (await fs.readJson(backupFilePath)) as Record<string, string[]>;
     }
     return null;
   } catch (error) {
@@ -251,7 +250,7 @@ ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
   await shell.openPath(fullPath);
 });
 
-ipcMain.handle("apply-mods", async (_event, changes: { modName: string; enable: boolean }[]) => {
+ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
 
@@ -260,7 +259,8 @@ ipcMain.handle("apply-mods", async (_event, changes: { modName: string; enable: 
     return;
   }
 
-  for (const { modName, enable } of changes) {
+  for (const modName in changes) {
+    const enable = changes[modName];
     const sourcePath = path.join(libraryPath, modName);
     const destPath = path.join(targetPath, modName);
 

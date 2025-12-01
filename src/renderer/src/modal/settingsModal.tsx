@@ -2,13 +2,17 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   loadLibrary,
   selectLibraryPath,
-  selectModInfos,
   selectTargetPath,
   setLibraryPath,
   setTargetPath,
 } from "@renderer/redux/slices/librarySlice";
 import { FaTimes } from "react-icons/fa";
-import { selectAllPresets, restorePresets, selectModNamesInCurrentPreset } from "@renderer/redux/slices/presetsSlice";
+import {
+  selectAllPresets,
+  setPresets,
+  selectCurrentPresetName,
+  setCurrentPreset,
+} from "@renderer/redux/slices/presetsSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 
@@ -16,9 +20,8 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const targetPath = useAppSelector(selectTargetPath);
-  const modInfos = useAppSelector(selectModInfos);
   const presets = useAppSelector(selectAllPresets);
-  const currentPresetMods = useAppSelector(selectModNamesInCurrentPreset);
+  const currentPresetName = useAppSelector(selectCurrentPresetName);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const { t, i18n } = useTranslation();
 
@@ -26,7 +29,11 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setLibraryPath(newPath));
+      await window.electron.ipcRenderer.invoke("set-library-path", newPath);
       dispatch(loadLibrary(newPath));
+      await window.electron.ipcRenderer.invoke("clear-target-path");
+      dispatch(setPresets({})); // Clear presets when library path changes
+      // user will need to restore presets manually
     }
   };
 
@@ -34,19 +41,15 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setTargetPath(newPath));
+      await window.electron.ipcRenderer.invoke("set-target-path", newPath);
+      // Clear target path, then transform current active mods in preset to diffList
+      await window.electron.ipcRenderer.invoke("clear-target-path");
+      dispatch(setCurrentPreset(currentPresetName));
     }
   };
 
   const handleBackupPresets = async () => {
-    const backupData = { Presets: {} };
-    presets.forEach((preset) => {
-      const presetMods: Record<string, boolean> = {};
-      modInfos.forEach((mod) => {
-        presetMods[mod.name] = preset.mods.includes(mod.name);
-      });
-      backupData.Presets[preset.name] = presetMods;
-    });
-    const success = await window.electron.ipcRenderer.invoke("backup-presets", backupData);
+    const success = await window.electron.ipcRenderer.invoke("backup-presets", presets);
     if (success) {
       showAlert(t("settings.backupSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
     } else {
@@ -55,20 +58,25 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleRestorePresets = async () => {
+    /*
+      When user switches to different preset, that preset infos will be temporarily loaded to diffList,
+      so that user will manually apply the changes back to the preset.
+      Therefore, when restoring presets from backup, we need to:
+      1. Clear current diffList
+      2. load all presets from backup
+      3. remove current preset mods and put in diffList (done in setCurrentPreset action)
+    */
     const restoreData = async () => {
-      const backupData = await window.electron.ipcRenderer.invoke("restore-presets");
-      if (backupData) {
-        dispatch(restorePresets(backupData));
+      const backupPresets: Record<string, string[]> | null =
+        await window.electron.ipcRenderer.invoke("restore-presets");
+      if (backupPresets) {
+        dispatch(setPresets(backupPresets));
+        await window.electron.ipcRenderer.invoke("clear-target-path");
+        dispatch(setCurrentPreset(currentPresetName)); // This will transform current preset mods to diffList
+        return true;
+      } else {
+        return false;
       }
-    };
-
-    const applyRestore = async () => {
-      await window.electron.ipcRenderer.invoke("clear-target-path");
-      const changes = currentPresetMods.map((modName) => ({
-        modName,
-        enable: true,
-      }));
-      await window.electron.ipcRenderer.invoke("apply-mods", changes);
     };
 
     showAlert(t("settings.restoreConfirm"), undefined, [
@@ -76,11 +84,14 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       {
         name: t("common.confirm"),
         f: async () => {
-          await restoreData();
-          await applyRestore();
+          const success = await restoreData();
           hideAlert();
 
-          showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
+          if (success) {
+            showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
+          } else {
+            showAlert(t("settings.restoreFail"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
+          }
         },
       },
     ]);

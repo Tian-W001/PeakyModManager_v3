@@ -11,17 +11,7 @@ import { addModInfo } from "@renderer/redux/slices/librarySlice";
 import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 
-const ModCardGrid = ({
-  modInfos,
-  diffList,
-  appendToDiffList,
-  className,
-}: {
-  modInfos: ModInfo[];
-  diffList: { modName: string; enable: boolean }[];
-  appendToDiffList: (modName: string, enable: boolean) => void;
-  className?: string;
-}) => {
+const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const allPresetNames = useAppSelector(selectAllPresetNames);
@@ -61,7 +51,7 @@ const ModCardGrid = ({
     <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
       <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
         {modInfos.map((modInfo) => (
-          <ModCard key={modInfo.name} modInfo={modInfo} diffList={diffList} appendToDiffList={appendToDiffList} />
+          <ModCard key={modInfo.name} modInfo={modInfo} />
         ))}
       </div>
 
@@ -72,7 +62,8 @@ const ModCardGrid = ({
               <button
                 key={name}
                 className={clsx("", name === currentPresetName && "text-zzzYellow")}
-                onClick={() => {
+                onClick={async () => {
+                  await window.electron.ipcRenderer.invoke("clear-target-path");
                   dispatch(setCurrentPreset(name));
                   setIsDropdownOpen(false);
                 }}
@@ -86,10 +77,7 @@ const ModCardGrid = ({
           <button className="" onClick={() => setIsEditPresetsModalOpen(true)}>
             <FaPlus />
           </button>
-          <button
-            className="bg-zzzYellow flex aspect-square w-auto items-center justify-around gap-2 rounded-full px-4 py-2 text-black shadow-lg transition-colors hover:bg-yellow-400"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
+          <button className="flex items-center justify-around gap-2" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
             <FaCaretUp
               className="transition-transform"
