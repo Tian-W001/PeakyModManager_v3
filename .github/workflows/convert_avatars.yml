@@ -40,20 +40,21 @@ jobs:
 
           foreach ($file in $files) {
             Write-Host "Processing $($file.Name)..."
-
+            
             # Convert to PNG and Rotate 180
             # -ft png: File Type PNG
             # -rotate 180: Rotate 180 degrees
             # -y: Overwrite existing
             # -o: Output directory
-            $args = @("-ft", "png", "-rotate", "180", "-y", "-o", $targetDir, $file.FullName)
-            $proc = Start-Process -FilePath ".\texconv.exe" -ArgumentList $args -PassThru -Wait
-
-            if ($proc.ExitCode -eq 0) {
+            
+            # Use call operator & to execute and capture output
+            & .\texconv.exe -ft png -rotate 180 -y -o "$targetDir" "$($file.FullName)"
+            
+            if ($LASTEXITCODE -eq 0) {
               $baseName = $file.BaseName
               $pngName = "$baseName.png"
               $pngPath = Join-Path $targetDir $pngName
-
+              
               if (Test-Path $pngPath) {
                 $finalNameStr = $baseName
 
@@ -71,7 +72,7 @@ jobs:
 
                 $finalPngName = "$finalNameStr.png"
                 $finalPath = Join-Path $targetDir $finalPngName
-
+                
                 # Rename if the name changed (e.g. capitalization or _r removal)
                 if ($pngName -cne $finalPngName) {
                     Move-Item -Path $pngPath -Destination $finalPath -Force
@@ -79,13 +80,13 @@ jobs:
                 } else {
                     Write-Host "Generated $finalPngName"
                 }
-
+                
                 # Remove original DDS file
                 Remove-Item -Path $file.FullName -Force
                 Write-Host "Removed original DDS file"
               }
             } else {
-              Write-Error "Failed to convert $($file.Name)"
+              Write-Error "Failed to convert $($file.Name). Exit code: $LASTEXITCODE"
             }
           }
         shell: powershell
