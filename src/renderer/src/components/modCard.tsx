@@ -97,7 +97,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
             <img
               src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
               alt={modInfo.name}
-              className="h-[55%] w-full object-cover"
+              className="min-h-[55%] w-full object-cover"
               onError={(e) => (e.currentTarget.src = defaultCover)}
             />
             <div className="flex w-full flex-1 flex-col">
@@ -117,9 +117,11 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
                     : t(`modTypes.${modInfo.modType}`)}
                 </span>
               </div>
-              <div className="flex-1 p-3 py-1.5">
+              <div className="flex flex-1 flex-col p-3 py-1.5">
                 <h2 className="text-xl font-bold text-white">{modInfo.name}</h2>
-                <p className="text-s font-bold text-[#888]">{modInfo.description || t("modCard.noDescription")}</p>
+                <p className="text-s flex-1 overflow-auto border font-bold whitespace-pre-line text-[#888]">
+                  {modInfo.description || t("modCard.noDescription")}
+                </p>
               </div>
             </div>
           </>

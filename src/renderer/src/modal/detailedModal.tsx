@@ -161,11 +161,10 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         <div className="flex h-full flex-1 flex-col justify-between gap-2 bg-gray-300" id="right-section">
           <h1>{modInfo.name}</h1>
           <div className="flex flex-1 flex-col gap-2 overflow-auto p-4" id="mod-info-section">
-            <input
-              type="text"
+            <textarea
               value={localModInfo.description}
               placeholder={t("modDetails.description")}
-              className="min-h-20 w-full rounded-2xl border bg-black font-bold text-white"
+              className="no-scrollbar min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white"
               onChange={(e) => handleModInfoChange("description", e.target.value)}
               onBlur={() => handleModInfoBlur("description")}
             />
