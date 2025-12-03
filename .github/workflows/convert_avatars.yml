@@ -3,14 +3,14 @@ name: Process Avatar Images
 on:
   push:
     paths:
-      - 'src/renderer/src/assets/avatars/character_avatars/**'
+      - "src/renderer/src/assets/avatars/character_avatars/**"
 
 jobs:
   process-images:
     runs-on: windows-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,15 +23,15 @@ jobs:
       - name: Convert, Rotate, and Rename Images
         run: |
           $targetDir = "src/renderer/src/assets/avatars/character_avatars"
-          
+
           if (-not (Test-Path $targetDir)) {
             Write-Host "Directory $targetDir does not exist."
             exit 0
           }
 
           # Find all matching dds files
-          $files = Get-ChildItem -Path $targetDir -Filter "*_r.dds"
-          
+          $files = Get-ChildItem -Path $targetDir -Filter "*.dds"
+
           if ($files.Count -eq 0) {
             Write-Host "No matching .dds files found to process."
             exit 0
@@ -39,7 +39,7 @@ jobs:
 
           foreach ($file in $files) {
             Write-Host "Processing $($file.Name)..."
-            
+
             # Convert to PNG and Rotate 180
             # -ft png: File Type PNG
             # -rotate 180: Rotate 180 degrees
@@ -47,31 +47,41 @@ jobs:
             # -o: Output directory
             $args = @("-ft", "png", "-rotate", "180", "-y", "-o", $targetDir, $file.FullName)
             $proc = Start-Process -FilePath ".\texconv.exe" -ArgumentList $args -PassThru -Wait
-            
+
             if ($proc.ExitCode -eq 0) {
-              $baseName = $file.BaseName # e.g., "name_r"
+              $baseName = $file.BaseName
               $pngName = "$baseName.png"
               $pngPath = Join-Path $targetDir $pngName
-              
+
               if (Test-Path $pngPath) {
-                # Rename logic: xxxx_r -> Xxxx
+                $finalNameStr = $baseName
+
+                # Remove _r suffix if present
                 if ($baseName -match "^(.*)_r$") {
-                  $prefix = $matches[1]
-                  # Capitalize first letter
-                  if ($prefix.Length -gt 0) {
-                    $firstChar = $prefix.Substring(0,1).ToUpper()
-                    $rest = $prefix.Substring(1)
-                    $finalName = "$firstChar$rest.png"
-                    $finalPath = Join-Path $targetDir $finalName
-                    
-                    Move-Item -Path $pngPath -Destination $finalPath -Force
-                    Write-Host "Renamed to $finalName"
-                    
-                    # Remove original DDS file
-                    Remove-Item -Path $file.FullName -Force
-                    Write-Host "Removed original DDS file"
-                  }
+                  $finalNameStr = $matches[1]
                 }
+
+                # Capitalize first letter
+                if ($finalNameStr.Length -gt 0) {
+                  $firstChar = $finalNameStr.Substring(0,1).ToUpper()
+                  $rest = $finalNameStr.Substring(1)
+                  $finalNameStr = "$firstChar$rest"
+                }
+
+                $finalPngName = "$finalNameStr.png"
+                $finalPath = Join-Path $targetDir $finalPngName
+
+                # Rename if the name changed (e.g. capitalization or _r removal)
+                if ($pngName -cne $finalPngName) {
+                    Move-Item -Path $pngPath -Destination $finalPath -Force
+                    Write-Host "Renamed $pngName to $finalPngName"
+                } else {
+                    Write-Host "Generated $finalPngName"
+                }
+
+                # Remove original DDS file
+                Remove-Item -Path $file.FullName -Force
+                Write-Host "Removed original DDS file"
               }
             } else {
               Write-Error "Failed to convert $($file.Name)"
