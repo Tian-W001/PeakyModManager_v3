@@ -87,6 +87,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
   return (
     <>
       <div
+        id="mod-card-container"
         ref={ref}
         onClick={handleOnClick}
         onContextMenu={handleOnRightClick}
@@ -95,31 +96,38 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
         {entry?.isIntersecting && (
           <>
             <img
+              id="mod-card-cover"
               src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
               alt={modInfo.name}
-              className="min-h-[55%] w-full object-cover"
+              className="max-h-[55%] min-h-[55%] w-full object-cover"
               onError={(e) => (e.currentTarget.src = defaultCover)}
             />
-            <div className="flex w-full flex-1 flex-col">
-              <div className="flex flex-row items-center">
-                <div className="relative flex flex-col items-center justify-start">
+            <div id="mod-card-info-container" className="flex min-h-0 w-full flex-1 flex-col">
+              <div id="mod-card-info-header" className="flex flex-row items-center">
+                <div id="mod-card-avatar" className="relative flex flex-col items-center justify-start">
                   <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
                   <img
+                    id="mod-card-avatar"
                     src={getAvatarUrl(modInfo)}
                     alt="Avatar"
                     className={`absolute aspect-square -translate-y-[50%] rounded-full bg-blue-500 ring-2 ring-[#333]`}
                     style={{ width: 2 * R }}
                   />
                 </div>
-                <span className={`mr-4 -ml-4 flex-1 font-bold text-[#666] shadow-[0_2px_0_#666]`}>
+                <span
+                  id="mod-card-info-type"
+                  className={`mr-4 -ml-4 flex-1 font-bold text-[#666] shadow-[0_2px_0_#666]`}
+                >
                   {modInfo.modType === "Character"
                     ? t(`characters.nicknames.${modInfo.character}`)
                     : t(`modTypes.${modInfo.modType}`)}
                 </span>
               </div>
-              <div className="flex flex-1 flex-col p-3 py-1.5">
-                <h2 className="text-xl font-bold text-white">{modInfo.name}</h2>
-                <p className="text-s flex-1 overflow-auto border font-bold whitespace-pre-line text-[#888]">
+              <div id="mod-card-info-body" className="flex min-h-0 flex-1 flex-col px-3 py-1.5">
+                <h2 className="overflow-hidden text-xl font-bold text-ellipsis whitespace-nowrap text-white">
+                  {modInfo.name}
+                </h2>
+                <p className="text-s flex-1 overflow-hidden font-bold whitespace-pre-wrap text-[#888]">
                   {modInfo.description || t("modCard.noDescription")}
                 </p>
               </div>
