@@ -16,80 +16,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Pillow
+
       - name: Download texconv
         run: |
           Invoke-WebRequest -Uri "https://github.com/microsoft/DirectXTex/releases/download/oct2025/texconv.exe" -OutFile "texconv.exe"
         shell: powershell
 
-      - name: Convert, Rotate, and Rename Images
+      - name: Run Conversion Script
         run: |
-          $targetDir = "src/renderer/src/assets/avatars/character_avatars"
-
-          if (-not (Test-Path $targetDir)) {
-            Write-Host "Directory $targetDir does not exist."
-            exit 0
-          }
-
-          # Find all matching dds files
-          $files = Get-ChildItem -Path $targetDir -Filter "*.dds"
-
-          if ($files.Count -eq 0) {
-            Write-Host "No matching .dds files found to process."
-            exit 0
-          }
-
-          foreach ($file in $files) {
-            Write-Host "Processing $($file.Name)..."
-            
-            # Convert to PNG and Rotate 180
-            # -ft png: File Type PNG
-            # -rotate 180: Rotate 180 degrees
-            # -y: Overwrite existing
-            # -o: Output directory
-            
-            # Use call operator & to execute and capture output
-            & .\texconv.exe -ft png -rotate 180 -y -o "$targetDir" "$($file.FullName)"
-            
-            if ($LASTEXITCODE -eq 0) {
-              $baseName = $file.BaseName
-              $pngName = "$baseName.png"
-              $pngPath = Join-Path $targetDir $pngName
-              
-              if (Test-Path $pngPath) {
-                $finalNameStr = $baseName
-
-                # Remove _r suffix if present
-                if ($baseName -match "^(.*)_r$") {
-                  $finalNameStr = $matches[1]
-                }
-
-                # Capitalize first letter
-                if ($finalNameStr.Length -gt 0) {
-                  $firstChar = $finalNameStr.Substring(0,1).ToUpper()
-                  $rest = $finalNameStr.Substring(1)
-                  $finalNameStr = "$firstChar$rest"
-                }
-
-                $finalPngName = "$finalNameStr.png"
-                $finalPath = Join-Path $targetDir $finalPngName
-                
-                # Rename if the name changed (e.g. capitalization or _r removal)
-                if ($pngName -cne $finalPngName) {
-                    Move-Item -Path $pngPath -Destination $finalPath -Force
-                    Write-Host "Renamed $pngName to $finalPngName"
-                } else {
-                    Write-Host "Generated $finalPngName"
-                }
-                
-                # Remove original DDS file
-                Remove-Item -Path $file.FullName -Force
-                Write-Host "Removed original DDS file"
-              }
-            } else {
-              Write-Error "Failed to convert $($file.Name). Exit code: $LASTEXITCODE"
-            }
-          }
-        shell: powershell
+          python scripts/convert_avatars.py
 
       - name: Commit and Push changes
         run: |
