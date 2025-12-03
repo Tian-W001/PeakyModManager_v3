@@ -1,6 +1,7 @@
 name: Process Avatar Images
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "src/renderer/src/assets/avatars/character_avatars/**"
