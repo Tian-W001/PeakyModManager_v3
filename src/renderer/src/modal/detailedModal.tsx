@@ -6,6 +6,7 @@ import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
+import ZzzSelect from "../components/zzzSelect";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -160,7 +161,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         </div>
         <div className="flex h-full flex-1 flex-col justify-between gap-2 bg-gray-300" id="right-section">
           <h1>{modInfo.name}</h1>
-          <div className="flex flex-1 flex-col gap-2 overflow-auto p-4" id="mod-info-section">
+          <div className="flex flex-1 flex-col gap-2 overflow-hidden p-4" id="mod-info-section">
             <textarea
               value={localModInfo.description}
               placeholder={t("modDetails.description")}
@@ -168,38 +169,34 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               onChange={(e) => handleModInfoChange("description", e.target.value)}
               onBlur={() => handleModInfoBlur("description")}
             />
-            <select
-              className="mt-2 w-full rounded-full border bg-black px-2 py-1 font-bold text-white"
+            <ZzzSelect
+              label={t("modDetails.modType")}
               value={localModInfo.modType}
-              onChange={(e) => handleModInfoChange("modType", e.target.value)}
-            >
-              {modTypeList.map((modType) => (
-                <option key={modType} value={modType}>
-                  {modType}
-                </option>
-              ))}
-            </select>
+              options={modTypeList.map((type) => ({ value: type, label: t(`modTypes.${type}`) }))}
+              onChange={(val) => handleModInfoChange("modType", val)}
+              className="px-4 py-1"
+            />
             {localModInfo.modType === "Character" && (
-              <select
-                className="mt-2 w-full rounded-full border bg-black px-2 py-1 font-bold text-white"
+              <ZzzSelect
+                label={t("modDetails.character")}
                 value={localModInfo.character}
-                onChange={(e) => handleModInfoChange("character", e.target.value)}
-              >
-                {characterNameList.map((character) => (
-                  <option key={character} value={character}>
-                    {t(`characters.fullnames.${character}`)}
-                  </option>
-                ))}
-              </select>
+                options={characterNameList.map((char) => ({
+                  value: char,
+                  label: t(`characters.fullnames.${char}`),
+                }))}
+                onChange={(val) => handleModInfoChange("character", val)}
+                className="px-4 py-1"
+              />
             )}
             <div
-              className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3.5 py-1 font-bold text-white"
+              className="hover:text-zzzYellow flex flex-row items-center justify-between gap-8 rounded-full bg-black px-3.5 py-1 pr-9 font-bold text-white"
               id="mod-source"
             >
               <span className="">{t("modDetails.source")}</span>
               <input
                 className="flex-1 text-right font-bold text-white"
-                value={localModInfo.source || t("modDetails.unknownSource")}
+                placeholder={t("modDetails.unknownSource")}
+                value={localModInfo.source}
                 onChange={(e) => handleModInfoChange("source", e.target.value)}
                 onBlur={() => handleModInfoBlur("source")}
               />

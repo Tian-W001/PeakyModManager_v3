@@ -31,6 +31,8 @@
   },
   "modDetails": {
     "description": "Description",
+    "modType": "Mod Type",
+    "character": "Character",
     "source": "Source",
     "unknownSource": "Unknown Source",
     "removeCover": "Remove Cover",

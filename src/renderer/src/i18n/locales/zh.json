@@ -31,6 +31,8 @@
   },
   "modDetails": {
     "description": "描述",
+    "modType": "模组类型",
+    "character": "角色",
     "source": "来源",
     "unknownSource": "未知来源",
     "removeCover": "移除封面",

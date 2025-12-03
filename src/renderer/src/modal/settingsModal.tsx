@@ -15,6 +15,7 @@ import {
 } from "@renderer/redux/slices/presetsSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
+import ZzzSelect from "@renderer/components/zzzSelect";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -101,12 +102,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     showAlert(t("settings.testAlert"), t("settings.testAlertMessage"), [{ name: t("common.confirm"), f: hideAlert }]);
   };
 
-  const handleSwitchLanguage = () => {
-    const newLang = i18n.language === "en" ? "zh" : "en";
-    i18n.changeLanguage(newLang);
-    localStorage.setItem("app_lang", newLang);
-  };
-
   return (
     <>
       <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
@@ -119,8 +114,21 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           </div>
 
           <div className="flex flex-col gap-4 p-6">
+            <ZzzSelect
+              label={t("settings.language")}
+              value={i18n.language}
+              onChange={(val) => {
+                i18n.changeLanguage(val);
+                localStorage.setItem("app_lang", val);
+              }}
+              options={[
+                { value: "en", label: "English" },
+                { value: "zh", label: "中文" },
+              ]}
+              className="px-3 py-1"
+            />
             {/* Library Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white">
               <span className="whitespace-nowrap">{t("settings.libraryPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
@@ -131,7 +139,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             </div>
 
             {/* Target Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-4 py-2 font-bold text-white">
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white">
               <span className="whitespace-nowrap">{t("settings.targetPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
@@ -162,13 +170,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 {t("settings.testAlert")}
               </button>
               <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>
-            </div>
-
-            {/* Language Switch */}
-            <div className="flex flex-row items-center gap-4">
-              <button onClick={handleSwitchLanguage} className="w-30">
-                {i18n.language === "en" ? "English" : "中文"}
-              </button>
             </div>
           </div>
         </div>
