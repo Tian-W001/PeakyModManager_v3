@@ -110,10 +110,18 @@ ipcMain.handle("delete-mod", async (_event, modName: string) => {
 });
 
 ipcMain.handle("clear-target-path", async () => {
+  // remove all symlinks ONLY
   const targetPath = store.get("targetPath", null) as string | null;
   if (!targetPath) return;
   try {
-    await fs.emptyDir(targetPath);
+    const files = await fs.readdir(targetPath);
+    for (const file of files) {
+      const filePath = path.join(targetPath, file);
+      const stats = await fs.lstat(filePath);
+      if (stats.isSymbolicLink()) {
+        await fs.unlink(filePath);
+      }
+    }
   } catch (error) {
     console.error("Error clearing target path:", error);
   }
