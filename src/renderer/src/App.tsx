@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import MainScreen from "./screens/mainScreen";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Toaster, toast } from "react-hot-toast";
-import { loadLibrary, selectLibraryPath, selectTargetPath } from "./redux/slices/librarySlice";
-import { setCurrentPreset, setPresets } from "./redux/slices/presetsSlice";
+import { selectLibraryPath, selectTargetPath } from "./redux/slices/librarySlice";
 
 function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -34,24 +33,15 @@ function App(): React.JSX.Element {
 
   /* Sync libraryPath and targetPath to main process */
   useEffect(() => {
-    if (!libraryPath) return;
-    (async () => {
-      await window.electron.ipcRenderer.invoke("set-library-path", libraryPath);
-      await dispatch(loadLibrary(libraryPath));
-      await window.electron.ipcRenderer.invoke("clear-target-path");
-      dispatch(setPresets({})); // Clear presets when library path changes
-    })();
-  }, [libraryPath, dispatch]);
-
+    if (libraryPath) {
+      window.electron.ipcRenderer.invoke("set-library-path", libraryPath);
+    }
+  }, [libraryPath]);
   useEffect(() => {
-    if (!targetPath) return;
-    (async () => {
-      await window.electron.ipcRenderer.invoke("set-target-path", targetPath);
-      // Clear target path, then transform current active mods in preset to diffList
-      await window.electron.ipcRenderer.invoke("clear-target-path");
-      dispatch(setCurrentPreset(""));
-    })();
-  }, [targetPath, dispatch]);
+    if (targetPath) {
+      window.electron.ipcRenderer.invoke("set-target-path", targetPath);
+    }
+  }, [targetPath]);
 
   return (
     <>
