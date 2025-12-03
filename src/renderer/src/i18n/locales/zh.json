@@ -40,6 +40,7 @@
     "setCover": "设置封面",
     "deleteMod": "删除模组",
     "openModFolder": "打开模组文件夹",
+    "autofill": "自动填充",
     "deleteConfirm": "确定要删除 {{name}} 吗？"
   },
   "presets": {

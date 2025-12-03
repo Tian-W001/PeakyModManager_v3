@@ -4,7 +4,7 @@ import { editModInfo, selectLibraryPath, loadLibrary } from "@renderer/redux/sli
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
-import { characterNameList } from "@shared/character";
+import { Character, characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
 
@@ -112,6 +112,45 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     e.stopPropagation();
   };
 
+  const handleAutofill = async () => {
+    const result = (await window.electron.ipcRenderer.invoke("autofill-mod-info", modInfo.name)) as {
+      description: string | null;
+      coverImage: string | null;
+    };
+    if (result) {
+      const { description, coverImage } = result;
+      const updates: Partial<ModInfo> = {};
+
+      if (description) {
+        updates.description = description;
+      }
+      if (coverImage) {
+        updates.coverImage = coverImage;
+      }
+
+      // Character matching
+      let matchedCharacter: Character | null = null;
+      const sortedChars = [...characterNameList].filter((c) => c !== "Unknown").sort((a, b) => b.length - a.length);
+
+      for (const char of sortedChars) {
+        if (modInfo.name.toLowerCase().includes(char.toLowerCase())) {
+          matchedCharacter = char;
+          break;
+        }
+      }
+
+      if (matchedCharacter) {
+        updates.modType = "Character";
+        updates.character = matchedCharacter;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        setLocalModInfo((prev) => ({ ...prev, ...updates }) as ModInfo);
+        dispatch(editModInfo({ modName: modInfo.name, newModInfo: updates }));
+      }
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 bg-black/80"
@@ -209,6 +248,9 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           {t("modDetails.deleteMod")}
         </button>
         <div className="flex flex-row gap-4">
+          <button onClick={handleAutofill} className="iron-border chess-background">
+            {t("modDetails.autofill")}
+          </button>
           <button onClick={handleOpenModFolder} className="iron-border chess-background">
             {t("modDetails.openModFolder")}
           </button>

@@ -40,6 +40,7 @@
     "setCover": "Set Cover",
     "deleteMod": "Delete Mod",
     "openModFolder": "Open Mod Folder",
+    "autofill": "Autofill",
     "deleteConfirm": "Are you sure you want to delete {{name}}?"
   },
   "presets": {

@@ -258,6 +258,44 @@ ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
   await shell.openPath(fullPath);
 });
 
+ipcMain.handle("autofill-mod-info", async (_event, modName: string) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return null;
+
+  const modPath = path.join(libraryPath, modName);
+  if (!fs.existsSync(modPath)) return null;
+
+  let description = "";
+  let coverImage = "";
+
+  try {
+    const files = await fs.readdir(modPath);
+
+    // Find readme
+    const readmeFile = files.find((file) => file.toLowerCase().includes("readme"));
+    if (readmeFile) {
+      const readmePath = path.join(modPath, readmeFile);
+      const stats = await fs.stat(readmePath);
+      if (stats.isFile()) {
+        description = await fs.readFile(readmePath, "utf-8");
+      }
+    }
+
+    // Find cover image
+    const imageExtensions = [".jpg", ".png", ".gif", ".webp", ".jpeg"];
+    const imageFiles = files.filter((file) => imageExtensions.includes(path.extname(file).toLowerCase()));
+
+    if (imageFiles.length > 0) {
+      const previewImage = imageFiles.find((file) => path.parse(file).name.toLowerCase() === "preview");
+      coverImage = previewImage || imageFiles[0];
+    }
+  } catch (error) {
+    console.error("Error autofilling mod info:", error);
+  }
+
+  return { description: description || null, coverImage: coverImage || null };
+});
+
 ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
