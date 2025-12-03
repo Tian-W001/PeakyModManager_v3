@@ -30,10 +30,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setLibraryPath(newPath));
-      dispatch(loadLibrary(newPath));
-      await window.electron.ipcRenderer.invoke("clear-target-path");
-      dispatch(setPresets({})); // Clear presets when library path changes
-      // user will need to restore presets manually
     }
   };
 
@@ -41,9 +37,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       dispatch(setTargetPath(newPath));
-      // Clear target path, then transform current active mods in preset to diffList
-      await window.electron.ipcRenderer.invoke("clear-target-path");
-      dispatch(setCurrentPreset(currentPresetName));
     }
   };
 
