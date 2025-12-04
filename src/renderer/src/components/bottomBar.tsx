@@ -23,6 +23,13 @@ const BottomBar = ({ className }: { className?: string }) => {
     dispatch(clearDiffList());
   };
 
+  const getApplyButtonText = () => {
+    const adds = Object.values(diffList).filter(Boolean).length;
+    const removes = diffList ? Object.keys(diffList).length - adds : 0;
+    const text = `${t("common.apply")} ${adds ? `+${adds} ` : ""}${removes ? `-${removes}` : ""}`;
+    return text.trim();
+  };
+
   return (
     <>
       <div className={clsx("flex items-center justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
@@ -33,8 +40,8 @@ const BottomBar = ({ className }: { className?: string }) => {
           {t("common.refresh")}
         </button>
 
-        <button className="w-50" onClick={handleApplyChanges}>
-          {t("common.apply")} {Object.keys(diffList).length ? `(${Object.keys(diffList).length})` : ""}
+        <button className="w-50 overflow-hidden" onClick={handleApplyChanges}>
+          {getApplyButtonText()}
         </button>
       </div>
       {isSettingsModalOpen &&

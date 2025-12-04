@@ -14,6 +14,7 @@
   },
   "settings": {
     "title": "Settings",
+    "language": "Language",
     "libraryPath": "Library Path",
     "targetPath": "Target Path",
     "clickToSetPath": "Click to set path",

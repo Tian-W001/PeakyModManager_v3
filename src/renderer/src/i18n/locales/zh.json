@@ -14,6 +14,7 @@
   },
   "settings": {
     "title": "设置",
+    "language": "语言",
     "libraryPath": "库路径",
     "targetPath": "目标路径",
     "clickToSetPath": "点击设置路径",
