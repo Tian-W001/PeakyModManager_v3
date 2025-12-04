@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { editModInfo, selectLibraryPath, loadLibrary, removeModInfo } from "@renderer/redux/slices/librarySlice";
+import { editModInfo, selectLibraryPath, removeModInfo } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
@@ -106,10 +106,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         console.log("Not an image file");
         return;
       }
-      console.log("Dropped file:", file);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const imagePath = file.path;
+      const imagePath = window.api.getFilePath(file);
       console.log("Dropped image path:", imagePath);
 
       if (imagePath) {
@@ -177,7 +174,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           id="modal-container"
         >
           <div
-            className="group relative h-full w-[40%] bg-gray-200"
+            className="group relative h-full w-[40%] overflow-hidden"
             id="left-section"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
