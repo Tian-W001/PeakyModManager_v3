@@ -47,6 +47,8 @@ const characterNameList = [
   "Yidhari",
   "Dialyn",
   "Banyue",
+  "Zhao",
+  "YeShunguang",
 ] as const;
 
 type Character = (typeof characterNameList)[number];
