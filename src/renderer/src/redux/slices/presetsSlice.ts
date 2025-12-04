@@ -108,6 +108,15 @@ export const presetsSlice = createSlice({
         }
       }
     },
+    removeModFromAllPresets: (state, action: PayloadAction<string>) => {
+      const modName = action.payload;
+      for (const presetMods of Object.values(state.presets)) {
+        const index = presetMods.indexOf(modName);
+        if (index !== -1) {
+          presetMods.splice(index, 1);
+        }
+      }
+    },
     addToDiffList: (state, action: PayloadAction<DiffList>) => {
       const newDiffList = action.payload;
       for (const [modName, enable] of Object.entries(newDiffList)) {
@@ -131,6 +140,7 @@ export const {
   setCurrentPreset,
   applyMods,
   renamePreset,
+  removeModFromAllPresets,
   addToDiffList,
   clearDiffList,
 } = presetsSlice.actions;
