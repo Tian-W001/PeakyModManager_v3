@@ -24,9 +24,18 @@ const libraryPersistConfig = {
   whitelist: ["libraryPath", "targetPath", "modInfos"],
 };
 
-export const loadLibrary = createAsyncThunk("library/load", async (libraryPath: string | null) => {
-  const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library", libraryPath);
-  //console.log("Loaded mods from thunk:", mods);
+export const setLibraryPath = createAsyncThunk("library/setLibraryPath", async (newPath: string) => {
+  await window.electron.ipcRenderer.invoke("set-library-path", newPath);
+  return newPath;
+});
+
+export const setTargetPath = createAsyncThunk("library/setTargetPath", async (newPath: string) => {
+  await window.electron.ipcRenderer.invoke("set-target-path", newPath);
+  return newPath;
+});
+
+export const loadLibrary = createAsyncThunk("library/load", async () => {
+  const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library");
   return mods;
 });
 
@@ -34,12 +43,6 @@ const librarySlice = createSlice({
   name: "library",
   initialState,
   reducers: {
-    setLibraryPath: (state, action: PayloadAction<string | null>) => {
-      state.libraryPath = action.payload;
-    },
-    setTargetPath: (state, action: PayloadAction<string | null>) => {
-      state.targetPath = action.payload;
-    },
     addModInfo: (state, action: PayloadAction<ModInfo>) => {
       state.modInfos.push(action.payload);
     },
@@ -53,19 +56,24 @@ const librarySlice = createSlice({
         Object.assign(state.modInfos[modIndex], newModInfo);
       }
       window.electron.ipcRenderer.invoke("edit-mod-info", modName, { ...state.modInfos[modIndex] });
-      console.log("Edited mod info:", state.modInfos[modIndex]);
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadLibrary.fulfilled, (state, action) => {
-      console.log("Loaded mods in extraReducers:", action.payload);
-      state.modInfos = action.payload;
-    });
+    builder
+      .addCase(loadLibrary.fulfilled, (state, action) => {
+        state.modInfos = action.payload;
+      })
+      .addCase(setLibraryPath.fulfilled, (state, action) => {
+        state.libraryPath = action.payload;
+      })
+      .addCase(setTargetPath.fulfilled, (state, action) => {
+        state.targetPath = action.payload;
+      });
   },
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, setLibraryPath, setTargetPath, addModInfo, removeModInfo } = librarySlice.actions;
+export const { editModInfo, addModInfo, removeModInfo } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;

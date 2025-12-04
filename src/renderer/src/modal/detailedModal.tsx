@@ -52,7 +52,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     if (confirmed) {
       const success = await window.electron.ipcRenderer.invoke("delete-mod", modInfo.name);
       if (success) {
-        dispatch(loadLibrary(null));
+        dispatch(loadLibrary());
         onClose();
       }
     }

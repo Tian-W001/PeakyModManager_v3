@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import MainScreen from "./screens/mainScreen";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { useAppDispatch } from "./redux/hooks";
 import { Toaster, toast } from "react-hot-toast";
-import { selectLibraryPath, selectTargetPath } from "./redux/slices/librarySlice";
 
 function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -27,21 +26,6 @@ function App(): React.JSX.Element {
       window.electron.ipcRenderer.removeAllListeners("download-mod-error");
     };
   }, [dispatch]);
-
-  const libraryPath = useAppSelector(selectLibraryPath);
-  const targetPath = useAppSelector(selectTargetPath);
-
-  /* Sync libraryPath and targetPath to main process */
-  useEffect(() => {
-    if (libraryPath) {
-      window.electron.ipcRenderer.invoke("set-library-path", libraryPath);
-    }
-  }, [libraryPath]);
-  useEffect(() => {
-    if (targetPath) {
-      window.electron.ipcRenderer.invoke("set-target-path", targetPath);
-    }
-  }, [targetPath]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { loadLibrary, selectLibraryPath } from "@renderer/redux/slices/librarySlice";
+import { loadLibrary } from "@renderer/redux/slices/librarySlice";
 import { clsx } from "clsx";
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -10,12 +10,11 @@ import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const libraryPath = useAppSelector(selectLibraryPath);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const diffList = useAppSelector(selectDiffList);
 
   const handleOnClickRefresh = async () => {
-    dispatch(loadLibrary(libraryPath));
+    await dispatch(loadLibrary());
   };
 
   const handleApplyChanges = async () => {
