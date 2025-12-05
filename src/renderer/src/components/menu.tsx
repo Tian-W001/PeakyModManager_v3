@@ -17,30 +17,33 @@ const Menu = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div className={clsx("flex justify-center p-6", className)} id="menu-area">
+    <div className={clsx("flex justify-center p-4", className)} id="menu-area">
       <div
-        className="m-0.5 flex w-full flex-col items-center gap-3 rounded-2xl border-3 border-black bg-linear-to-br from-[#3a3a3a] to-[#272727] p-3 text-white outline-3 outline-white/30"
+        className="flex w-full flex-col items-center justify-between rounded-[30px] border-4 border-[#fff3] bg-black px-1 py-2"
         id="menu-container"
       >
-        <div className="menu-button flex h-8 w-full items-center justify-center" id="menu-upper-button">
-          <FaCaretUp className="h-full translate-y-0.5 text-inherit" />
+        <div className="menuButton" id="menu-upper-button">
+          <FaCaretUp className="h-full translate-y-px scale-x-200" color="#000" />
         </div>
         <div
-          className="no-scrollbar flex w-full flex-1 flex-col items-center gap-0.5 overflow-x-hidden overflow-y-auto rounded-2xl border-8 border-black bg-black shadow-[2px_1px_0px_#ffffff19,-2px_-1px_0px_#00000051]"
+          className="no-scrollbar my-4 flex w-full flex-1 flex-col justify-start overflow-scroll"
           id="menu-items-container"
         >
-          {menuItems.map((menuItem) => (
-            <div
-              className={`m-1 flex h-14 w-full shrink-0 cursor-pointer items-center justify-center rounded-xl p-2 text-xl font-extrabold transition-all ${menuItem === selectedMenuItem ? "bg-zzzYellow text-black" : ""}`}
-              key={menuItem}
-              onClick={() => handleMenuItemClick(menuItem)}
-            >
-              {t(`modTypes.${menuItem}`)}
-            </div>
-          ))}
+          {menuItems.map((menuItem) => {
+            const isSelected = menuItem === selectedMenuItem;
+            return (
+              <div
+                className={`relative -mt-1 flex h-16 w-full shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-md text-center text-xl font-extrabold italic before:absolute before:top-0 before:h-1 before:w-full before:rounded-full after:absolute after:bottom-0 after:h-1 after:w-full after:rounded-full first:mt-0 ${isSelected ? "bg-zzzYellow z-50 text-black before:bg-[#2220] after:bg-[#2220]" : "z-0 bg-black text-white before:bg-[#222f] after:bg-[#222f]"}`}
+                key={menuItem}
+                onClick={() => handleMenuItemClick(menuItem)}
+              >
+                {t(`modTypes.${menuItem}`)}
+              </div>
+            );
+          })}
         </div>
-        <div className="menu-button flex h-8 w-full items-center justify-center" id="menu-lower-button">
-          <FaCaretDown className="h-full -translate-y-0.5" color="#aaa" />
+        <div className="menuButton" id="menu-lower-button">
+          <FaCaretDown className="h-full -translate-y-px scale-x-200" color="#000" />
         </div>
       </div>
     </div>
