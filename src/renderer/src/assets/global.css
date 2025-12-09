@@ -38,7 +38,13 @@ button {
   scrollbar-width: none; /* Firefox */
 }
 
+@font-face {
+  font-family: "HanYiQiHei";
+  src: url("./HanYiQiHei-105-JianFan.otf");
+}
+
 :root {
+  font-family: "HanYiQiHei", sans-serif;
   user-select: none;
   user-drag: none;
   -webkit-user-drag: none;
