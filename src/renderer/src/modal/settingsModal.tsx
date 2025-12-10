@@ -12,6 +12,7 @@ import {
   setPresets,
   selectCurrentPresetName,
   setCurrentPreset,
+  clearDiffList,
 } from "@renderer/redux/slices/presetsSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
@@ -30,10 +31,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       await dispatch(setLibraryPath(newPath));
-      console.log("load library from new path:", newPath);
       await dispatch(loadLibrary());
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(setPresets({})); // Clear presets when library path changes
+      dispatch(clearDiffList());
       // user will need to restore presets manually
     }
   };
@@ -42,9 +43,9 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
       await dispatch(setTargetPath(newPath));
-      // Clear target path, then move current active mods in preset to diffList
       await window.electron.ipcRenderer.invoke("clear-target-path");
-      dispatch(setCurrentPreset(currentPresetName));
+      dispatch(clearDiffList());
+      dispatch(setCurrentPreset(currentPresetName)); // move current active mods in preset to diffList
     }
   };
 

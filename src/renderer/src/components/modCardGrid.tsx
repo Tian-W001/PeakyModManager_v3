@@ -4,17 +4,26 @@ import clsx from "clsx";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { selectAllPresetNames, selectCurrentPresetName, setCurrentPreset } from "@renderer/redux/slices/presetsSlice";
+import {
+  applyMods,
+  clearDiffList,
+  selectAllPresetNames,
+  selectCurrentPresetName,
+  selectDiffList,
+  setCurrentPreset,
+} from "@renderer/redux/slices/presetsSlice";
 import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
 import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
+import { useAlertModal } from "@renderer/hooks/useAlertModal";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const allPresetNames = useAppSelector(selectAllPresetNames);
+  const diffList = useAppSelector(selectDiffList);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditPresetsModalOpen, setIsEditPresetsModalOpen] = useState(false);
 
@@ -47,54 +56,84 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     e.stopPropagation();
   };
 
-  return (
-    <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
-      <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
-        {modInfos.map((modInfo) => (
-          <ModCard key={modInfo.name} modInfo={modInfo} />
-        ))}
-      </div>
+  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const handleSwitchPreset = async (name: string) => {
+    const applyChanges = async () => {
+      dispatch(applyMods(diffList));
+      await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+      dispatch(clearDiffList());
+    };
+    const switchPreset = async () => {
+      await window.electron.ipcRenderer.invoke("clear-target-path");
+      dispatch(setCurrentPreset(name));
+      setIsDropdownOpen(false);
+      hideAlert();
+    };
+    // if diffList is not empty, show alert
+    if (diffList && Object.keys(diffList).length > 0) {
+      showAlert("You have unsaved changes. Please apply or discard them before switching presets.", undefined, [
+        { name: "Cancel", f: hideAlert },
+        { name: "Discard", f: switchPreset },
+        {
+          name: "Apply",
+          f: async () => {
+            await applyChanges();
+            await switchPreset();
+          },
+        },
+      ]);
+      return;
+    }
+    await switchPreset();
+  };
 
-      <div className="absolute right-8 bottom-4 flex flex-col items-end">
-        {isDropdownOpen && (
-          <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-4">
-            {allPresetNames.map((name) => (
-              <div
-                key={name}
-                className={clsx(
-                  "hover:bg-zzzYellow flex h-10 cursor-pointer items-center overflow-hidden rounded p-1 whitespace-nowrap text-white hover:text-black",
-                  name === currentPresetName && "text-zzzYellow"
-                )}
-                onClick={async () => {
-                  await window.electron.ipcRenderer.invoke("clear-target-path");
-                  dispatch(setCurrentPreset(name));
-                  setIsDropdownOpen(false);
-                }}
-              >
-                {name}
-              </div>
-            ))}
-          </div>
-        )}
-        <div className="flex items-center gap-2">
-          <button className="chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
-            <FaPlus />
-          </button>
-          <button
-            className="chess-background flex items-center justify-around gap-2"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
-            <FaCaretUp
-              className="transition-transform"
-              style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-            />
-          </button>
+  return (
+    <>
+      <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
+        <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
+          {modInfos.map((modInfo) => (
+            <ModCard key={modInfo.name} modInfo={modInfo} />
+          ))}
         </div>
+
+        <div className="absolute right-8 bottom-4 flex flex-col items-end">
+          {isDropdownOpen && (
+            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-4">
+              {allPresetNames.map((name) => (
+                <div
+                  key={name}
+                  className={clsx(
+                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center overflow-hidden rounded p-1 whitespace-nowrap text-white hover:text-black",
+                    name === currentPresetName && "text-zzzYellow"
+                  )}
+                  onClick={async () => await handleSwitchPreset(name)}
+                >
+                  {name}
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <button className="chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
+              <FaPlus />
+            </button>
+            <button
+              className="chess-background flex items-center justify-around gap-2"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
+              <FaCaretUp
+                className="transition-transform"
+                style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+              />
+            </button>
+          </div>
+        </div>
+        {isEditPresetsModalOpen &&
+          createPortal(<EditPresetsModal onClose={() => setIsEditPresetsModalOpen(false)} />, document.body)}
       </div>
-      {isEditPresetsModalOpen &&
-        createPortal(<EditPresetsModal onClose={() => setIsEditPresetsModalOpen(false)} />, document.body)}
-    </div>
+      <RenderAlert />
+    </>
   );
 };
 
