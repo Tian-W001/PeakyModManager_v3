@@ -21,7 +21,7 @@ const AlertModal: React.FC<AlertModalProps> = ({ title, message, actions }) => {
 
         <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-[calc(50%+4px)] gap-4 *:italic">
           {actions.map((action, index) => (
-            <button key={index} onClick={action.f} className="w-50">
+            <button key={index} onClick={action.f} className="chess-background w-50">
               {action.name}
             </button>
           ))}

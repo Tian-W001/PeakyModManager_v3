@@ -48,7 +48,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
       <div className="flex h-[60%] w-[40%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
         <div className="flex items-center justify-between bg-gray-300 p-4">
           <h2 className="text-xl font-bold">{t("presets.managePresets")}</h2>
-          <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
+          <button onClick={onClose} className="chess-background">
             <FaTimes size={24} />
           </button>
         </div>
@@ -62,10 +62,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
               placeholder={t("presets.newPresetName")}
               className="flex-1 rounded border border-gray-400 px-2 py-1"
             />
-            <button
-              onClick={handleAddPreset}
-              className="rounded bg-blue-600 px-4 py-1 font-bold text-white hover:bg-blue-700"
-            >
+            <button onClick={handleAddPreset} className="chess-background">
               {t("common.add")}
             </button>
           </div>
@@ -85,10 +82,10 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
                       className="flex-1 rounded border border-gray-400 px-2 py-1"
                       autoFocus
                     />
-                    <button onClick={saveEditing} className="text-green-600 hover:text-green-800">
+                    <button onClick={saveEditing} className="chess-background">
                       <FaCheck />
                     </button>
-                    <button onClick={cancelEditing} className="text-red-600 hover:text-red-800">
+                    <button onClick={cancelEditing} className="chess-background">
                       <FaTimes />
                     </button>
                   </div>
@@ -97,10 +94,10 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
                     <span className="font-bold">{name}</span>
                     {name !== "Default Preset" && (
                       <div className="flex gap-2">
-                        <button onClick={() => startEditing(name)} className="text-blue-600 hover:text-blue-800">
+                        <button onClick={() => startEditing(name)} className="chess-background">
                           <FaEdit />
                         </button>
-                        <button onClick={() => handleRemovePreset(name)} className="text-red-600 hover:text-red-800">
+                        <button onClick={() => handleRemovePreset(name)} className="chess-background">
                           <FaTrash />
                         </button>
                       </div>

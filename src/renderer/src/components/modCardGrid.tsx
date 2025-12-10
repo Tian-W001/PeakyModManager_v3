@@ -74,10 +74,13 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           </div>
         )}
         <div className="flex items-center gap-2">
-          <button className="" onClick={() => setIsEditPresetsModalOpen(true)}>
+          <button className="chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
             <FaPlus />
           </button>
-          <button className="flex items-center justify-around gap-2" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+          <button
+            className="chess-background flex items-center justify-around gap-2"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
             <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
             <FaCaretUp
               className="transition-transform"

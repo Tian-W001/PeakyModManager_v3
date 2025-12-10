@@ -107,7 +107,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
         <div className="flex h-[70%] w-[70%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
           <div className="flex items-center justify-between bg-gray-300 p-4">
             <h2 className="text-xl font-bold">{t("settings.title")}</h2>
-            <button onClick={onClose} className="font-bold text-red-600 hover:text-red-800">
+            <button onClick={onClose} className="chess-background">
               <FaTimes size={24} />
             </button>
           </div>
@@ -150,22 +150,13 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
             {/* Backup Button */}
             <div className="flex flex-row items-center gap-4">
-              <button
-                onClick={handleBackupPresets}
-                className="iron-border bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-              >
+              <button onClick={handleBackupPresets} className="chess-background">
                 {t("settings.backup")}
               </button>
-              <button
-                onClick={handleRestorePresets}
-                className="iron-border bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
-              >
+              <button onClick={handleRestorePresets} className="chess-background">
                 {t("settings.restore")}
               </button>
-              <button
-                onClick={handleOnClickTestButton}
-                className="iron-border bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-              >
+              <button onClick={handleOnClickTestButton} className="chess-background">
                 {t("settings.testAlert")}
               </button>
               <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>

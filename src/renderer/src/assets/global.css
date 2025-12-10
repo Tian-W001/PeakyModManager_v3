@@ -31,10 +31,9 @@
   }
   --color-zzzYellow: #d8fa00;
   --iron-border: inset 0 1px 2px #fff3, inset 0 0 0 3px #666, inset 0 0 0 4px #333, inset 0 0 0 5px #000;
-  --chess-background: repeating-conic-gradient(#000 0% 25%, #141414 0% 50%);
 }
 
-.chess-background2 {
+.chess-background {
   background-image:
     linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 0 75%, rgba(255, 255, 255, 0.02) 0),
     linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 0 75%, rgba(255, 255, 255, 0.02) 0);
@@ -46,7 +45,7 @@
 }
 
 button {
-  @apply hover:bg-zzzYellow h-12 rounded-full bg-black px-4 py-2 font-bold shadow-(--iron-border) transition-all not-hover:bg-(image:--chess-background) not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-[box-shadow-pulse_0.8s_cubic-bezier(0.25,0.1,0.75,1)_infinite] hover:text-black;
+  @apply hover:bg-zzzYellow h-12 rounded-full bg-[#111] px-4 py-2 font-bold shadow-(--iron-border) transition-all not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-[box-shadow-pulse_0.8s_cubic-bezier(0.25,0.1,0.75,1)_infinite] hover:text-black;
 }
 
 .no-scrollbar::-webkit-scrollbar {
