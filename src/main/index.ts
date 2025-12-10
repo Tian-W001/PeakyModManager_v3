@@ -1,5 +1,6 @@
+import "./setup";
 import { app, shell, BrowserWindow, protocol } from "electron";
-import path, { join } from "path";
+import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import log from "electron-log/main";
 import { installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
@@ -13,11 +14,6 @@ import {
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 
 let mainWindow: BrowserWindow | null = null;
-
-if (process.env.NODE_ENV === "development") {
-  const devUserDataPath = path.join(app.getPath("userData"), "dev");
-  app.setPath("userData", devUserDataPath);
-}
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
