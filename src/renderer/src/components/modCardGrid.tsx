@@ -60,7 +60,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const handleSwitchPreset = async (name: string) => {
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
-      await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+      //no need to call ipc here, as this preset will be switched right after
       dispatch(clearDiffList());
     };
     const switchPreset = async () => {
