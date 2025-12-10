@@ -110,7 +110,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
                     id="mod-card-avatar"
                     src={getAvatarUrl(modInfo)}
                     alt="Avatar"
-                    className={`absolute aspect-square -translate-y-[50%] rounded-full bg-transparent ring-2 ring-[#333]`}
+                    className={`absolute aspect-square -translate-y-[50%] rounded-full bg-black ring-2 ring-[#333]`}
                     style={{ width: 2 * R }}
                   />
                 </div>

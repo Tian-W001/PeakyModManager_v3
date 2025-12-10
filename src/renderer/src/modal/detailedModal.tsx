@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
+import Exit from "@renderer/components/Exit";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -166,58 +167,69 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   return (
     <>
       <div
-        className="fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 bg-black/80"
+        className="fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 overflow-hidden bg-black/60"
         id="modal-overlay"
       >
         <div
-          className="flex size-[70%] flex-row overflow-auto rounded-2xl border-2 border-black bg-white"
+          className="chess-background2 flex size-[70%] flex-row overflow-hidden rounded-4xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
         >
           <div
-            className="group relative h-full w-[40%] overflow-hidden"
+            className="relative h-full w-[40%] shrink-0 overflow-hidden p-4"
             id="left-section"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <img
-              src={`mod-image://local/${modInfo.name}/${localModInfo.coverImage}`}
-              alt="Cover"
-              className="h-full w-full object-cover transition-all duration-300 group-hover:blur"
-              onError={(e) => (e.currentTarget.src = defaultCover)}
-            />
-            <div className="absolute inset-0 hidden flex-col items-center justify-center gap-4 group-hover:flex">
-              {localModInfo.coverImage ? (
-                <>
-                  <button
-                    onClick={handleRemoveCover}
-                    className="rounded bg-red-600 px-4 py-2 font-bold text-white hover:bg-red-700"
-                  >
-                    {t("modDetails.removeCover")}
+            <div
+              id="cover-image-container"
+              className="group hover:border-zzzYellow relative h-full w-full overflow-hidden rounded-2xl border-3 border-black bg-black shadow-[1px_1px_1px_#fff2] hover:border-2"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-300 group-hover:blur-sm"
+                style={{
+                  backgroundImage: localModInfo.coverImage
+                    ? `url("mod-image://local/${modInfo.name}/${localModInfo.coverImage}")`
+                    : `url("${defaultCover}")`,
+                }}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                {localModInfo.coverImage ? (
+                  <>
+                    <button onClick={handleRemoveCover} className="">
+                      {t("modDetails.removeCover")}
+                    </button>
+                    <button onClick={handleSetCover} className="">
+                      {t("modDetails.changeCover")}
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={handleSetCover} className="">
+                    {t("modDetails.setCover")}
                   </button>
-                  <button
-                    onClick={handleSetCover}
-                    className="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                  >
-                    {t("modDetails.changeCover")}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={handleSetCover}
-                  className="rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-700"
-                >
-                  {t("modDetails.setCover")}
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex h-full flex-1 flex-col justify-between gap-2 bg-gray-300" id="right-section">
-            <h1>{modInfo.name}</h1>
-            <div className="flex flex-1 flex-col gap-2 overflow-hidden p-4" id="mod-info-section">
+          <div className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden" id="right-section">
+            <div
+              className="box-border flex h-14 min-w-0 items-center justify-between gap-2 overflow-hidden py-2 pr-4"
+              id="modal-title-area"
+            >
+              <div className="title-decorator flex min-w-0 items-center justify-between overflow-hidden">
+                <p className="min-w-0 overflow-hidden px-2 text-2xl font-bold text-ellipsis whitespace-nowrap text-white italic">
+                  {modInfo.name}
+                </p>
+              </div>
+              <Exit
+                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
+                onClick={onClose}
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4" id="mod-info-section">
               <textarea
                 value={localModInfo.description}
                 placeholder={t("modDetails.description")}
-                className="no-scrollbar min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white"
+                className="no-scrollbar min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
                 onChange={(e) => handleModInfoChange("description", e.target.value)}
                 onBlur={() => handleModInfoBlur("description")}
               />
@@ -226,7 +238,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 value={localModInfo.modType}
                 options={modTypeList.map((type) => ({ value: type, label: t(`modTypes.${type}`) }))}
                 onChange={(val) => handleModInfoChange("modType", val)}
-                className="px-4 py-1"
+                className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
               />
               {localModInfo.modType === "Character" && (
                 <ZzzSelect
@@ -237,11 +249,11 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                     label: t(`characters.fullnames.${char}`),
                   }))}
                   onChange={(val) => handleModInfoChange("character", val)}
-                  className="px-4 py-1"
+                  className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
                 />
               )}
               <div
-                className="hover:text-zzzYellow flex flex-row items-center justify-between gap-8 rounded-full bg-black px-3.5 py-1 pr-9 font-bold text-white"
+                className="hover:text-zzzYellow flex flex-row items-center justify-between gap-8 rounded-full bg-black px-3.5 py-1 pr-9 font-bold text-white shadow-[1px_1px_1px_#fff2]"
                 id="mod-source"
               >
                 <span className="">{t("modDetails.source")}</span>
@@ -261,16 +273,13 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
             {t("modDetails.deleteMod")}
           </button>
           <div className="flex flex-row gap-4">
-            <button onClick={handleAutofill} className="iron-border chess-background">
+            <button onClick={handleAutofill} className="">
               {t("modDetails.autofill")}
             </button>
-            <button onClick={handleOpenModFolder} className="iron-border chess-background">
+            <button onClick={handleOpenModFolder} className="">
               {t("modDetails.openModFolder")}
             </button>
-            <button onClick={onClose} className="iron-border chess-background">
-              {t("common.close")}
-            </button>
-            <button onClick={saveModInfoChanges} className="iron-border chess-background">
+            <button onClick={saveModInfoChanges} className="">
               {t("common.save")}
             </button>
           </div>

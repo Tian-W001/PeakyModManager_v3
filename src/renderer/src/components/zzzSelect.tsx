@@ -39,7 +39,7 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
       <div
         className={clsx(
           className,
-          "hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full border border-transparent bg-black font-bold text-white transition-colors hover:border-gray-600"
+          "hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full border border-transparent bg-black font-bold text-white transition-colors"
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -51,7 +51,7 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
       </div>
 
       {isOpen && (
-        <div className="no-scrollbar absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-black p-2 shadow-xl">
+        <div className="no-scrollbar absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-[#111] p-2 shadow-xl">
           {options.map((option) => (
             <div
               key={option.value}
