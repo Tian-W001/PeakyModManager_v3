@@ -57,11 +57,14 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
       <div className="absolute right-8 bottom-4 flex flex-col items-end">
         {isDropdownOpen && (
-          <div className="mb-2 flex flex-col gap-1 rounded border border-gray-700 bg-black p-2 text-white shadow-lg">
+          <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-4">
             {allPresetNames.map((name) => (
-              <button
+              <div
                 key={name}
-                className={clsx("", name === currentPresetName && "text-zzzYellow")}
+                className={clsx(
+                  "hover:bg-zzzYellow flex h-10 cursor-pointer items-center overflow-hidden rounded p-1 whitespace-nowrap text-white hover:text-black",
+                  name === currentPresetName && "text-zzzYellow"
+                )}
                 onClick={async () => {
                   await window.electron.ipcRenderer.invoke("clear-target-path");
                   dispatch(setCurrentPreset(name));
@@ -69,7 +72,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
                 }}
               >
                 {name}
-              </button>
+              </div>
             ))}
           </div>
         )}
