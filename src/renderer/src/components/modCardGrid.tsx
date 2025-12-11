@@ -19,6 +19,7 @@ import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
+import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -93,9 +94,13 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     <>
       <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
         <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
-          {modInfos.map((modInfo) => (
-            <ModCard key={modInfo.name} modInfo={modInfo} />
-          ))}
+          {modInfos.length === 0 ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
+            </div>
+          ) : (
+            modInfos.map((modInfo) => <ModCard key={modInfo.name} modInfo={modInfo} />)
+          )}
         </div>
 
         <div className="absolute right-8 bottom-4 flex flex-col items-end">
