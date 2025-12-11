@@ -44,7 +44,7 @@
   background-repeat: repeat;
 }
 
-button {
+.zzzButton {
   @apply hover:bg-zzzYellow h-12 rounded-full bg-[#111] px-4 py-2 font-bold shadow-(--iron-border) transition-all not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-[box-shadow-pulse_0.8s_cubic-bezier(0.25,0.1,0.75,1)_infinite] hover:text-black;
 }
 
@@ -69,6 +69,14 @@ button {
 }
 .title-decorator::after {
   @apply aspect-55/32 bg-[url('./suffix_decorator.png')];
+}
+
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 overflow-hidden bg-[repeating-linear-gradient(40deg,transparent_0_5px,rgba(255,255,255,.07)_5px_10px)] backdrop-brightness-20;
+}
+
+.overlay-stripe {
+  background-image: repeating-linear-gradient(40deg, transparent 0 5px, rgba(255, 255, 255, 0.07) 5px 10px);
 }
 
 @font-face {

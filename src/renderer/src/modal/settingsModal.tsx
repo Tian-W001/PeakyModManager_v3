@@ -6,7 +6,6 @@ import {
   setLibraryPath,
   setTargetPath,
 } from "@renderer/redux/slices/librarySlice";
-import { FaTimes } from "react-icons/fa";
 import {
   selectAllPresets,
   setPresets,
@@ -17,6 +16,7 @@ import {
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
+import Exit from "@renderer/components/Exit";
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -104,16 +104,22 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex size-full items-center justify-center bg-black/50" id="modal-overlay">
-        <div className="flex h-[70%] w-[70%] flex-col overflow-hidden rounded-2xl border-2 border-black bg-white">
-          <div className="flex items-center justify-between bg-gray-300 p-4">
-            <h2 className="text-xl font-bold">{t("settings.title")}</h2>
-            <button onClick={onClose} className="chess-background">
-              <FaTimes size={24} />
-            </button>
+      <div className="modal-overlay" id="modal-overlay">
+        <div
+          className="chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+          id="modal-container"
+        >
+          <div className="flex h-16 items-center justify-between bg-black/20 px-4 py-2" id="modal-header">
+            <div className="title-decorator flex min-w-0 items-center gap-2" id="title-wrapper">
+              <p className="text-2xl font-bold text-white">{t("settings.title")}</p>
+            </div>
+            <Exit
+              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
+              onClick={onClose}
+            />
           </div>
 
-          <div className="flex flex-col gap-4 p-6">
+          <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-scroll p-6" id="info-container">
             <ZzzSelect
               label={t("settings.language")}
               value={i18n.language}
@@ -125,10 +131,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 { value: "en", label: "English" },
                 { value: "zh", label: "中文" },
               ]}
-              className="px-3 py-1"
+              className="px-3 py-1 shadow-[1px_1px_1px_#fff2]"
             />
             {/* Library Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white">
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]">
               <span className="whitespace-nowrap">{t("settings.libraryPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
@@ -139,7 +145,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             </div>
 
             {/* Target Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white">
+            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]">
               <span className="whitespace-nowrap">{t("settings.targetPath")}</span>
               <input
                 className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
@@ -151,13 +157,13 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
             {/* Backup Button */}
             <div className="flex flex-row items-center gap-4">
-              <button onClick={handleBackupPresets} className="chess-background">
+              <button onClick={handleBackupPresets} className="zzzButton chess-background w-40">
                 {t("settings.backup")}
               </button>
-              <button onClick={handleRestorePresets} className="chess-background">
+              <button onClick={handleRestorePresets} className="zzzButton chess-background w-40">
                 {t("settings.restore")}
               </button>
-              <button onClick={handleOnClickTestButton} className="chess-background">
+              <button onClick={handleOnClickTestButton} className="zzzButton chess-background w-40">
                 {t("settings.testAlert")}
               </button>
               <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>

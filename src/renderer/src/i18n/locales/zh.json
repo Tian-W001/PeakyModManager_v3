@@ -47,6 +47,7 @@
   "presets": {
     "managePresets": "管理预设",
     "newPresetName": "新预设名称",
+    "pressEnterToAdd": "按回车键添加新预设",
     "deleteConfirm": "确定要删除预设 \"{{name}}\" 吗？"
   },
   "modCard": {

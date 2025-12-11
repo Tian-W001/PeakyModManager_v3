@@ -98,12 +98,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
         <div className="absolute right-8 bottom-4 flex flex-col items-end">
           {isDropdownOpen && (
-            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-4">
+            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2">
               {allPresetNames.map((name) => (
                 <div
                   key={name}
                   className={clsx(
-                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center overflow-hidden rounded p-1 whitespace-nowrap text-white hover:text-black",
+                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
                     name === currentPresetName && "text-zzzYellow"
                   )}
                   onClick={async () => await handleSwitchPreset(name)}
@@ -114,11 +114,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             </div>
           )}
           <div className="flex items-center gap-2">
-            <button className="chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
+            <button className="zzzButton chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
               <FaPlus />
             </button>
             <button
-              className="chess-background flex items-center justify-around gap-2"
+              className="zzzButton chess-background flex items-center justify-around gap-2"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <span className="font-bold whitespace-nowrap">{currentPresetName}</span>

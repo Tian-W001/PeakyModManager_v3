@@ -166,10 +166,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 flex size-full flex-col items-center justify-center gap-4 overflow-hidden bg-black/60"
-        id="modal-overlay"
-      >
+      <div className="modal-overlay" id="modal-overlay">
         <div
           className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
@@ -195,15 +192,15 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
                 {localModInfo.coverImage ? (
                   <>
-                    <button onClick={handleRemoveCover} className="chess-background">
+                    <button onClick={handleRemoveCover} className="zzzButton chess-background">
                       {t("modDetails.removeCover")}
                     </button>
-                    <button onClick={handleSetCover} className="chess-background">
+                    <button onClick={handleSetCover} className="zzzButton chess-background">
                       {t("modDetails.changeCover")}
                     </button>
                   </>
                 ) : (
-                  <button onClick={handleSetCover} className="chess-background">
+                  <button onClick={handleSetCover} className="zzzButton chess-background">
                     {t("modDetails.setCover")}
                   </button>
                 )}
@@ -269,17 +266,17 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           </div>
         </div>
         <div className="flex w-[70%] flex-row items-center justify-between gap-4" id="outside-buttons-container">
-          <button onClick={handleDeleteMod} className="chess-background">
+          <button onClick={handleDeleteMod} className="zzzButton chess-background">
             {t("modDetails.deleteMod")}
           </button>
           <div className="flex flex-row gap-4">
-            <button onClick={handleAutofill} className="chess-background">
+            <button onClick={handleAutofill} className="zzzButton chess-background">
               {t("modDetails.autofill")}
             </button>
-            <button onClick={handleOpenModFolder} className="chess-background">
+            <button onClick={handleOpenModFolder} className="zzzButton chess-background">
               {t("modDetails.openModFolder")}
             </button>
-            <button onClick={saveModInfoChanges} className="chess-background">
+            <button onClick={saveModInfoChanges} className="zzzButton chess-background">
               {t("common.save")}
             </button>
           </div>

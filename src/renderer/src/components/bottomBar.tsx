@@ -33,14 +33,14 @@ const BottomBar = ({ className }: { className?: string }) => {
   return (
     <>
       <div className={clsx("flex items-center justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
-        <button className="chess-background w-50" onClick={() => setIsSettingsModalOpen(true)}>
+        <button className="zzzButton chess-background w-50" onClick={() => setIsSettingsModalOpen(true)}>
           {t("common.settings")}
         </button>
-        <button className="chess-background w-50" onClick={handleOnClickRefresh}>
+        <button className="zzzButton chess-background w-50" onClick={handleOnClickRefresh}>
           {t("common.refresh")}
         </button>
 
-        <button className="chess-background w-50 overflow-hidden" onClick={handleApplyChanges}>
+        <button className="zzzButton chess-background w-50 overflow-hidden" onClick={handleApplyChanges}>
           {getApplyButtonText()}
         </button>
       </div>
