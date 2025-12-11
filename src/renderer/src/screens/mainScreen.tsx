@@ -12,7 +12,7 @@ const MainScreen: React.FC = () => {
 
   return (
     <div
-      className="flex h-screen w-screen flex-col bg-[url('@renderer/assets/zzz_site_background.webp')]"
+      className="relative flex h-screen w-screen flex-col overflow-hidden before:absolute before:inset-0 before:-z-10 before:scale-104 before:bg-[url('@renderer/assets/wallpapers/zzz_wallpaper_0.jpg')] before:bg-cover before:blur-sm"
       id="main-screen"
     >
       <div className="flex min-h-0 flex-1 flex-row" id="content-area">
