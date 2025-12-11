@@ -5,7 +5,7 @@
     "save": "Save",
     "close": "Close",
     "delete": "Delete",
-    "remove": "Remove",
+    "discard": "Discard",
     "edit": "Edit",
     "add": "Add",
     "refresh": "Refresh",
@@ -48,7 +48,8 @@
     "managePresets": "Manage Presets",
     "newPresetName": "New Preset Name",
     "pressEnterToAdd": "Press Enter to add a new preset",
-    "deleteConfirm": "Are you sure you want to delete preset \"{{name}}\"?"
+    "deleteConfirm": "Are you sure you want to delete preset \"{{name}}\"?",
+    "UnsavedChanges": "You have unsaved changes, save before switching presets?"
   },
   "modCard": {
     "noDescription": "No description"

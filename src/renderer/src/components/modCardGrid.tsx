@@ -18,9 +18,11 @@ import { addModInfo } from "@renderer/redux/slices/librarySlice";
 import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
+import { useTranslation } from "react-i18next";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const diffList = useAppSelector(selectDiffList);
@@ -71,11 +73,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     };
     // if diffList is not empty, show alert
     if (diffList && Object.keys(diffList).length > 0) {
-      showAlert("You have unsaved changes. Please apply or discard them before switching presets.", undefined, [
-        { name: "Cancel", f: hideAlert },
-        { name: "Discard", f: switchPreset },
+      showAlert(t("presets.UnsavedChanges"), undefined, [
+        { name: t("common.cancel"), f: hideAlert },
+        { name: t("common.discard"), f: switchPreset },
         {
-          name: "Apply",
+          name: t("common.apply"),
           f: async () => {
             await applyChanges();
             await switchPreset();
