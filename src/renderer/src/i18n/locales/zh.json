@@ -10,11 +10,13 @@
     "add": "添加",
     "refresh": "刷新",
     "settings": "设置",
-    "apply": "应用"
+    "apply": "应用",
+    "select": "选择"
   },
   "settings": {
     "title": "设置",
     "language": "语言",
+    "wallpaper": "壁纸",
     "libraryPath": "库路径",
     "targetPath": "目标路径",
     "clickToSetPath": "点击设置路径",
@@ -28,7 +30,8 @@
     "restoreSuccess": "预设恢复成功！",
     "restoreFail": "恢复预设失败或未找到备份文件。",
     "testAlert": "测试弹窗",
-    "testAlertMessage": "这是一个测试弹窗！"
+    "testAlertMessage": "这是一个测试弹窗！",
+    "wallpaperTooltip": "双击应用新壁纸"
   },
   "modDetails": {
     "description": "描述",

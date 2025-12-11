@@ -1,4 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
+import { useEffect, useRef } from "react";
+import IconInfo from "@renderer/assets/icons/IconInfo.png";
 import {
   loadLibrary,
   selectLibraryPath,
@@ -13,10 +15,14 @@ import {
   setCurrentPreset,
   clearDiffList,
 } from "@renderer/redux/slices/presetsSlice";
+import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
 import Exit from "@renderer/components/Exit";
+import IconHookBig from "@renderer/assets/icons/IconHookBig.png";
+
+const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -24,8 +30,13 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const targetPath = useAppSelector(selectTargetPath);
   const presets = useAppSelector(selectAllPresets);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
+  const currentWallpaper = useAppSelector(selectCurrentWallpaper);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const { t, i18n } = useTranslation();
+
+  const handleSaveWallpaper = (selectedWallpaper: string) => {
+    dispatch(setCurrentWallpaper(selectedWallpaper));
+  };
 
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
@@ -102,6 +113,25 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     showAlert(t("settings.testAlert"), t("settings.testAlertMessage"), [{ name: t("common.confirm"), f: hideAlert }]);
   };
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const handleWheel = (e: WheelEvent) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          container.scrollLeft += e.deltaY;
+        }
+      };
+      container.addEventListener("wheel", handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener("wheel", handleWheel);
+      };
+    }
+    return;
+  }, []);
+
   return (
     <>
       <div className="modal-overlay" id="modal-overlay">
@@ -133,6 +163,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
               ]}
               className="px-3 py-1 shadow-[1px_1px_1px_#fff2]"
             />
+
             {/* Library Path */}
             <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]">
               <span className="whitespace-nowrap">{t("settings.libraryPath")}</span>
@@ -167,6 +198,37 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 {t("settings.testAlert")}
               </button>
               <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>
+            </div>
+
+            {/* Wallpaper Selection */}
+            <div className="flex flex-col gap-1">
+              <div
+                ref={scrollContainerRef}
+                className="no-scrollbar flex flex-row items-center gap-2 overflow-x-scroll rounded-3xl border-8 bg-black shadow-[1px_1px_1px_#fff2]"
+              >
+                {Object.entries(wallpapers).map(([path, url]) => {
+                  const filename = path.split("/").pop() || "";
+                  const isCurrent = currentWallpaper === filename;
+                  return (
+                    <div
+                      key={path}
+                      className={`hover:border-zzzYellow relative aspect-video w-48 shrink-0 cursor-pointer overflow-hidden rounded-2xl border-3 transition-all`}
+                      onDoubleClick={() => handleSaveWallpaper(filename)}
+                    >
+                      <img src={url as string} alt={filename} className="h-full w-full object-cover" />
+                      {isCurrent && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                          <img src={IconHookBig} className="h-12 w-12" />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="flex items-center gap-1 pl-3 text-sm text-[#999]">
+                <img src={IconInfo} alt="Info" className="mr-1 inline-block h-4 w-4" />
+                {t("settings.wallpaperTooltip")}
+              </p>
             </div>
           </div>
         </div>

@@ -10,11 +10,13 @@
     "add": "Add",
     "refresh": "Refresh",
     "settings": "Settings",
-    "apply": "Apply"
+    "apply": "Apply",
+    "select": "Select"
   },
   "settings": {
     "title": "Settings",
     "language": "Language",
+    "wallpaper": "Wallpaper",
     "libraryPath": "Library Path",
     "targetPath": "Target Path",
     "clickToSetPath": "Click to set path",
@@ -28,7 +30,8 @@
     "restoreSuccess": "Presets restored successfully!",
     "restoreFail": "Failed to restore presets or backup file not found.",
     "testAlert": "Test Alert",
-    "testAlertMessage": "This is a test alert!"
+    "testAlertMessage": "This is a test alert!",
+    "wallpaperTooltip": "Double-click to apply new wallpaper"
   },
   "modDetails": {
     "description": "Description",
