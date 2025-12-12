@@ -3,14 +3,9 @@ import { app, shell, BrowserWindow, protocol } from "electron";
 import { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import log from "electron-log/main";
 
 import "./handlers/libraryHandler";
-import {
-  explorerImportProtocolScheme,
-  handleExplorerImport,
-  registerExplorerImportProtocol,
-} from "./protocols/explorerImportProtocol";
+import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 
 const installExtensions = async () => {
@@ -79,13 +74,19 @@ const gotlock = app.requestSingleInstanceLock();
 if (!gotlock) {
   app.quit();
 } else {
-  app.on("second-instance", (_event, argv) => {
-    const url = argv.find((a) => a.startsWith("peakymodmanager://"));
-    log.info("Second instance with URL:", url);
-    if (url && mainWindow) {
+  // app.on("second-instance", (_event, argv) => {
+  //   const url = argv.find((a) => a.startsWith("peakymodmanager://"));
+  //   log.info("Second instance with URL:", url);
+  //   if (url && mainWindow) {
+  //     if (mainWindow.isMinimized()) mainWindow.restore();
+  //     mainWindow.focus();
+  //     handleExplorerImport(url, mainWindow);
+  //   }
+  app.on("second-instance", () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
-      handleExplorerImport(url, mainWindow);
     }
   });
 }

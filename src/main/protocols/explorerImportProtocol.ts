@@ -36,7 +36,7 @@ export const registerExplorerImportProtocol = (mainWindow: BrowserWindow) => {
   }
 };
 
-export const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
+const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
   log.info("Received URL:", url);
   try {
     const data = url.split("data=")[1];
