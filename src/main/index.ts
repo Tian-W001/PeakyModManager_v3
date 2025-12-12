@@ -1,10 +1,10 @@
 import "./setup";
 import { app, shell, BrowserWindow, protocol } from "electron";
 import { join } from "path";
+import icon from "../../resources/icon.png?asset";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import log from "electron-log/main";
-import { installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
-import icon from "../../resources/icon.png?asset";
+
 import "./handlers/libraryHandler";
 import {
   explorerImportProtocolScheme,
@@ -12,6 +12,18 @@ import {
   registerExplorerImportProtocol,
 } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
+
+const installExtensions = async () => {
+  const installer = await import("electron-devtools-installer");
+  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  return installer
+    .default(
+      extensions.map((name) => installer[name]),
+      { forceDownload }
+    )
+    .catch(console.log);
+};
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -21,14 +33,15 @@ app.on("window-all-closed", () => {
   }
 });
 
-function createWindow(): void {
+const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1300,
     height: 720,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
+    title: "PeakyModManager_v3",
+    icon,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
@@ -58,7 +71,7 @@ function createWindow(): void {
   // Register protocol handler after window is created
   registerExplorerImportProtocol(mainWindow);
   registerModImageProtocol();
-}
+};
 
 protocol.registerSchemesAsPrivileged([explorerImportProtocolScheme, modImageProtocolScheme]);
 
@@ -80,13 +93,14 @@ if (!gotlock) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-    .then(([redux, react]) => console.log(`Added Extensions:  ${redux.name}, ${react.name}`))
-    .catch((err) => console.log("An error occurred: ", err));
-
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.peaky.peakymodmanager");
+
+  // Install devtools extensions in dev mode
+  if (is.dev && !app.isPackaged) {
+    await installExtensions();
+  }
 
   // Set as default protocol client for peakymodmanager://
   if (process.defaultApp) {
