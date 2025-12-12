@@ -86,7 +86,7 @@ app.whenReady().then(() => {
     .catch((err) => console.log("An error occurred: ", err));
 
   // Set app user model id for windows
-  electronApp.setAppUserModelId("com.electron");
+  electronApp.setAppUserModelId("com.peaky.peakymodmanager");
 
   // Set as default protocol client for peakymodmanager://
   if (process.defaultApp) {
