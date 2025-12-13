@@ -1,5 +1,5 @@
 import axios from "axios";
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import unzipper from "unzipper";
@@ -26,14 +26,16 @@ export const explorerImportProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerExplorerImportProtocol = (mainWindow: BrowserWindow) => {
-  // Windows: 检查是否通过 protocol 启动
-  const args = process.argv;
-  log.info("Process args:", args);
-  const protocolUrl = args.find((a) => a.startsWith("peakymodmanager://"));
-  if (protocolUrl) {
-    log.info("Found protocol URL in args:", protocolUrl);
-    handleExplorerImport(protocolUrl, mainWindow);
-  }
+  ipcMain.once("renderer-ready", () => {
+    // Windows: 检查是否通过 protocol 启动
+    const args = process.argv;
+    log.info("Process args:", args);
+    const protocolUrl = args.find((a) => a.startsWith("peakymodmanager://"));
+    if (protocolUrl) {
+      log.info("Found protocol URL in args:", protocolUrl);
+      handleExplorerImport(protocolUrl, mainWindow);
+    }
+  });
 };
 
 const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
@@ -70,12 +72,25 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
     for (const link of payload.downloadLinks) {
       log.info(`Downloading from: ${link.href}`);
       const fileDest = path.join(modDest, link.filename);
-      const res = await axios.get(link.href, { responseType: "arraybuffer" });
+      const res = await axios.get(link.href, {
+        responseType: "arraybuffer",
+        onDownloadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            mainWindow.webContents.send("download-mod-progress", {
+              modName: payload.modName,
+              progress: progress,
+            });
+          }
+        },
+      });
       if (res.status !== 200) {
         log.error(`Failed to download from ${link.href}: ${res.statusText}`);
         throw new Error(`Failed to download ${payload.modName}`);
       }
       await fs.writeFile(fileDest, res.data);
+      mainWindow.webContents.send("download-mod-finish", { modName: payload.modName });
+
       // unzip
       if (fileDest.endsWith(".zip")) {
         mainWindow.webContents.send("unzipping-mod", {
@@ -87,6 +102,7 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
           .pipe(unzipper.Extract({ path: modDest }))
           .promise();
         await fs.remove(fileDest);
+        mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
       }
     }
 
