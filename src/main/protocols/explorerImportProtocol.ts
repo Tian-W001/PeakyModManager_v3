@@ -36,6 +36,14 @@ export const registerExplorerImportProtocol = (mainWindow: BrowserWindow) => {
       handleExplorerImport(protocolUrl, mainWindow);
     }
   });
+  app.on("second-instance", (_event, argv) => {
+    // check if launched with protocol URL
+    const url = argv.find((a) => a.startsWith("peakymodmanager://"));
+    log.info("Second instance with URL:", url);
+    if (url && mainWindow) {
+      handleExplorerImport(url, mainWindow);
+    }
+  });
 };
 
 const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
@@ -103,6 +111,7 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
           .promise();
         await fs.remove(fileDest);
         mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
+        mainWindow.webContents.send("import-mod", modDest);
       }
     }
 
