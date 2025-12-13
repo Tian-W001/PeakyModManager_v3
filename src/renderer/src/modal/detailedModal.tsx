@@ -166,7 +166,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   return (
     <>
-      <div className="modal-overlay" id="modal-overlay">
+      <div className="modal-overlay gap-2" id="modal-overlay">
         <div
           className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
