@@ -91,7 +91,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
         ref={ref}
         onClick={handleOnClick}
         onContextMenu={handleOnRightClick}
-        className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-[350px] flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333]`}
+        className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-[350px] flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333] hover:[&>div]:h-[21%]`}
       >
         {entry?.isIntersecting && (
           <>
@@ -99,10 +99,10 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
               id="mod-card-cover"
               src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
               alt={modInfo.name}
-              className="max-h-[55%] min-h-[55%] w-full object-cover"
+              className="w-full flex-1 object-cover"
               onError={(e) => (e.currentTarget.src = defaultCover)}
             />
-            <div id="mod-card-info-container" className="flex min-h-0 w-full flex-1 flex-col">
+            <div id="mod-card-info-container" className="flex h-[50%] min-h-0 w-full flex-col transition-all ease-in">
               <div id="mod-card-info-header" className="flex flex-row items-center">
                 <div id="mod-card-avatar" className="relative flex flex-col items-center justify-start">
                   <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
