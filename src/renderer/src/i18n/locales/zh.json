@@ -13,6 +13,12 @@
     "apply": "应用",
     "select": "选择"
   },
+  "download": {
+    "downloading": "正在下载 {{modName}}...",
+    "unzipping": "正在解压 {{modName}}...",
+    "success": "成功安装 {{modName}}",
+    "error": "下载 {{modName}} 失败: {{error}}"
+  },
   "settings": {
     "title": "设置",
     "language": "语言",

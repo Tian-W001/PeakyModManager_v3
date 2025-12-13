@@ -13,6 +13,12 @@
     "apply": "Apply",
     "select": "Select"
   },
+  "download": {
+    "downloading": "Downloading {{modName}}...",
+    "unzipping": "Unzipping {{modName}}...",
+    "success": "Successfully installed {{modName}}",
+    "error": "Error downloading {{modName}}: {{error}}"
+  },
   "settings": {
     "title": "Settings",
     "language": "Language",
