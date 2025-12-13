@@ -116,6 +116,9 @@ export const presetsSlice = createSlice({
           presetMods.splice(index, 1);
         }
       }
+      if (state.diffList[modName] !== undefined) {
+        delete state.diffList[modName];
+      }
     },
     addToDiffList: (state, action: PayloadAction<DiffList>) => {
       const newDiffList = action.payload;
