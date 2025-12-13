@@ -45,7 +45,7 @@ const getBorderStyle = (modState: ModState) => {
     case "Enabled":
       return "outline-zzzYellow outline-4";
     case "Disabled":
-      return "outline-2";
+      return "outline-4 outline-black";
     case "WillEnable":
       return "outline-zzzYellow outline-dotted outline-4";
     case "WillDisable":
@@ -95,13 +95,15 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
       >
         {entry?.isIntersecting && (
           <>
-            <img
-              id="mod-card-cover"
-              src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
-              alt={modInfo.name}
-              className="w-full flex-1 object-cover"
-              onError={(e) => (e.currentTarget.src = defaultCover)}
-            />
+            <div className="w-full flex-1 overflow-hidden" id="mod-card-cover-container">
+              <img
+                id="mod-card-cover"
+                src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
+                alt={modInfo.name}
+                className="size-full flex-1 object-cover"
+                onError={(e) => (e.currentTarget.src = defaultCover)}
+              />
+            </div>
             <div id="mod-card-info-container" className="flex h-[50%] min-h-0 w-full flex-col transition-all ease-in">
               <div id="mod-card-info-header" className="flex flex-row items-center">
                 <div id="mod-card-avatar" className="relative flex flex-col items-center justify-start">
