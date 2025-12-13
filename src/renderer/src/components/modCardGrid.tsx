@@ -1,7 +1,7 @@
 import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
@@ -30,6 +30,27 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditPresetsModalOpen, setIsEditPresetsModalOpen] = useState(false);
 
+  const importMod = useCallback(
+    async (filePath: string) => {
+      const newModInfo = await window.electron.ipcRenderer.invoke("import-mod", filePath);
+      console.log("Imported mod info:", newModInfo);
+      if (newModInfo) {
+        dispatch(addModInfo(newModInfo));
+        dispatch(setSelectedMenuItem("Unknown"));
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("import-mod", (_event, filePath) => {
+      importMod(filePath);
+    });
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners("import-mod");
+    };
+  }, [importMod]);
+
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
@@ -44,12 +65,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       const filePath = window.api.getFilePath(file);
       console.log("Dropped folder:", filePath);
       if (filePath) {
-        const newModInfo = await window.electron.ipcRenderer.invoke("import-mod", filePath);
-        console.log("Imported mod info:", newModInfo);
-        if (newModInfo) {
-          dispatch(addModInfo(newModInfo));
-          dispatch(setSelectedMenuItem("Unknown"));
-        }
+        await importMod(filePath);
       }
     }
   };
