@@ -10,6 +10,7 @@ import ZzzSelect from "../components/zzzSelect";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import Exit from "@renderer/components/Exit";
+import ZzzButton from "@renderer/components/zzzButton";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -192,17 +193,17 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
                 {localModInfo.coverImage ? (
                   <>
-                    <button onClick={handleRemoveCover} className="zzzButton chess-background">
+                    <ZzzButton onClick={handleRemoveCover} className="w-40">
                       {t("modDetails.removeCover")}
-                    </button>
-                    <button onClick={handleSetCover} className="zzzButton chess-background">
+                    </ZzzButton>
+                    <ZzzButton onClick={handleSetCover} className="w-40">
                       {t("modDetails.changeCover")}
-                    </button>
+                    </ZzzButton>
                   </>
                 ) : (
-                  <button onClick={handleSetCover} className="zzzButton chess-background">
+                  <ZzzButton onClick={handleSetCover} className="w-40">
                     {t("modDetails.setCover")}
-                  </button>
+                  </ZzzButton>
                 )}
               </div>
             </div>
@@ -266,19 +267,19 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
           </div>
         </div>
         <div className="flex w-[70%] flex-row items-center justify-between gap-4" id="outside-buttons-container">
-          <button onClick={handleDeleteMod} className="zzzButton chess-background">
+          <ZzzButton type="FairyWarning" onClick={handleDeleteMod}>
             {t("modDetails.deleteMod")}
-          </button>
+          </ZzzButton>
           <div className="flex flex-row gap-4">
-            <button onClick={handleAutofill} className="zzzButton chess-background">
+            <ZzzButton type="FairyAI" onClick={handleAutofill}>
               {t("modDetails.autofill")}
-            </button>
-            <button onClick={handleOpenModFolder} className="zzzButton chess-background">
+            </ZzzButton>
+            <ZzzButton type="Track" onClick={handleOpenModFolder}>
               {t("modDetails.openModFolder")}
-            </button>
-            <button onClick={saveModInfoChanges} className="zzzButton chess-background">
+            </ZzzButton>
+            <ZzzButton type="Save" onClick={saveModInfoChanges}>
               {t("common.save")}
-            </button>
+            </ZzzButton>
           </div>
         </div>
       </div>

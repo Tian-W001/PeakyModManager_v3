@@ -6,12 +6,12 @@ import {
   selectAllPresetNames,
   selectCurrentPresetName,
 } from "@renderer/redux/slices/presetsSlice";
-import { FaTrash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import Exit from "@renderer/components/Exit";
-import IconHook from "@renderer/assets/icons/IconHook.png";
-import IconInfo from "@renderer/assets/icons/IconInfo.png";
+import IconHook from "@renderer/assets/icons/Hook.png";
+import IconInfo from "@renderer/assets/icons/Info.png";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
+import ZzzButton from "@renderer/components/zzzButton";
 
 const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -87,9 +87,7 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
                 </span>
                 {name !== "Default Preset" && (
                   <div className="absolute flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button onClick={() => handleRemovePreset(name)} className="zzzButton chess-background">
-                      <FaTrash />
-                    </button>
+                    <ZzzButton type="Cancel" onClick={() => handleRemovePreset(name)} />
                   </div>
                 )}
               </div>

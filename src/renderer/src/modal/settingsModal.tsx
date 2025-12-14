@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { useEffect, useRef } from "react";
-import IconInfo from "@renderer/assets/icons/IconInfo.png";
+import IconInfo from "@renderer/assets/icons/Info.png";
 import {
   loadLibrary,
   selectLibraryPath,
@@ -20,7 +20,8 @@ import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
 import Exit from "@renderer/components/Exit";
-import IconHookBig from "@renderer/assets/icons/IconHookBig.png";
+import IconHookBig from "@renderer/assets/icons/HookBig.png";
+import ZzzButton from "@renderer/components/zzzButton";
 
 const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
 
@@ -141,7 +142,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
         >
           <div className="flex h-16 items-center justify-between bg-black/20 px-4 py-2" id="modal-header">
             <div className="title-decorator flex min-w-0 items-center gap-2" id="title-wrapper">
-              <p className="text-2xl font-bold text-white">{t("settings.title")}</p>
+              <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
             </div>
             <Exit
               className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
@@ -188,15 +189,15 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
             {/* Backup Button */}
             <div className="flex flex-row items-center gap-4">
-              <button onClick={handleBackupPresets} className="zzzButton chess-background w-40">
+              <ZzzButton type="Save" onClick={handleBackupPresets}>
                 {t("settings.backup")}
-              </button>
-              <button onClick={handleRestorePresets} className="zzzButton chess-background w-40">
+              </ZzzButton>
+              <ZzzButton type="Refresh" onClick={handleRestorePresets}>
                 {t("settings.restore")}
-              </button>
-              <button onClick={handleOnClickTestButton} className="zzzButton chess-background w-40">
+              </ZzzButton>
+              <ZzzButton type="Info" onClick={handleOnClickTestButton}>
                 {t("settings.testAlert")}
-              </button>
+              </ZzzButton>
               <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>
             </div>
 

@@ -2,7 +2,6 @@ import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import clsx from "clsx";
 import { useState, useEffect, useCallback } from "react";
-import { FaPlus } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   applyMods,
@@ -20,6 +19,7 @@ import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
+import ZzzButton from "./zzzButton";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -137,19 +137,17 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             </div>
           )}
           <div className="flex items-center gap-2">
-            <button className="zzzButton chess-background" onClick={() => setIsEditPresetsModalOpen(true)}>
-              <FaPlus />
-            </button>
-            <button
-              className="zzzButton chess-background flex items-center justify-around gap-2"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              <span className="font-bold whitespace-nowrap">{currentPresetName}</span>
-              <FaCaretUp
-                className="transition-transform"
-                style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-              />
-            </button>
+            <ZzzButton type="Add" onClick={() => setIsEditPresetsModalOpen(true)} />
+
+            <ZzzButton onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="w-auto max-w-70">
+              <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
+                <span className="truncate">{currentPresetName}</span>
+                <FaCaretUp
+                  className="transition-all"
+                  style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
+              </div>
+            </ZzzButton>
           </div>
         </div>
         {isEditPresetsModalOpen &&

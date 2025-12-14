@@ -1,3 +1,4 @@
+import ZzzButton from "@renderer/components/zzzButton";
 import React from "react";
 
 export interface AlertAction {
@@ -21,9 +22,9 @@ const AlertModal: React.FC<AlertModalProps> = ({ title, message, actions }) => {
 
         <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-[calc(50%+4px)] gap-4 *:italic">
           {actions.map((action, index) => (
-            <button key={index} onClick={action.f} className="zzzButton chess-background w-50">
+            <ZzzButton key={index} type="Ok" onClick={action.f}>
               {action.name}
-            </button>
+            </ZzzButton>
           ))}
         </div>
       </div>

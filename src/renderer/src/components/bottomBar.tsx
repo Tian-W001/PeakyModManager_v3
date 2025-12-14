@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import SettingsModal from "../modal/settingsModal";
 import { useTranslation } from "react-i18next";
 import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
+import ZzzButton from "./zzzButton";
 
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
@@ -33,16 +34,19 @@ const BottomBar = ({ className }: { className?: string }) => {
   return (
     <>
       <div className={clsx("flex items-center justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
-        <button className="zzzButton chess-background w-50" onClick={() => setIsSettingsModalOpen(true)}>
+        <ZzzButton type="Setting" onClick={() => setIsSettingsModalOpen(true)}>
           {t("common.settings")}
-        </button>
-        <button className="zzzButton chess-background w-50" onClick={handleOnClickRefresh}>
+        </ZzzButton>
+        <ZzzButton type="Refresh" onClick={handleOnClickRefresh}>
           {t("common.refresh")}
-        </button>
+        </ZzzButton>
+        <ZzzButton type="Ok" className="w-50">
+          Test
+        </ZzzButton>
 
-        <button className="zzzButton chess-background w-50 overflow-hidden" onClick={handleApplyChanges}>
+        <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
           {getApplyButtonText()}
-        </button>
+        </ZzzButton>
       </div>
       {isSettingsModalOpen &&
         createPortal(<SettingsModal onClose={() => setIsSettingsModalOpen(false)} />, document.body)}
