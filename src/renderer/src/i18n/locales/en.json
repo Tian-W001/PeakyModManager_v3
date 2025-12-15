@@ -49,7 +49,7 @@
     "changeCover": "Change Cover",
     "setCover": "Set Cover",
     "deleteMod": "Delete Mod",
-    "openModFolder": "Open Mod Folder",
+    "openModFolder": "Open Folder",
     "autofill": "Autofill",
     "deleteConfirm": "Are you sure you want to delete {{name}}?"
   },

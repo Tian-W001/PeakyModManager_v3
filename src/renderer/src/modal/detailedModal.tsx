@@ -250,7 +250,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         </div>
         <div className="flex w-[70%] flex-row items-center justify-between gap-4" id="outside-buttons-container">
           <ZzzButton type="FairyWarning" onClick={handleDeleteMod}>
-            {t("modDetails.deleteMod")}
+            {t("common.delete")}
           </ZzzButton>
           <div className="flex flex-row gap-4">
             <ZzzButton type="FairyAI" onClick={handleAutofill}>

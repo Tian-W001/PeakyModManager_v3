@@ -49,7 +49,7 @@
     "changeCover": "更换封面",
     "setCover": "设置封面",
     "deleteMod": "删除模组",
-    "openModFolder": "打开模组文件夹",
+    "openModFolder": "打开文件夹",
     "autofill": "自动填充",
     "deleteConfirm": "确定要删除 {{name}} 吗？"
   },
