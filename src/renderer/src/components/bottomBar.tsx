@@ -40,10 +40,6 @@ const BottomBar = ({ className }: { className?: string }) => {
         <ZzzButton type="Refresh" onClick={handleOnClickRefresh}>
           {t("common.refresh")}
         </ZzzButton>
-        <ZzzButton type="Ok" className="w-50">
-          Test
-        </ZzzButton>
-
         <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
           {getApplyButtonText()}
         </ZzzButton>
