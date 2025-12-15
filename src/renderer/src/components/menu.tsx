@@ -33,7 +33,7 @@ const Menu = ({ className }: { className?: string }) => {
             const isSelected = menuItem === selectedMenuItem;
             return (
               <div
-                className={`relative -mt-1 flex h-16 w-full shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-md text-center text-xl font-extrabold italic before:absolute before:top-0 before:h-1 before:w-full before:rounded-full after:absolute after:bottom-0 after:h-1 after:w-full after:rounded-full first:mt-0 ${isSelected ? "bg-zzzYellow z-50 text-black before:bg-[#2220] after:bg-[#2220]" : "z-0 bg-black text-white before:bg-[#222f] after:bg-[#222f]"}`}
+                className={`${!isSelected && "hover:text-zzzYellow"} relative -mt-1 flex h-16 w-full shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-md text-center text-xl font-extrabold italic before:absolute before:top-0 before:h-1 before:w-full before:rounded-full after:absolute after:bottom-0 after:h-1 after:w-full after:rounded-full first:mt-0 ${isSelected ? "bg-zzzYellow z-50 text-black before:bg-[#2220] after:bg-[#2220]" : "z-0 bg-black text-white before:bg-[#222f] after:bg-[#222f]"}`}
                 key={menuItem}
                 onClick={() => handleMenuItemClick(menuItem)}
               >

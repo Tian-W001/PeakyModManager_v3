@@ -37,7 +37,7 @@ const ZzzButton = ({ type, onClick, className, children }: ZzzButtonProps) => {
         )}
         onClick={onClick}
       >
-        <div className="chess-background absolute top-0 left-0 size-full overflow-hidden rounded-full bg-transparent inset-shadow-[1px_2px_1px_#fff3,0_0_0_4px_#333] group-hover:inset-shadow-[0_0_0_0_#0000]" />
+        <div className="chess-background absolute top-0 left-0 size-full overflow-hidden rounded-full bg-transparent inset-shadow-[1px_1px_2px_#fff3,0_0_0_4px_#333] group-hover:inset-shadow-[0_0_0_0_#0000]" />
         {type && (
           <div
             className={`aspect-square h-full rounded-full p-3 inset-ring-4 inset-ring-[#333] group-hover:inset-ring-0`}
