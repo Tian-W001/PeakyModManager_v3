@@ -25,17 +25,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     }));
   };
 
-  const handleModInfoBlur = (field: keyof ModInfo) => {
-    dispatch(
-      editModInfo({
-        modName: modInfo.name,
-        newModInfo: {
-          [field]: localModInfo[field],
-        },
-      })
-    );
-  };
-
   const saveModInfoChanges = () => {
     dispatch(
       editModInfo({
@@ -81,14 +70,12 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
       const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
       if (newCoverName) {
         handleModInfoChange("coverImage", newCoverName);
-        dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: newCoverName } }));
       }
     }
   };
 
   const handleRemoveCover = async () => {
     handleModInfoChange("coverImage", "");
-    dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: "" } }));
   };
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
@@ -114,7 +101,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
         const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
         if (newCoverName) {
           handleModInfoChange("coverImage", newCoverName);
-          dispatch(editModInfo({ modName: modInfo.name, newModInfo: { coverImage: newCoverName } }));
         }
       }
     }
@@ -159,7 +145,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
       if (Object.keys(updates).length > 0) {
         setLocalModInfo((prev) => ({ ...prev, ...updates }) as ModInfo);
-        dispatch(editModInfo({ modName: modInfo.name, newModInfo: updates }));
       }
     }
   };
@@ -228,7 +213,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 placeholder={t("modDetails.description")}
                 className="no-scrollbar min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
                 onChange={(e) => handleModInfoChange("description", e.target.value)}
-                onBlur={() => handleModInfoBlur("description")}
               />
               <ZzzSelect
                 label={t("modDetails.modType")}
@@ -259,7 +243,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                   placeholder={t("modDetails.unknownSource")}
                   value={localModInfo.source}
                   onChange={(e) => handleModInfoChange("source", e.target.value)}
-                  onBlur={() => handleModInfoBlur("source")}
                 />
               </div>
             </div>
