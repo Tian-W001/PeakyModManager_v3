@@ -33,16 +33,20 @@ const BottomBar = ({ className }: { className?: string }) => {
 
   return (
     <>
-      <div className={clsx("flex items-center justify-end gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
-        <ZzzButton type="Setting" onClick={() => setIsSettingsModalOpen(true)}>
-          {t("common.settings")}
-        </ZzzButton>
-        <ZzzButton type="Refresh" onClick={handleOnClickRefresh}>
-          {t("common.refresh")}
-        </ZzzButton>
-        <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
-          {getApplyButtonText()}
-        </ZzzButton>
+      <div className={clsx("flex items-center justify-between gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
+        <div className="flex justify-center gap-4">
+          <ZzzButton type="Setting" onClick={() => setIsSettingsModalOpen(true)}>
+            {t("common.settings")}
+          </ZzzButton>
+        </div>
+        <div className="flex justify-center gap-4">
+          <ZzzButton type="Refresh" onClick={handleOnClickRefresh}>
+            {t("common.refresh")}
+          </ZzzButton>
+          <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
+            {getApplyButtonText()}
+          </ZzzButton>
+        </div>
       </div>
       {isSettingsModalOpen &&
         createPortal(<SettingsModal onClose={() => setIsSettingsModalOpen(false)} />, document.body)}

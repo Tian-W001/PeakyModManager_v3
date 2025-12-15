@@ -261,10 +261,10 @@ const loadLibrary = async () => {
   }
 };
 
-ipcMain.handle("open-mod-folder", async (_event, modName: string) => {
+ipcMain.handle("open-mod-folder", async (_event, modName?: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return;
-  const fullPath = path.resolve(libraryPath, modName);
+  const fullPath = modName ? path.resolve(libraryPath, modName) : libraryPath;
   await shell.openPath(fullPath);
 });
 
