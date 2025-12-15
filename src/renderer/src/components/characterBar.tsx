@@ -5,19 +5,8 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
 import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
 
-const imageNameList = [...characterNameList, "All"] as const;
-const imageModules = import.meta.glob("@renderer/assets/character_images/*.png", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-const characterImageMap: Record<string, string> = {};
-for (const path in imageModules) {
-  const characterName = path.split("/").pop()?.replace(".png", "") || "Unknown";
-  characterImageMap[characterName] = imageModules[path];
-}
-
-const getCharacterImageSrc = (character: Character | "All") => {
-  return characterImageMap[character] || characterImageMap["Unknown"];
+const getCharacterImagePath = (char: Character) => {
+  return new URL(`../assets/character_images/${char}.png`, import.meta.url).href;
 };
 
 const CharacterBar = ({ className }: { className?: string }) => {
@@ -51,17 +40,17 @@ const CharacterBar = ({ className }: { className?: string }) => {
           id="character-bar-images-container"
           onWheel={handleScroll}
         >
-          {imageNameList.toReversed().map((character) => (
+          {characterNameList.toReversed().map((char) => (
             <div
-              key={character}
+              key={char}
               className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
               id="character-bar-image-container"
-              onClick={() => handleSelectCharacter(character)}
+              onClick={() => handleSelectCharacter(char)}
             >
-              {selectedCharacter === character && (
+              {selectedCharacter === char && (
                 <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />
               )}
-              <img src={getCharacterImageSrc(character)} alt={character} className="h-full skew-x-[25.3deg]" />
+              <img src={getCharacterImagePath(char)} alt={char} className="h-full skew-x-[25.3deg]" />
             </div>
           ))}
         </div>
