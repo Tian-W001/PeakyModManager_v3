@@ -1,18 +1,12 @@
-import ZzzButton from "@renderer/components/zzzButton";
 import React from "react";
-
-export interface AlertAction {
-  name: string;
-  f: () => void | Promise<void>;
-}
 
 interface AlertModalProps {
   title: string;
   message?: string;
-  actions: AlertAction[];
+  children?: React.ReactNode;
 }
 
-const AlertModal: React.FC<AlertModalProps> = ({ title, message, actions }) => {
+const AlertModal: React.FC<AlertModalProps> = ({ title, message, children }) => {
   return (
     <div className="modal-overlay" id="modal-overlay">
       <div className="relative h-[3px] w-full bg-white/20" />
@@ -21,11 +15,7 @@ const AlertModal: React.FC<AlertModalProps> = ({ title, message, actions }) => {
         {message && <p className="mt-2 font-bold text-[#aaa]">{message}</p>}
 
         <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-[calc(50%+4px)] gap-4 *:italic">
-          {actions.map((action, index) => (
-            <ZzzButton key={index} type="Ok" onClick={action.f}>
-              {action.name}
-            </ZzzButton>
-          ))}
+          {children}
         </div>
       </div>
       <div className="relative h-[3px] w-full bg-white/20" />

@@ -29,16 +29,24 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleRemovePreset = (name: string) => {
-    showAlert(t("presets.deleteConfirm", { name }), undefined, [
-      { name: t("common.cancel"), f: hideAlert },
-      {
-        name: t("common.confirm"),
-        f: () => {
-          dispatch(removePreset(name));
-          hideAlert();
-        },
-      },
-    ]);
+    showAlert(
+      t("presets.deleteConfirm", { name }),
+      undefined,
+      <>
+        <ZzzButton type="Cancel" onClick={hideAlert}>
+          {t("common.cancel")}
+        </ZzzButton>
+        <ZzzButton
+          type="Ok"
+          onClick={() => {
+            dispatch(removePreset(name));
+            hideAlert();
+          }}
+        >
+          {t("common.confirm")}
+        </ZzzButton>
+      </>
+    );
   };
 
   return (

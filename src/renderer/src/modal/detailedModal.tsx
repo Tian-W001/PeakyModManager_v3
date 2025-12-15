@@ -51,16 +51,18 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
       }
       hideAlert();
     };
-    showAlert(t("modDetails.deleteConfirm", { name: modInfo.name }), undefined, [
-      {
-        name: t("common.cancel"),
-        f: hideAlert,
-      },
-      {
-        name: t("common.confirm"),
-        f: deleteMod,
-      },
-    ]);
+    showAlert(
+      t("modDetails.deleteConfirm", { name: modInfo.name }),
+      undefined,
+      <>
+        <ZzzButton type="Cancel" onClick={hideAlert}>
+          {t("common.cancel")}
+        </ZzzButton>
+        <ZzzButton type="Ok" onClick={deleteMod}>
+          {t("common.confirm")}
+        </ZzzButton>
+      </>
+    );
   };
 
   const handleSetCover = async () => {

@@ -1,5 +1,6 @@
 import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
+import ZzzButton from "./zzzButton";
 import clsx from "clsx";
 import { useState, useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
@@ -19,7 +20,6 @@ import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
-import ZzzButton from "./zzzButton";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -90,17 +90,27 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     };
     // if diffList is not empty, show alert
     if (diffList && Object.keys(diffList).length > 0) {
-      showAlert(t("presets.UnsavedChanges"), undefined, [
-        { name: t("common.cancel"), f: hideAlert },
-        { name: t("common.discard"), f: switchPreset },
-        {
-          name: t("common.apply"),
-          f: async () => {
-            await applyChanges();
-            await switchPreset();
-          },
-        },
-      ]);
+      showAlert(
+        t("presets.UnsavedChanges"),
+        undefined,
+        <>
+          <ZzzButton type="Cancel" onClick={hideAlert}>
+            {t("common.cancel")}
+          </ZzzButton>
+          <ZzzButton type="FairyWarning" onClick={switchPreset}>
+            {t("common.discard")}
+          </ZzzButton>
+          <ZzzButton
+            type="Apply"
+            onClick={async () => {
+              await applyChanges();
+              await switchPreset();
+            }}
+          >
+            {t("presets.ApplyAndSwitch")}
+          </ZzzButton>
+        </>
+      );
       return;
     }
     await switchPreset();

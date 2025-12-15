@@ -64,9 +64,21 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const handleBackupPresets = async () => {
     const success = await window.electron.ipcRenderer.invoke("backup-presets", presets);
     if (success) {
-      showAlert(t("settings.backupSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
+      showAlert(
+        t("settings.backupSuccess"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.confirm")}
+        </ZzzButton>
+      );
     } else {
-      showAlert(t("settings.backupFail"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
+      showAlert(
+        t("settings.backupFail"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.confirm")}
+        </ZzzButton>
+      );
     }
   };
 
@@ -92,26 +104,52 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       }
     };
 
-    showAlert(t("settings.restoreConfirm"), undefined, [
-      { name: t("common.cancel"), f: hideAlert },
-      {
-        name: t("common.confirm"),
-        f: async () => {
-          const success = await restoreData();
-          hideAlert();
+    showAlert(
+      t("settings.restoreConfirm"),
+      undefined,
+      <>
+        <ZzzButton type="Cancel" onClick={hideAlert}>
+          {t("common.cancel")}
+        </ZzzButton>
+        <ZzzButton
+          type="Ok"
+          onClick={async () => {
+            const success = await restoreData();
+            hideAlert();
 
-          if (success) {
-            showAlert(t("settings.restoreSuccess"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
-          } else {
-            showAlert(t("settings.restoreFail"), undefined, [{ name: t("common.confirm"), f: hideAlert }]);
-          }
-        },
-      },
-    ]);
+            if (success) {
+              showAlert(
+                t("settings.restoreSuccess"),
+                undefined,
+                <ZzzButton type="Ok" onClick={hideAlert}>
+                  {t("common.confirm")}
+                </ZzzButton>
+              );
+            } else {
+              showAlert(
+                t("settings.restoreFail"),
+                undefined,
+                <ZzzButton type="Info" onClick={hideAlert}>
+                  {t("common.confirm")}
+                </ZzzButton>
+              );
+            }
+          }}
+        >
+          {t("common.confirm")}
+        </ZzzButton>
+      </>
+    );
   };
 
   const handleOnClickTestButton = () => {
-    showAlert(t("settings.testAlert"), t("settings.testAlertMessage"), [{ name: t("common.confirm"), f: hideAlert }]);
+    showAlert(
+      t("settings.testAlert"),
+      t("settings.testAlertMessage"),
+      <ZzzButton type="Info" onClick={hideAlert}>
+        {t("common.confirm")}
+      </ZzzButton>
+    );
   };
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);

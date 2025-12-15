@@ -57,7 +57,9 @@
     "managePresets": "管理预设",
     "newPresetName": "新预设名称",
     "pressEnterToAdd": "按回车键添加新预设",
-    "deleteConfirm": "确定要删除预设 \"{{name}}\" 吗？"
+    "deleteConfirm": "确定要删除预设 \"{{name}}\" 吗？",
+    "UnsavedChanges": "你有未保存的更改。你想保存这些更改并切换预设吗？",
+    "ApplyAndSwitch": "应用并切换"
   },
   "modCard": {
     "noDescription": "无描述"

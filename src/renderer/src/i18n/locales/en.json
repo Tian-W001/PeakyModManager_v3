@@ -58,7 +58,8 @@
     "newPresetName": "New Preset Name",
     "pressEnterToAdd": "Press Enter to add a new preset",
     "deleteConfirm": "Are you sure you want to delete preset \"{{name}}\"?",
-    "UnsavedChanges": "You have unsaved changes, save before switching presets?"
+    "UnsavedChanges": "You have unsaved changes, save before switching presets?",
+    "ApplyAndSwitch": "Apply & Switch"
   },
   "modCard": {
     "noDescription": "No description"
