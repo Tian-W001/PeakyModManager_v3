@@ -32,11 +32,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
   const importMod = useCallback(
     async (filePath: string) => {
-      const newModInfo = await window.electron.ipcRenderer.invoke("import-mod", filePath);
+      const newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo;
       console.log("Imported mod info:", newModInfo);
       if (newModInfo) {
         dispatch(addModInfo(newModInfo));
-        dispatch(setSelectedMenuItem("Unknown"));
+        dispatch(setSelectedMenuItem(newModInfo.modType ?? "Unknown"));
       }
     },
     [dispatch]

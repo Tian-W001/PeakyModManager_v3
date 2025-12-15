@@ -56,7 +56,6 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
     const deleteMod = async () => {
       const success = await window.electron.ipcRenderer.invoke("delete-mod", modInfo.name);
       if (success) {
-        //await dispatch(loadLibrary());
         dispatch(removeModInfo(modInfo.name));
         dispatch(removeModFromAllPresets(modInfo.name));
         onClose();
