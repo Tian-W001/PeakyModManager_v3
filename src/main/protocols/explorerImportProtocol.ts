@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import path from "path";
 import unzipper from "unzipper";
 import log from "electron-log/main";
+import { ModInfo } from "../../shared/modInfo";
 
 // Chrome Extention calls peakymodmanager://import?data=<base64(JSON)>
 
@@ -26,8 +27,9 @@ export const explorerImportProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerExplorerImportProtocol = (mainWindow: BrowserWindow) => {
+  // make sure renderer is ready to receive IPC messages
   ipcMain.once("renderer-ready", () => {
-    // Windows: 检查是否通过 protocol 启动
+    // Windows: check if launched with protocol URL
     const args = process.argv;
     log.info("Process args:", args);
     const protocolUrl = args.find((a) => a.startsWith("peakymodmanager://"));
@@ -130,6 +132,17 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
         log.warn("Error downloading cover image:", error);
       }
     }
+
+    // generate modinfo.json
+    const modInfoPath = path.join(modDest, "modinfo.json");
+    const modInfo: ModInfo = {
+      name: payload.modName,
+      modType: "Unknown",
+      description: "",
+      source: payload.modSource,
+      coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
+    };
+    fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
   } catch (error) {
     log.error("Error downloading mod:", error);
     mainWindow.webContents.send("download-mod-error", {

@@ -86,9 +86,18 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 
     const modName = path.basename(sourcePath);
     const destPath = path.join(libraryPath, modName);
-
     await fs.copy(sourcePath, destPath);
-    return createModInfoFile(destPath);
+
+    // Check if modinfo.json exists
+    const modInfoPath = path.join(destPath, "modinfo.json");
+    if (fs.existsSync(modInfoPath)) {
+      const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
+      const fixedModInfo = validateAndFixModInfo(modInfo);
+      fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
+      return fixedModInfo;
+    } else {
+      return createModInfoFile(destPath);
+    }
   } catch (error) {
     console.error("Error importing mod:", error);
     return false;
@@ -204,7 +213,7 @@ const createModInfoFile = (modPath: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const validateAndFixModInfo = (modInfo: any, modInfoPath: string) => {
+const validateAndFixModInfo = (modInfo: any) => {
   const fixedModInfo: ModInfo = { ...defaultModInfo };
   for (const key in modInfo) {
     if (key in fixedModInfo) {
@@ -218,7 +227,6 @@ const validateAndFixModInfo = (modInfo: any, modInfoPath: string) => {
       fixedModInfo.character = "Unknown";
     }
   }
-  fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
   return fixedModInfo;
 };
 
@@ -239,7 +247,9 @@ const loadLibrary = async () => {
       if (fs.existsSync(modInfoPath)) {
         const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
         //need to validate modInfo here
-        return validateAndFixModInfo(modInfo, modInfoPath);
+        const fixedModInfo = validateAndFixModInfo(modInfo);
+        fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
+        return fixedModInfo;
       } else {
         return createModInfoFile(path.join(libraryPath, folder));
       }
