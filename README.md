@@ -63,4 +63,8 @@ Located in **Settings**:
 
 ## Previews
 
-![1764811576569](images/README/1764811576569.png)
+![screenshot_main](images/README/screenshot_main.png)
+![screenshot_main](images/README/screenshot_apply.png)
+![screenshot_main](images/README/screenshot_detailmodal.png)
+![screenshot_main](images/README/screenshot_presetsmodal.png)
+![screenshot_main](images/README/screenshot_settings.png)
