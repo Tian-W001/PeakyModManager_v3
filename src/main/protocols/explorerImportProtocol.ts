@@ -2,9 +2,34 @@ import axios from "axios";
 import { app, BrowserWindow, ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import unzipper from "unzipper";
+import sevenBin from "7zip-bin";
+import Seven from "node-7z";
 import log from "electron-log/main";
 import { ModInfo } from "../../shared/modInfo";
+
+const zippedExtensions = [".zip", ".7z", ".rar", ".tar", ".gz"];
+const isZippedFile = (filename: string) => {
+  const ext = path.extname(filename).toLowerCase();
+  if (zippedExtensions.includes(ext)) {
+    return true;
+  }
+  // recognize (.001, .part1, .r00, .z01)
+  if (ext.match(/^\.(001|part1|r00|z01)$/)) {
+    return true;
+  }
+  return false;
+};
+
+const asarToAsarUnpacked = (path: string) => {
+  if (!/app\.asar\.unpacked/.test(path)) {
+    const pathUnpacked = path.replace(/app\.asar/, "app.asar.unpacked");
+
+    if (fs.existsSync(pathUnpacked)) {
+      path = pathUnpacked;
+    }
+  }
+  return path;
+};
 
 // Chrome Extention calls peakymodmanager://import?data=<base64(JSON)>
 
@@ -79,6 +104,7 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
   const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
   await fs.ensureDir(modDest);
   try {
+    // download all files
     for (const link of payload.downloadLinks) {
       log.info(`Downloading from: ${link.href}`);
       const fileDest = path.join(modDest, link.filename);
@@ -95,27 +121,41 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
         },
       });
       if (res.status !== 200) {
-        log.error(`Failed to download from ${link.href}: ${res.statusText}`);
         throw new Error(`Failed to download ${payload.modName}`);
       }
       await fs.writeFile(fileDest, res.data);
       mainWindow.webContents.send("download-mod-finish", { modName: payload.modName });
+    }
 
-      // unzip
-      if (fileDest.endsWith(".zip")) {
-        mainWindow.webContents.send("unzipping-mod", {
-          modName: payload.modName,
-          filename: link.filename,
+    // extract the current folder
+    mainWindow.webContents.send("extracting-mod", { modName: payload.modName });
+    const files = await fs.readdir(modDest);
+    for (const file of files) {
+      if (isZippedFile(file)) {
+        const filePath = path.join(modDest, file);
+
+        const stream = Seven.extractFull(filePath, modDest, {
+          $bin: asarToAsarUnpacked(sevenBin.path7za),
+          $progress: true,
         });
-        await fs
-          .createReadStream(fileDest)
-          .pipe(unzipper.Extract({ path: modDest }))
-          .promise();
-        await fs.remove(fileDest);
-        mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
-        mainWindow.webContents.send("import-mod", modDest);
+        stream.on("progress", (progress: { percent?: number }) => {
+          if (progress.percent && progress.percent !== 100) {
+            mainWindow.webContents.send("unzip-mod-progress", {
+              modName: payload.modName,
+              progress: Math.round(progress.percent),
+            });
+          }
+        });
+        stream.on("end", () => {
+          fs.removeSync(filePath);
+        });
+        stream.on("error", (error) => {
+          log.error(`Failed to extract archive ${filePath}:`, error);
+          throw new Error(`Failed to extract archive ${file}`);
+        });
       }
     }
+    mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
 
     // download cover image if provided
     if (payload.coverImageLink) {
@@ -126,10 +166,10 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
         if (res.status === 200) {
           await fs.writeFile(coverDest, res.data);
         } else {
-          log.warn(`Failed to download cover image: ${res.statusText}`);
+          throw new Error(`Failed to download cover image: ${res.statusText}`);
         }
       } catch (error) {
-        log.warn("Error downloading cover image:", error);
+        throw new Error("Error downloading cover image: " + error);
       }
     }
 
@@ -143,8 +183,11 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
       coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
     };
     fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
+
+    // notify renderer to import
+    mainWindow.webContents.send("import-mod", modDest);
   } catch (error) {
-    log.error("Error downloading mod:", error);
+    log.error("Error imoporting mod:", error);
     mainWindow.webContents.send("download-mod-error", {
       modName: payload.modName,
       error: error,
