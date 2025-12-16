@@ -213,7 +213,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
               <textarea
                 value={localModInfo.description}
                 placeholder={t("modDetails.description")}
-                className="no-scrollbar min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
+                className="no-scrollbar field-sizing-content min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
                 onChange={(e) => handleModInfoChange("description", e.target.value)}
               />
               <ZzzSelect
