@@ -88,17 +88,16 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
       const item = e.dataTransfer.items[0];
       // Check if it is an image
       if (item.kind !== "file" || !item.webkitGetAsEntry()?.isFile) {
-        console.log("Not a file");
+        console.error(item, "is not a file");
         return;
       }
       const file = item.getAsFile() as File;
       if (!file.type.startsWith("image/")) {
-        console.log("Not an image file");
+        console.error(file, "is not an image file");
         return;
       }
       const imagePath = window.api.getFilePath(file);
-      console.log("Dropped image path:", imagePath);
-
+      console.error("Dropped image path:", imagePath);
       if (imagePath) {
         const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
         if (newCoverName) {

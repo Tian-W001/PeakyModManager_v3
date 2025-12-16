@@ -58,7 +58,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       e.preventDefault();
       const item = e.dataTransfer.items[0];
       if (item.kind !== "file" || !item.webkitGetAsEntry()?.isDirectory) {
-        console.log("not a folder");
+        console.error(item, "not a folder");
         return;
       }
       const file = item.getAsFile() as File;
