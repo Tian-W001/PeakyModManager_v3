@@ -204,10 +204,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             />
 
             {/* Library Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="whitespace-nowrap">{t("settings.libraryPath")}</span>
+            <div className="hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+              <span className="truncate">{t("settings.libraryPath")}</span>
               <input
-                className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
+                className="flex-1 cursor-[inherit] text-right outline-none"
                 value={libraryPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectLibraryPath}
@@ -215,10 +215,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             </div>
 
             {/* Target Path */}
-            <div className="flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="whitespace-nowrap">{t("settings.targetPath")}</span>
+            <div className="hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+              <span className="truncate">{t("settings.targetPath")}</span>
               <input
-                className="hover:text-zzzYellow flex-1 cursor-pointer bg-transparent text-right font-bold text-white outline-none"
+                className="flex-1 cursor-[inherit] text-right outline-none"
                 value={targetPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectTargetPath}
@@ -236,7 +236,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
               <ZzzButton type="Info" onClick={handleOnClickTestButton}>
                 {t("settings.testAlert")}
               </ZzzButton>
-              <span className="text-sm text-gray-600">{t("settings.backupTooltip")}</span>
             </div>
 
             {/* Wallpaper Selection */}
