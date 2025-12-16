@@ -142,16 +142,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     );
   };
 
-  const handleOnClickTestButton = () => {
-    showAlert(
-      t("settings.testAlert"),
-      t("settings.testAlertMessage"),
-      <ZzzButton type="Info" onClick={hideAlert}>
-        {t("common.confirm")}
-      </ZzzButton>
-    );
-  };
-
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -232,9 +222,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
               </ZzzButton>
               <ZzzButton type="Refresh" onClick={handleRestorePresets}>
                 {t("settings.restore")}
-              </ZzzButton>
-              <ZzzButton type="Info" onClick={handleOnClickTestButton}>
-                {t("settings.testAlert")}
               </ZzzButton>
             </div>
 
