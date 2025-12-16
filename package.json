@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "PeakyModManager-v3",
   "main": "./out/main/index.js",
-  "author": "peaky.com",
-  "homepage": "https://electron-vite.org",
+  "author": "Peaky",
+  "homepage": "https://github.com/Tian-W001/PeakyModManager_v3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tian-W001/PeakyModManager_v3.git"
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

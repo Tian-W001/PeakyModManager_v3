@@ -3,6 +3,7 @@ import { app, shell, BrowserWindow, protocol } from "electron";
 import { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import { autoUpdater } from "electron-updater";
 
 import "./handlers/libraryHandler";
 import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
@@ -48,6 +49,9 @@ const createWindow = async () => {
 
   mainWindow.on("ready-to-show", () => {
     mainWindow!.show();
+    if (!is.dev) {
+      autoUpdater.checkForUpdatesAndNotify();
+    }
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

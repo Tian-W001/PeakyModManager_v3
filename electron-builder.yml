@@ -1,5 +1,9 @@
 appId: com.peaky.peakymodmanager
 productName: peakymodmanager-v3
+publish:
+  provider: github
+  owner: Tian-W001
+  repo: PeakyModManager_v3
 directories:
   buildResources: build
 files:
