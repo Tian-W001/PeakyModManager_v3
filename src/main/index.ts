@@ -78,14 +78,6 @@ const gotlock = app.requestSingleInstanceLock();
 if (!gotlock) {
   app.quit();
 } else {
-  // app.on("second-instance", (_event, argv) => {
-  //   const url = argv.find((a) => a.startsWith("peakymodmanager://"));
-  //   log.info("Second instance with URL:", url);
-  //   if (url && mainWindow) {
-  //     if (mainWindow.isMinimized()) mainWindow.restore();
-  //     mainWindow.focus();
-  //     handleExplorerImport(url, mainWindow);
-  //   }
   app.on("second-instance", () => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
