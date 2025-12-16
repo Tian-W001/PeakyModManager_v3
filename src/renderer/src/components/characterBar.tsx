@@ -5,13 +5,18 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
 import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
 
-const getCharacterImagePath = (char: Character) => {
+const getCharacterImagePath = (char: Character | "All") => {
   return new URL(`../assets/character_images/${char}.png`, import.meta.url).href;
 };
 
 const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
+
+  const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
+    | Character
+    | "All"
+  )[];
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -40,7 +45,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
           id="character-bar-images-container"
           onWheel={handleScroll}
         >
-          {characterNameList.toReversed().map((char) => (
+          {characterBarImageList.map((char) => (
             <div
               key={char}
               className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"

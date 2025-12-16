@@ -227,7 +227,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 <ZzzSelect
                   label={t("modDetails.character")}
                   value={localModInfo.character}
-                  options={characterNameList.map((char) => ({
+                  options={characterNameList.toReversed().map((char) => ({
                     value: char,
                     label: t(`characters.fullnames.${char}`),
                   }))}
