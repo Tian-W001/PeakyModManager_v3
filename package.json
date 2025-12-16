@@ -2,6 +2,7 @@
   "name": "peakymodmanager-v3",
   "version": "1.0.0",
   "description": "PeakyModManager-v3",
+  "license": "MIT",
   "main": "./out/main/index.js",
   "author": "Peaky",
   "homepage": "https://github.com/Tian-W001/PeakyModManager_v3",
