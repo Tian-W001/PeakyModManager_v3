@@ -51,13 +51,14 @@
     "deleteMod": "Delete Mod",
     "openModFolder": "Open Folder",
     "autofill": "Autofill",
-    "deleteConfirm": "Are you sure you want to delete {{name}}?"
+    "deleteModConfirm": "Delete {{name}}?",
+    "deleteModConfirmMsg": "This action cannot be undone"
   },
   "presets": {
     "managePresets": "Manage Presets",
     "newPresetName": "New Preset Name",
     "pressEnterToAdd": "Press Enter to add a new preset",
-    "deleteConfirm": "Are you sure you want to delete preset \"{{name}}\"?",
+    "deleteConfirm": "Delete preset \"{{name}}\"?",
     "UnsavedChanges": "You have unsaved changes, save before switching presets?",
     "ApplyAndSwitch": "Apply & Switch"
   },

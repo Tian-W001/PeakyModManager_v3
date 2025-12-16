@@ -52,8 +52,8 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
       hideAlert();
     };
     showAlert(
-      t("modDetails.deleteConfirm", { name: modInfo.name }),
-      undefined,
+      t("modDetails.deleteModConfirm", { name: modInfo.name }),
+      t("modDetails.deleteModConfirmMsg"),
       <>
         <ZzzButton type="Cancel" onClick={hideAlert}>
           {t("common.cancel")}

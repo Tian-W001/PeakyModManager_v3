@@ -11,8 +11,8 @@ const AlertModal: React.FC<AlertModalProps> = ({ title, message, children }) => 
     <div className="modal-overlay" id="modal-overlay">
       <div className="relative h-[3px] w-full bg-white/20" />
       <div className="relative z-5 flex h-[30%] w-full flex-col items-center justify-center gap-4 border-y-4 border-y-black bg-[url('@renderer/assets/wallpapers/zzz_wallpaper_0.jpg')] bg-cover">
-        <h1 className="text-3xl font-extrabold text-white">{title}</h1>
-        {message && <p className="mt-2 font-bold text-[#aaa]">{message}</p>}
+        <h1 className="w-full text-center text-3xl text-white">{title}</h1>
+        {message && <p className="mt-2 w-full text-center text-[#aaa]">{message}</p>}
 
         <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-[calc(50%+4px)] gap-4 *:italic">
           {children}
