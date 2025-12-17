@@ -39,11 +39,11 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
       <div
         className={clsx(
           className,
-          "hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full border border-transparent bg-black font-bold text-white transition-colors"
+          "hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black font-bold text-white transition-colors"
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="whitespace-nowrap">{label}</span>
+        <span className="truncate">{label}</span>
         <div className="flex flex-1 items-center justify-end gap-2">
           <span className="truncate text-right">{selectedOption ? selectedOption.label : value}</span>
           <FaCaretDown size={12} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
