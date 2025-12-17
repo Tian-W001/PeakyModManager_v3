@@ -4,7 +4,7 @@ import { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import { autoUpdater } from "electron-updater";
-
+import log from "electron-log/main";
 import "./handlers/libraryHandler";
 import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
@@ -49,9 +49,18 @@ const createWindow = async () => {
 
   mainWindow.on("ready-to-show", () => {
     mainWindow!.show();
-    if (!is.dev) {
-      autoUpdater.checkForUpdatesAndNotify();
-    }
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.on("checking-for-update", () => {
+      log.info("Checking for updates...");
+    });
+    autoUpdater.on("update-available", (info) => {
+      log.info("Update available.", info);
+    });
+    autoUpdater.on("update-not-available", (info) => {
+      log.info("Update not available.", info);
+    });
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

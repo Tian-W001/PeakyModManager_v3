@@ -18,6 +18,7 @@ asarUnpack:
 win:
   icon: build/icon.ico
   executableName: peakymodmanager-v3
+  verifyUpdateCodeSignature: false
   protocols:
     - name: PeakyModManager URL Scheme
       schemes:

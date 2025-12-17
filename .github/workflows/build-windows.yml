@@ -36,16 +36,7 @@ jobs:
           }
           npm version $version --no-git-tag-version
 
-      - name: Build for Windows
-        run: npm run build:win
+      - name: Build and Publish
+        run: npx electron-builder --win --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          files: |
-            dist/*.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
