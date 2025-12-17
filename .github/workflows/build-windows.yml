@@ -34,7 +34,7 @@ jobs:
           if ($version.StartsWith("v")) {
             $version = $version.Substring(1)
           }
-          npm version $version --no-git-tag-version
+          npm version $version --no-git-tag-version --allow-same-version
 
       - name: Build and Publish
         run: npx electron-builder --win --publish always
