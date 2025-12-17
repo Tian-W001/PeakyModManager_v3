@@ -28,6 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Update version
+        run: |
+          $version = "${{ inputs.tag_name }}"
+          if ($version.StartsWith("v")) {
+            $version = $version.Substring(1)
+          }
+          npm version $version --no-git-tag-version
+
       - name: Build for Windows
         run: npm run build:win
         env:
