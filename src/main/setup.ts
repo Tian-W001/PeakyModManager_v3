@@ -8,5 +8,5 @@ if (process.env.NODE_ENV === "development") {
 
   log.transports.file.level = false;
 } else {
-  log.transports.file.level = false; // test
+  log.transports.file.level = "error";
 }

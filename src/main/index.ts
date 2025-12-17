@@ -8,6 +8,7 @@ import log from "electron-log/main";
 import "./handlers/libraryHandler";
 import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
+import { ipcMain } from "electron/main";
 
 const installExtensions = async () => {
   const installer = await import("electron-devtools-installer");
@@ -144,3 +145,6 @@ app.on("window-all-closed", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+ipcMain.handle("get-app-version", () => {
+  return app.getVersion();
+});

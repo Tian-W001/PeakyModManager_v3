@@ -25,6 +25,8 @@ import ZzzButton from "@renderer/components/zzzButton";
 
 const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
 
+const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
+
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
@@ -254,6 +256,12 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                 <img src={IconInfo} alt="Info" className="mr-1 inline-block h-4 w-4" />
                 {t("settings.wallpaperTooltip")}
               </p>
+            </div>
+
+            {/* App Version */}
+            <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+              <span className="truncate">{t("settings.appVersion")}</span>
+              <span className="truncate">{appVersion}</span>
             </div>
           </div>
         </div>

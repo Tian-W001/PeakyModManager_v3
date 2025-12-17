@@ -37,7 +37,8 @@
     "restoreFail": "Failed to restore presets or backup file not found.",
     "testAlert": "Test Alert",
     "testAlertMessage": "This is a test alert!",
-    "wallpaperTooltip": "Double-click to apply new wallpaper"
+    "wallpaperTooltip": "Double-click to apply new wallpaper",
+    "appVersion": "App Version"
   },
   "modDetails": {
     "description": "Description",
