@@ -37,6 +37,6 @@ jobs:
           npm version $version --no-git-tag-version --allow-same-version
 
       - name: Build and Publish
-        run: npx electron-builder --win --publish always
+        run: npm run build:win:publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
