@@ -11,6 +11,7 @@ import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
+import Locate from "@renderer/assets/icons/Locate.png";
 
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -235,16 +236,24 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 />
               )}
               <div
-                className="hover:text-zzzYellow flex flex-row items-center justify-between gap-8 rounded-full bg-black px-3.5 py-1 pr-9 font-bold text-white shadow-[1px_1px_1px_#fff2]"
+                className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
                 id="mod-source"
               >
                 <span className="">{t("modDetails.source")}</span>
                 <input
-                  className="flex-1 text-right font-bold text-white"
+                  className="mr-6 flex-1 text-right font-bold"
                   placeholder={t("modDetails.unknownSource")}
                   value={localModInfo.source}
                   onChange={(e) => handleModInfoChange("source", e.target.value)}
                 />
+                <a
+                  href={`${localModInfo.source}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="absolute right-2 h-6 cursor-pointer"
+                >
+                  <img src={Locate} alt="Locate" className="h-full" />
+                </a>
               </div>
             </div>
           </div>
