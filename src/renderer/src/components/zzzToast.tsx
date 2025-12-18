@@ -8,7 +8,7 @@ interface ZzzToastProps {
 
 const ZzzToast: React.FC<ZzzToastProps> = ({ message, progress }) => {
   return (
-    <div className="chess-background flex h-auto max-w-[75vw] min-w-[400px] flex-col items-center justify-center rounded-3xl bg-[#333] p-4 font-bold text-white ring-2 inset-shadow-[1px_2px_1px_#fff4,-1px_-2px_1px_#0004,0_0_0_4px_#888] ring-black">
+    <div className="chess-background flex h-auto max-w-[75vw] min-w-100 flex-col items-center justify-center rounded-3xl bg-[#333] p-4 font-bold text-white ring-2 inset-shadow-[1px_2px_1px_#fff4,-1px_-2px_1px_#0004,0_0_0_4px_#888] ring-black">
       <div className="w-full truncate text-center" title={message}>
         {message}
       </div>
