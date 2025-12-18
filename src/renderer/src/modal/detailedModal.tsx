@@ -236,7 +236,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                 />
               )}
               <div
-                className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
+                className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
                 id="mod-source"
               >
                 <span className="">{t("modDetails.source")}</span>
