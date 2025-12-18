@@ -22,6 +22,7 @@ import ZzzSelect from "@renderer/components/zzzSelect";
 import Exit from "@renderer/components/Exit";
 import IconHookBig from "@renderer/assets/icons/HookBig.png";
 import ZzzButton from "@renderer/components/zzzButton";
+import Locate from "@renderer/assets/icons/Locate.png";
 
 const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
 
@@ -163,6 +164,18 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
     return;
   }, []);
 
+  const handleOpenLibraryFolder = () => {
+    if (libraryPath) {
+      window.electron.ipcRenderer.invoke("open-mod-folder");
+    }
+  };
+
+  const handleOpenTargetFolder = () => {
+    if (targetPath) {
+      window.electron.ipcRenderer.invoke("open-target-folder");
+    }
+  };
+
   return (
     <>
       <div className="modal-overlay" id="modal-overlay">
@@ -196,24 +209,36 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             />
 
             {/* Library Path */}
-            <div className="hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.libraryPath")}</span>
               <input
-                className="flex-1 cursor-[inherit] text-right outline-none"
+                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
                 value={libraryPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectLibraryPath}
               />
+              <img
+                src={Locate}
+                alt="Locate"
+                onClick={handleOpenLibraryFolder}
+                className="absolute right-2 h-6 cursor-pointer"
+              />
             </div>
 
             {/* Target Path */}
-            <div className="hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.targetPath")}</span>
               <input
-                className="flex-1 cursor-[inherit] text-right outline-none"
+                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
                 value={targetPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectTargetPath}
+              />
+              <img
+                src={Locate}
+                alt="Locate"
+                onClick={handleOpenTargetFolder}
+                className="absolute right-2 h-6 cursor-pointer"
               />
             </div>
 

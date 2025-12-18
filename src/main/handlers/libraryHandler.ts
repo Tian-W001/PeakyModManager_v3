@@ -268,6 +268,12 @@ ipcMain.handle("open-mod-folder", async (_event, modName?: string) => {
   await shell.openPath(fullPath);
 });
 
+ipcMain.handle("open-target-folder", async () => {
+  const targetPath = store.get("targetPath", null) as string | null;
+  if (!targetPath) return;
+  await shell.openPath(targetPath);
+});
+
 ipcMain.handle("autofill-mod-info", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return null;
