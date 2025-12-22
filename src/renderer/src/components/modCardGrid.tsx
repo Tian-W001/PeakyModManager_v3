@@ -2,7 +2,7 @@ import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
 import clsx from "clsx";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   addToDiffList,
@@ -17,7 +17,7 @@ import {
 import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
-import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
+import { selectSelectedCharacter, selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
@@ -34,6 +34,13 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const [isMultiSelectDropdownOpen, setIsMultiSelectDropdownOpen] = useState(false);
   const [isPresetsDropdownOpen, setIsPresetsDropdownOpen] = useState(false);
   const [isEditPresetsModalOpen, setIsEditPresetsModalOpen] = useState(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
+  const selectedCharacter = useAppSelector(selectSelectedCharacter);
+  useEffect(() => {
+    ref.current?.scrollTo(0, 0);
+  }, [selectedMenuItem, selectedCharacter]);
 
   const importMod = useCallback(
     async (filePath: string) => {
@@ -150,7 +157,10 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   return (
     <>
       <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
-        <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
+        <div
+          ref={ref}
+          className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
+        >
           {modInfos.length === 0 ? (
             <div className="flex h-full w-full items-center justify-center">
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
