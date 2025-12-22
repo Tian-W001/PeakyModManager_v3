@@ -91,23 +91,29 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     if (value === "selectAll") {
       dispatch(
         addToDiffList(
-          modInfos.reduce((acc, mod) => {
-            if (!currentPresetMods.includes(mod.name)) {
-              acc[mod.name] = true;
-            }
-            return acc;
-          }, {})
+          modInfos.reduce(
+            (acc: Record<string, boolean>, mod) => {
+              if (!currentPresetMods.includes(mod.name)) {
+                acc[mod.name] = true;
+              }
+              return acc;
+            },
+            {} as Record<string, boolean>
+          )
         )
       );
     } else if (value === "selectNone") {
       dispatch(
         addToDiffList(
-          modInfos.reduce((acc, mod) => {
-            if (currentPresetMods.includes(mod.name)) {
-              acc[mod.name] = false;
-            }
-            return acc;
-          }, {})
+          modInfos.reduce(
+            (acc: Record<string, boolean>, mod) => {
+              if (currentPresetMods.includes(mod.name)) {
+                acc[mod.name] = false;
+              }
+              return acc;
+            },
+            {} as Record<string, boolean>
+          )
         )
       );
     }
