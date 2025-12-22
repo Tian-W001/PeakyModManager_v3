@@ -267,7 +267,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                       className={`hover:border-zzzYellow relative aspect-video w-48 shrink-0 cursor-pointer overflow-hidden rounded-2xl border-3 transition-all`}
                       onDoubleClick={() => handleSaveWallpaper(filename)}
                     >
-                      <img src={url as string} alt={filename} className="h-full w-full object-cover" />
+                      <img src={url as string} alt={filename} className="size-full object-cover" />
                       {isCurrent && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                           <img src={IconHookBig} className="h-12 w-12" />

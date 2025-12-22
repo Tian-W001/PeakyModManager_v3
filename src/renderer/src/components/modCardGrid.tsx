@@ -159,10 +159,10 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
         <div
           ref={ref}
-          className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
+          className="flex size-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
         >
           {modInfos.length === 0 ? (
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex size-full items-center justify-center">
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
