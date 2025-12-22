@@ -23,10 +23,11 @@ type ZzzButtonProps = {
   type?: ZzzButtonType;
   onClick?: () => void;
   className?: string;
+  iconClassName?: string;
   children?: React.ReactNode;
 };
 
-const ZzzButton = ({ type, onClick, className, children }: ZzzButtonProps) => {
+const ZzzButton = ({ type, onClick, className, iconClassName, children }: ZzzButtonProps) => {
   return (
     <>
       <button
@@ -45,7 +46,10 @@ const ZzzButton = ({ type, onClick, className, children }: ZzzButtonProps) => {
             <img
               src={getIconUrl(type)}
               alt={type}
-              className="h-full object-contain group-hover/zzz-button:filter-[url(#color-inverted-binary)]"
+              className={clsx(
+                "h-full object-contain group-hover/zzz-button:filter-[url(#color-inverted-binary)]",
+                iconClassName
+              )}
             />
           </div>
         )}

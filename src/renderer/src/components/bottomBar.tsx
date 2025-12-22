@@ -13,9 +13,12 @@ const BottomBar = ({ className }: { className?: string }) => {
   const { t } = useTranslation();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const diffList = useAppSelector(selectDiffList);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleOnClickRefresh = async () => {
+    setIsRefreshing(true);
     await dispatch(loadLibrary());
+    setIsRefreshing(false);
   };
 
   const handleApplyChanges = async () => {
@@ -40,8 +43,8 @@ const BottomBar = ({ className }: { className?: string }) => {
           </ZzzButton>
         </div>
         <div className="flex justify-center gap-4">
-          <ZzzButton type="Refresh" onClick={handleOnClickRefresh}>
-            {t("common.refresh")}
+          <ZzzButton type="Refresh" onClick={handleOnClickRefresh} iconClassName={isRefreshing ? "animate-spin" : ""}>
+            {isRefreshing ? t("common.refreshing") : t("common.refresh")}
           </ZzzButton>
           <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
             {getApplyButtonText()}

@@ -28,7 +28,7 @@ const MainScreen: React.FC = () => {
           style={{ backgroundImage: `url('${wallpaperUrl}')` }}
         />
         <div className="flex min-h-0 flex-1 flex-row" id="content-area">
-          <Menu className="w-[280px]" />
+          <Menu className="w-70" />
           <div className="flex h-full flex-1 flex-col overflow-hidden pt-4" id="card-grid-area">
             {selectedMenuItem === "Character" && <CharacterBar className="h-18 max-w-[80%]" />}
             <ModCardGrid modInfos={selectedModInfos} className="min-h-0 w-full flex-1" />

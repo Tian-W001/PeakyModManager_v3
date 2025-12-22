@@ -2,12 +2,14 @@ import { ModInfo } from "src/shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
 import clsx from "clsx";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
+  addToDiffList,
   applyMods,
   clearDiffList,
   selectAllPresetNames,
+  selectCurrentPresetMods,
   selectCurrentPresetName,
   selectDiffList,
   setCurrentPreset,
@@ -15,7 +17,7 @@ import {
 import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
-import { setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
+import { selectSelectedCharacter, selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
@@ -27,8 +29,18 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const diffList = useAppSelector(selectDiffList);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const currentPresetMods = useAppSelector(selectCurrentPresetMods);
+  const [isMultiSelectDropdownOpen, setIsMultiSelectDropdownOpen] = useState(false);
+  const [isPresetsDropdownOpen, setIsPresetsDropdownOpen] = useState(false);
   const [isEditPresetsModalOpen, setIsEditPresetsModalOpen] = useState(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
+  const selectedCharacter = useAppSelector(selectSelectedCharacter);
+  useEffect(() => {
+    ref.current?.scrollTo(0, 0);
+  }, [selectedMenuItem, selectedCharacter]);
 
   const importMod = useCallback(
     async (filePath: string) => {
@@ -75,6 +87,38 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     e.stopPropagation();
   };
 
+  const handleMultiSelect = (value: "selectAll" | "selectNone") => {
+    if (value === "selectAll") {
+      dispatch(
+        addToDiffList(
+          modInfos.reduce(
+            (acc: Record<string, boolean>, mod) => {
+              if (!currentPresetMods.includes(mod.name)) {
+                acc[mod.name] = true;
+              }
+              return acc;
+            },
+            {} as Record<string, boolean>
+          )
+        )
+      );
+    } else if (value === "selectNone") {
+      dispatch(
+        addToDiffList(
+          modInfos.reduce(
+            (acc: Record<string, boolean>, mod) => {
+              if (currentPresetMods.includes(mod.name)) {
+                acc[mod.name] = false;
+              }
+              return acc;
+            },
+            {} as Record<string, boolean>
+          )
+        )
+      );
+    }
+  };
+
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const handleSwitchPreset = async (name: string) => {
     const applyChanges = async () => {
@@ -85,7 +129,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     const switchPreset = async () => {
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(setCurrentPreset(name));
-      setIsDropdownOpen(false);
+      setIsPresetsDropdownOpen(false);
       hideAlert();
     };
     // if diffList is not empty, show alert
@@ -119,9 +163,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   return (
     <>
       <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
-        <div className="flex h-full w-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]">
+        <div
+          ref={ref}
+          className="flex size-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
+        >
           {modInfos.length === 0 ? (
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex size-full items-center justify-center">
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
@@ -129,8 +176,38 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           )}
         </div>
 
+        {/* Multi-Select Dropdown */}
+        <div className="absolute bottom-4 left-8 flex flex-col items-start">
+          {isMultiSelectDropdownOpen && (
+            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2">
+              {["selectAll", "selectNone"].map((option) => (
+                <div
+                  key={option}
+                  className="hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-start overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black"
+                  onClick={() => {
+                    handleMultiSelect(option as "selectAll" | "selectNone");
+                    setIsMultiSelectDropdownOpen(false);
+                  }}
+                >
+                  {t(`common.${option}`)}
+                </div>
+              ))}
+            </div>
+          )}
+          <ZzzButton onClick={() => setIsMultiSelectDropdownOpen(!isMultiSelectDropdownOpen)} className="shadow-xl">
+            <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
+              <span className="truncate">{t("common.multiSelect")}</span>
+              <FaCaretUp
+                className="transition-all"
+                style={{ transform: isMultiSelectDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+              />
+            </div>
+          </ZzzButton>
+        </div>
+
+        {/* Preset Dropdown and Add Button */}
         <div className="absolute right-8 bottom-4 flex flex-col items-end">
-          {isDropdownOpen && (
+          {isPresetsDropdownOpen && (
             <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2">
               {allPresetNames.map((name) => (
                 <div
@@ -149,12 +226,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           <div className="flex items-center gap-2">
             <ZzzButton type="Add" onClick={() => setIsEditPresetsModalOpen(true)} />
 
-            <ZzzButton onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="w-auto max-w-70">
+            <ZzzButton onClick={() => setIsPresetsDropdownOpen(!isPresetsDropdownOpen)} className="w-auto max-w-70">
               <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
                 <span className="truncate">{currentPresetName}</span>
                 <FaCaretUp
                   className="transition-all"
-                  style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                  style={{ transform: isPresetsDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                 />
               </div>
             </ZzzButton>

@@ -9,9 +9,13 @@
     "edit": "Edit",
     "add": "Add",
     "refresh": "Refresh",
+    "refreshing": "Refreshing...",
     "settings": "Settings",
     "apply": "Apply",
-    "select": "Select"
+    "select": "Select",
+    "multiSelect": "Multi-Select",
+    "selectAll": "Select All",
+    "selectNone": "Select None"
   },
   "download": {
     "downloading": "Downloading {{modName}}...",

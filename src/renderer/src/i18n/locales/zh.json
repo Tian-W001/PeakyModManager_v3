@@ -9,9 +9,13 @@
     "edit": "编辑",
     "add": "添加",
     "refresh": "刷新",
+    "refreshing": "刷新中...",
     "settings": "设置",
     "apply": "应用",
-    "select": "选择"
+    "select": "选择",
+    "multiSelect": "批量操作",
+    "selectAll": "全选",
+    "selectNone": "全不选"
   },
   "download": {
     "downloading": "正在下载 {{modName}}...",
