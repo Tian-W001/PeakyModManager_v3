@@ -15,7 +15,7 @@
     "select": "选择",
     "multiSelect": "批量操作",
     "selectAll": "全选",
-    "selectNone": "反选"
+    "selectNone": "全不选"
   },
   "download": {
     "downloading": "正在下载 {{modName}}...",
