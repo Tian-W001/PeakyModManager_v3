@@ -13,6 +13,11 @@ import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 
+import UnknownAvatar from "@renderer/assets/avatars/modType_avatars/Unknown.png";
+const getCharacterAvatarPath = (char: Character | "All") => {
+  return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
+};
+
 const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
@@ -229,7 +234,18 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                   value={localModInfo.character}
                   options={characterNameList.toReversed().map((char) => ({
                     value: char,
-                    label: t(`characters.fullnames.${char}`),
+                    label: (
+                      <div className="flex h-full flex-row items-center justify-end gap-2">
+                        {t(`characters.fullnames.${char}`)}
+                        <img
+                          src={getCharacterAvatarPath(char)}
+                          alt={char}
+                          className="h-6"
+                          onError={(e) => (e.currentTarget.src = UnknownAvatar)}
+                          loading="lazy"
+                        />
+                      </div>
+                    ),
                   }))}
                   onChange={(val) => handleModInfoChange("character", val)}
                   className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
@@ -250,7 +266,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                   href={`${localModInfo.source}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="absolute right-2 h-6 cursor-pointer"
+                  className="absolute right-2 h-[70%] cursor-pointer"
                 >
                   <img src={Locate} alt="Locate" className="h-full" />
                 </a>
