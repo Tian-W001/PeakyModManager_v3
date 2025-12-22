@@ -91,7 +91,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
         ref={ref}
         onClick={handleOnClick}
         onContextMenu={handleOnRightClick}
-        className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-[350px] flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333] hover:[&>div]:h-[21%]`}
+        className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-87.5 flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333] hover:[&>div]:h-[21%]`}
       >
         {entry?.isIntersecting && (
           <>
