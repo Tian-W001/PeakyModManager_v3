@@ -94,7 +94,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
                   <img
                     id="mod-card-avatar"
                     src={getAvatarUrl(modInfo.modType, modInfo.character)}
-                    onError={(e) => (e.currentTarget.src = getAvatarUrl("Character", "Unknown"))}
+                    onError={(e) => (e.currentTarget.src = getAvatarUrl("Unknown"))}
                     alt="Avatar"
                     className={`absolute aspect-square -translate-y-[50%] rounded-full bg-black ring-2 ring-[#333]`}
                     style={{ width: 2 * R }}
