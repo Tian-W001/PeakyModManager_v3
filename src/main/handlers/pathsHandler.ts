@@ -1,7 +1,7 @@
 import { ipcMain } from "electron/main";
 import store from "../store";
 import { shell } from "electron";
-import path from "path/win32";
+import path from "path";
 import fs from "fs-extra";
 
 ipcMain.handle("get-library-path", async () => {
