@@ -1,65 +1,106 @@
 # PeakyModManager v3
 
-A mod manager for **Zenless Zone Zero**.
+A lightweight mod manager for **Zenless Zone Zero**.
 
 ## Features
 
-- **Mod Management**: Easily import, enable, and disable mods.
-- **Presets**: Save and switch between different mod configurations.
-- **Visual Interface**: Clean, ZZZ-style UI design.
-- **Backup & Restore**: Safely backup and restore your preset configurations.
+- **Mod Management**
+  Import, enable, and disable mods with ease.
+- **Presets**
+  Save multiple mod configurations and switch between them quickly.
+- **Visual Interface**
+  Clean, **Zenless Zone Zero–style** UI design.
+- **Backup & Restore**
+  Safely back up and restore preset configurations.
 
 ## Getting Started
 
-### 1. Initial Setup
+### Initial Setup
 
-Before using PeakyModManager, you need to configure the paths:
+Before using PeakyModManager, you need to configure the required paths:
 
 1. Click the **Settings** button in the bottom bar.
-2. **Library Path**: Select the folder where you want to store your mods. This will serve as your main "source" folder.
-3. **Target Path**: Select the game's mod folder where mods will be installed.
+2. **Library Path**
+   Select the folder where your mods will be stored. This acts as the main _source_ directory.
+3. **Target Path**
+   Select the game's mod folder where mods will be installed.
    - For **ZZMI users**, this should be `ZZMI/ZZMI/Mods`.
 
-### 2. Importing Mods
+---
 
-- **Drag and Drop**: Drag a mod folder into the application window to import it into your Library.
-- **Autofill**: Open a mod’s detailed view by right-clicking on its mod card, then click **Autofill**.
-  - This automatically extracts and sets the mod’s description (from the readme file) and cover image.
+### Importing Mods
 
-### 3. Enabling & Disabling Mods
+- **Drag & Drop**
+  Drag a mod folder directly into the application window to import it into your Library.
+  Newly imported mods will appear in the **Unknown** category by default.
+- **Manual Import Notice**
+  If you add mod folders directly through the file system instead of the app:
+  - Click **Refresh** to detect them.
+  - They will also be placed in the **Unknown** category by default.
 
-1. Click on a mod card to toggle its state:
-   - **Yellow Border**: Mod is **enabled**.
-   - **No Border**: Mod is **disabled**.
-   - **Yellow Dashed Border**: Mod is queued to be **enabled**.
-   - **Red Dashed Border**: Mod is queued to be **disabled**.
+---
+
+### Enabling & Disabling Mods
+
+1. Click a mod card to toggle its state:
+   - **Yellow solid border** → Mod is **enabled**
+   - **Black solid border** → Mod is **disabled**
+   - **Yellow dashed border** → Mod is queued to be **enabled**
+   - **Red dashed border** → Mod is queued to be **disabled**
 2. The **Apply** button in the bottom bar shows the number of pending changes.
-3. Click **Apply** to commit changes. This will create or remove symlinks in your Target Path.
+3. Click **Apply** to commit changes.
+   This will create or remove **symbolic links** in the Target Path.
+
+---
+
+### Editing Mods
+
+1. **Right-click** a mod card to open the edit modal.
+2. You can edit:
+   - Description
+   - Mod Type
+   - Character (for Character-type mods)
+   - Source URL
+3. **Delete**
+   Deletes the **actual mod files** from disk.
+4. **Autofill** will:
+   - Automatically set the preview image:
+     - Prefers images named `Preview`
+     - Falls back to any available image, if present.
+   - Automatically set the description:
+     - Reads from a file named `readme`, if present
+   - Attempt to match the mod title with a character name:
+     - Sets the mod type to **Character**
+     - Assigns the matched character
+5. Click **Save** to apply changes.
+
+---
 
 ## Using Presets
 
-Presets allow you to save and switch between different combinations of enabled mods.
+1. Presets allow you to store and switch between different mod combinations.
+2. Switch the active preset using the button in the **bottom-right corner**.
+3. ⚠️ **Important**
+   Loading a preset only queues changes as **Pending**.
+   You must click **Apply** in the bottom bar to actually apply them.
+4. Preset management:
+   - Click the **+** button to manage presets.
+   - Hover over a preset block to reveal the **Delete** button.
 
-### Switching Presets
-
-1. Click the current preset name at the bottom right to open the list.
-2. Select a preset to load it.
-3. **Important**: Loading a preset only queues its mods in the "Pending" state. You must click **Apply** in the bottom bar to actually apply them.
-
-### Managing Presets
-
-1. Click the **+** button next to the preset name.
-2. **Add**: Enter a name and click **Add** to create a new empty preset.
-3. **Edit/Delete**: Use the edit or trash icons to rename or remove presets.
+---
 
 ## Backup & Restore
 
 Located in **Settings**:
 
-- **Backup**: Saves your current presets configuration to a file named `Presets_Backup.json` inside your Library folder.
-- **Restore**: Loads the `Presets_Backup.json` file.
-  - _Note_: Restoring will overwrite your current preset list.
-  - After restoring, you must re-apply the current preset from the pending queue to reflect changes.
+- **Backup**
+  - Saves preset configurations to: `Presets_Backup.json` inside your Library folder.
+  - ⚠️ This will **overwrite** any existing backup file.
+
+- **Restore**
+  - Loads data from `Presets_Backup.json`.
+  - ⚠️ This will **overwrite** your current preset configurations.
+  - After restoring, you must **re-apply the current preset** from the pending queue to reflect changes.
 
 ## Previews
 
