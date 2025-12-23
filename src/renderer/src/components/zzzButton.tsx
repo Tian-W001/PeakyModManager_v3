@@ -1,5 +1,4 @@
 import clsx from "clsx";
-//const icons = import.meta.glob("@renderer/assets/icons/*", { eager: true, query: "?url", import: "default" });
 
 const getIconUrl = (name: string) => {
   return new URL(`../assets/icons/${name}.png`, import.meta.url).href;

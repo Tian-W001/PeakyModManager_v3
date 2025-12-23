@@ -9,32 +9,15 @@ import SmoothCornerPatch from "./CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
+import { ModType } from "@shared/modType";
+import { Character } from "@shared/character";
 
-// Load avatar images
-const modTypeImages = import.meta.glob("../assets/avatars/modType_avatars/*", { eager: true });
-const characterImages = import.meta.glob("../assets/avatars/character_avatars/*", { eager: true });
-const getFileName = (path: string) => path.split("/").pop()?.split(".")[0];
-const modTypeMap: Record<string, string> = {};
-for (const path in modTypeImages) {
-  const name = getFileName(path);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (name) modTypeMap[name] = (modTypeImages[path] as any).default;
-}
-const characterMap: Record<string, string> = {};
-for (const path in characterImages) {
-  const name = getFileName(path);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (name) characterMap[name] = (characterImages[path] as any).default;
-}
-const getAvatarUrl = (modInfo: ModInfo) => {
-  if (modInfo.modType === "Character" && modInfo.character && characterMap[modInfo.character]) {
-    return characterMap[modInfo.character];
+const getAvatarUrl = (modType: ModType, character?: Character) => {
+  if (modType === "Character") {
+    return new URL(`../assets/avatars/character_avatars/${character || "Unknown"}.png`, import.meta.url).href;
+  } else {
+    return new URL(`../assets/avatars/modType_avatars/${modType}.jpg`, import.meta.url).href;
   }
-  if (modTypeMap[modInfo.modType]) {
-    return modTypeMap[modInfo.modType];
-  }
-
-  return modTypeMap["Unknown"];
 };
 
 const R = 24; // Avatar Radius
@@ -110,7 +93,8 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
                   <SmoothCornerPatch R={R + 2} r={r} color="#333" className="-translate-y-full" />
                   <img
                     id="mod-card-avatar"
-                    src={getAvatarUrl(modInfo)}
+                    src={getAvatarUrl(modInfo.modType, modInfo.character)}
+                    onError={(e) => (e.currentTarget.src = getAvatarUrl("Character", "Unknown"))}
                     alt="Avatar"
                     className={`absolute aspect-square -translate-y-[50%] rounded-full bg-black ring-2 ring-[#333]`}
                     style={{ width: 2 * R }}
