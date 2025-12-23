@@ -5,10 +5,14 @@ import icon from "../../resources/icon.png?asset";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log/main";
-import "./handlers/libraryHandler";
 import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol, modImageProtocolScheme } from "./protocols/modImageProtocol";
 import { ipcMain } from "electron/main";
+import "./handlers/libraryHandler";
+import "./handlers/modInfoHandler";
+import "./handlers/systemDialogHandler";
+import "./handlers/pathsHandler";
+import "./handlers/presetsHandler";
 
 const installExtensions = async () => {
   const installer = await import("electron-devtools-installer");

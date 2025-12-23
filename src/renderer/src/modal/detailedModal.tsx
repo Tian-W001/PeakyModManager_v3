@@ -118,7 +118,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
   };
 
   const handleAutofill = async () => {
-    const result = (await window.electron.ipcRenderer.invoke("autofill-mod-info", modInfo.name)) as {
+    const result = (await window.electron.ipcRenderer.invoke("autofill-modinfo", modInfo.name)) as {
       description: string | null;
       coverImage: string | null;
     };
