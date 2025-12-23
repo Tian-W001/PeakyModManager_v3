@@ -55,7 +55,12 @@ const CharacterBar = ({ className }: { className?: string }) => {
               {selectedCharacter === char && (
                 <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />
               )}
-              <img src={getCharacterImagePath(char)} alt={char} className="h-full skew-x-[25.3deg]" />
+              <img
+                src={getCharacterImagePath(char)}
+                onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
+                alt={char}
+                className="h-full skew-x-[25.3deg]"
+              />
             </div>
           ))}
         </div>

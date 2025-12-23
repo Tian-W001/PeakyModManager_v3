@@ -13,7 +13,6 @@ import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 
-import UnknownAvatar from "@renderer/assets/avatars/modType_avatars/Unknown.png";
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
 };
@@ -241,7 +240,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
                           src={getCharacterAvatarPath(char)}
                           alt={char}
                           className="h-6"
-                          onError={(e) => (e.currentTarget.src = UnknownAvatar)}
+                          onError={(e) => (e.currentTarget.src = getCharacterAvatarPath("Unknown"))}
                           loading="lazy"
                         />
                       </div>

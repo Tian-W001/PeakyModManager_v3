@@ -7,15 +7,12 @@ import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCard
 import { selectSelectedMenuItem, selectCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
 import InvertedBWFilter from "@renderer/components/invertedBWFilter";
 
-const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
-
 const MainScreen: React.FC = () => {
   const selectedModInfos = useAppSelector(selectModTypeFilteredModCards);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
   const currentWallpaper = useAppSelector(selectCurrentWallpaper);
 
-  const wallpaperUrl =
-    Object.entries(wallpapers).find(([path]) => path.endsWith(currentWallpaper))?.[1] || Object.values(wallpapers)[0];
+  const wallpaperUrl = new URL(`../assets/wallpapers/${currentWallpaper}`, import.meta.url).href;
 
   return (
     <>
