@@ -102,6 +102,10 @@ Located in **Settings**:
   - ⚠️ This will **overwrite** your current preset configurations.
   - After restoring, you must **re-apply the current preset** from the pending queue to reflect changes.
 
+## Auto Updates
+
+- When you launch the app, wait a few seconds until a system notification pops up, indicating that a new version has been downloaded and will be installed after you quit the app.
+
 ## Previews
 
 ![screenshot_main](images/README/screenshot_main.png)
