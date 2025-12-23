@@ -1,7 +1,7 @@
 import { Character } from "./character";
 import { ModType } from "./modType";
 
-interface BaseModInfo {
+export interface BaseModInfo {
   name: string;
   description: string;
   source: string;
