@@ -39,6 +39,7 @@
     "restoreTooltip": "Restore presets from backup file",
     "restoreSuccess": "Presets restored successfully!",
     "restoreFail": "Failed to restore presets or backup file not found.",
+    "samePathError": "Library path and Target path cannot be the same.",
     "testAlert": "Test Alert",
     "testAlertMessage": "This is a test alert!",
     "wallpaperTooltip": "Double-click to apply new wallpaper",

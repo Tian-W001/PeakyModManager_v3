@@ -1,6 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { useEffect, useRef } from "react";
 import IconInfo from "@renderer/assets/icons/Info.png";
+import toast from "react-hot-toast";
+import ZzzToast from "@renderer/components/zzzToast";
 import {
   loadLibrary,
   selectLibraryPath,
@@ -45,6 +47,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const handleSelectLibraryPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
+      if (newPath === targetPath) {
+        toast.custom(() => <ZzzToast message={t("settings.samePathError")} />);
+        return;
+      }
       await dispatch(setLibraryPath(newPath));
       await dispatch(loadLibrary());
       await window.electron.ipcRenderer.invoke("clear-target-path");
@@ -57,6 +63,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const handleSelectTargetPath = async () => {
     const newPath: string | null = await window.electron.ipcRenderer.invoke("select-path");
     if (newPath) {
+      if (newPath === libraryPath) {
+        toast.custom(() => <ZzzToast message={t("settings.samePathError")} />);
+        return;
+      }
       await dispatch(setTargetPath(newPath));
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(clearDiffList());
