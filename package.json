@@ -12,6 +12,7 @@
   },
   "scripts": {
     "format": "prettier --write .",
+    "gen:characters": "npx tsx scripts/generate_characters.ts",
     "lint": "eslint --cache .",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",

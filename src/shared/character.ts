@@ -1,4 +1,5 @@
 const characterNameList = [
+  // AUTO-GENERATED-START
   "Unknown",
   "Belle",
   "Wise",
@@ -49,6 +50,7 @@ const characterNameList = [
   "Banyue",
   "Zhao",
   "YeShunguang",
+  // AUTO-GENERATED-END
 ] as const;
 
 type Character = (typeof characterNameList)[number];
