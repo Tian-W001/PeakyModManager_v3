@@ -1,0 +1,552 @@
+[
+  {
+    "id": "Unknown",
+    "nicknames": {
+      "en": "Unknown",
+      "zh": "未知角色"
+    },
+    "fullnames": {
+      "en": "Unknown",
+      "zh": "未知角色"
+    }
+  },
+  {
+    "id": "Belle",
+    "nicknames": {
+      "en": "Belle",
+      "zh": "玲"
+    },
+    "fullnames": {
+      "en": "Belle",
+      "zh": "玲"
+    }
+  },
+  {
+    "id": "Wise",
+    "nicknames": {
+      "en": "Wise",
+      "zh": "哲"
+    },
+    "fullnames": {
+      "en": "Wise",
+      "zh": "哲"
+    }
+  },
+  {
+    "id": "Anby",
+    "nicknames": {
+      "en": "Anby",
+      "zh": "安比"
+    },
+    "fullnames": {
+      "en": "Anby Demara",
+      "zh": "安比·德玛拉"
+    }
+  },
+  {
+    "id": "Billy",
+    "nicknames": {
+      "en": "Billy",
+      "zh": "比利"
+    },
+    "fullnames": {
+      "en": "Billy Kid",
+      "zh": "比利·奇德"
+    }
+  },
+  {
+    "id": "Nicole",
+    "nicknames": {
+      "en": "Nicole",
+      "zh": "妮可"
+    },
+    "fullnames": {
+      "en": "Nicole Demara",
+      "zh": "妮可·德玛拉"
+    }
+  },
+  {
+    "id": "Nekomata",
+    "nicknames": {
+      "en": "Nekomata",
+      "zh": "猫又"
+    },
+    "fullnames": {
+      "en": "Nekomiya Mana",
+      "zh": "猫宫又奈"
+    }
+  },
+  {
+    "id": "Koleda",
+    "nicknames": {
+      "en": "Koleda",
+      "zh": "柯蕾妲"
+    },
+    "fullnames": {
+      "en": "Koleda Belobog",
+      "zh": "柯蕾妲·贝洛伯格"
+    }
+  },
+  {
+    "id": "Ben",
+    "nicknames": {
+      "en": "Ben",
+      "zh": "本"
+    },
+    "fullnames": {
+      "en": "Ben Bigger",
+      "zh": "本·比格"
+    }
+  },
+  {
+    "id": "Grace",
+    "nicknames": {
+      "en": "Grace",
+      "zh": "格莉丝"
+    },
+    "fullnames": {
+      "en": "Grace Howard",
+      "zh": "格莉丝·霍华德"
+    }
+  },
+  {
+    "id": "Anton",
+    "nicknames": {
+      "en": "Anton",
+      "zh": "安东"
+    },
+    "fullnames": {
+      "en": "Anton Ivanov",
+      "zh": "安东·伊万诺夫"
+    }
+  },
+  {
+    "id": "Lycaon",
+    "nicknames": {
+      "en": "Lycaon",
+      "zh": "莱卡恩"
+    },
+    "fullnames": {
+      "en": "Von Lycaon",
+      "zh": "冯·莱卡恩"
+    }
+  },
+  {
+    "id": "Rina",
+    "nicknames": {
+      "en": "Rina",
+      "zh": "丽娜"
+    },
+    "fullnames": {
+      "en": "Alexandrina Sebastiane",
+      "zh": "亚历山德丽娜·莎芭丝缇安"
+    }
+  },
+  {
+    "id": "Corin",
+    "nicknames": {
+      "en": "Corin",
+      "zh": "可琳"
+    },
+    "fullnames": {
+      "en": "Corin Wickes",
+      "zh": "可琳·威克斯"
+    }
+  },
+  {
+    "id": "Soldier11",
+    "nicknames": {
+      "en": "Soldier11",
+      "zh": "11号"
+    },
+    "fullnames": {
+      "en": "Soldier 11",
+      "zh": "「 11号 」"
+    }
+  },
+  {
+    "id": "Soukaku",
+    "nicknames": {
+      "en": "Soukaku",
+      "zh": "苍角"
+    },
+    "fullnames": {
+      "en": "Soukaku",
+      "zh": "苍角"
+    }
+  },
+  {
+    "id": "Lucy",
+    "nicknames": {
+      "en": "Lucy",
+      "zh": "露西"
+    },
+    "fullnames": {
+      "en": "Luciana de Montefio",
+      "zh": "露西亚娜·德·蒙特夫"
+    }
+  },
+  {
+    "id": "Piper",
+    "nicknames": {
+      "en": "Piper",
+      "zh": "派派"
+    },
+    "fullnames": {
+      "en": "Piper Wheel",
+      "zh": "派派·韦尔"
+    }
+  },
+  {
+    "id": "Ellen",
+    "nicknames": {
+      "en": "Ellen",
+      "zh": "艾莲"
+    },
+    "fullnames": {
+      "en": "Ellen Joe",
+      "zh": "艾莲·乔"
+    }
+  },
+  {
+    "id": "ZhuYuan",
+    "nicknames": {
+      "en": "ZhuYuan",
+      "zh": "朱鸢"
+    },
+    "fullnames": {
+      "en": "Zhu Yuan",
+      "zh": "朱鸢"
+    }
+  },
+  {
+    "id": "Qingyi",
+    "nicknames": {
+      "en": "Qingyi",
+      "zh": "青衣"
+    },
+    "fullnames": {
+      "en": "Qingyi",
+      "zh": "青衣"
+    }
+  },
+  {
+    "id": "Jane",
+    "nicknames": {
+      "en": "Jane",
+      "zh": "简"
+    },
+    "fullnames": {
+      "en": "Jane Doe",
+      "zh": "简·杜"
+    }
+  },
+  {
+    "id": "Seith",
+    "nicknames": {
+      "en": "Seith",
+      "zh": "塞斯"
+    },
+    "fullnames": {
+      "en": "Seith Lowell",
+      "zh": "塞斯·洛威尔"
+    }
+  },
+  {
+    "id": "Caesar",
+    "nicknames": {
+      "en": "Caesar",
+      "zh": "凯撒"
+    },
+    "fullnames": {
+      "en": "Caesar King",
+      "zh": "凯撒·金"
+    }
+  },
+  {
+    "id": "Burnice",
+    "nicknames": {
+      "en": "Burnice",
+      "zh": "柏妮思"
+    },
+    "fullnames": {
+      "en": "Burnice White",
+      "zh": "柏妮思·怀特"
+    }
+  },
+  {
+    "id": "Yanagi",
+    "nicknames": {
+      "en": "Yanagi",
+      "zh": "柳"
+    },
+    "fullnames": {
+      "en": "Tsukishiro Yanagi",
+      "zh": "月城柳"
+    }
+  },
+  {
+    "id": "Lighter",
+    "nicknames": {
+      "en": "Lighter",
+      "zh": "莱特"
+    },
+    "fullnames": {
+      "en": "Lighter",
+      "zh": "莱特"
+    }
+  },
+  {
+    "id": "Harumasa",
+    "nicknames": {
+      "en": "Harumasa",
+      "zh": "悠真"
+    },
+    "fullnames": {
+      "en": "Asaba Harumasa",
+      "zh": "浅羽悠真"
+    }
+  },
+  {
+    "id": "Miyabi",
+    "nicknames": {
+      "en": "Miyabi",
+      "zh": "雅"
+    },
+    "fullnames": {
+      "en": "Hoshimi Miyabi",
+      "zh": "星见雅"
+    }
+  },
+  {
+    "id": "Astra",
+    "nicknames": {
+      "en": "Astra",
+      "zh": "耀佳音"
+    },
+    "fullnames": {
+      "en": "Astra Yao",
+      "zh": "耀佳音"
+    }
+  },
+  {
+    "id": "Evelyn",
+    "nicknames": {
+      "en": "Evelyn",
+      "zh": "伊芙琳"
+    },
+    "fullnames": {
+      "en": "Evelyn Chevalier",
+      "zh": "伊芙琳·舒瓦利耶"
+    }
+  },
+  {
+    "id": "Pulchra",
+    "nicknames": {
+      "en": "Pulchra",
+      "zh": "波可娜"
+    },
+    "fullnames": {
+      "en": "Pulchra Fellini",
+      "zh": "波可娜·费雷尼"
+    }
+  },
+  {
+    "id": "Anby0",
+    "nicknames": {
+      "en": "Anby0",
+      "zh": "零号安比"
+    },
+    "fullnames": {
+      "en": "Soldier 0 - Anby",
+      "zh": "零号·安比"
+    }
+  },
+  {
+    "id": "Trigger",
+    "nicknames": {
+      "en": "Trigger",
+      "zh": "扳机"
+    },
+    "fullnames": {
+      "en": "Trigger",
+      "zh": "「 扳机 」"
+    }
+  },
+  {
+    "id": "Hugo",
+    "nicknames": {
+      "en": "Hugo",
+      "zh": "雨果"
+    },
+    "fullnames": {
+      "en": "Hugo Vlad",
+      "zh": "雨果·维拉德"
+    }
+  },
+  {
+    "id": "Vivian",
+    "nicknames": {
+      "en": "Vivian",
+      "zh": "薇薇安"
+    },
+    "fullnames": {
+      "en": "Vivian Banshee",
+      "zh": "薇薇安·班希"
+    }
+  },
+  {
+    "id": "YiXuan",
+    "nicknames": {
+      "en": "YiXuan",
+      "zh": "仪玄"
+    },
+    "fullnames": {
+      "en": "Yixuan",
+      "zh": "仪玄"
+    }
+  },
+  {
+    "id": "PanYinhu",
+    "nicknames": {
+      "en": "PanYinhu",
+      "zh": "潘引壶"
+    },
+    "fullnames": {
+      "en": "Pan Yinhu",
+      "zh": "潘引壶"
+    }
+  },
+  {
+    "id": "JuFufu",
+    "nicknames": {
+      "en": "JuFufu",
+      "zh": "橘福福"
+    },
+    "fullnames": {
+      "en": "Ju Fufu",
+      "zh": "橘福福"
+    }
+  },
+  {
+    "id": "Yuzuha",
+    "nicknames": {
+      "en": "Yuzuha",
+      "zh": "柚叶"
+    },
+    "fullnames": {
+      "en": "Ukinami Yuzuha",
+      "zh": "浮波柚叶"
+    }
+  },
+  {
+    "id": "Alice",
+    "nicknames": {
+      "en": "Alice",
+      "zh": "爱丽丝"
+    },
+    "fullnames": {
+      "en": "Alice Thymefield",
+      "zh": "爱丽丝·泰姆菲尔德"
+    }
+  },
+  {
+    "id": "Seed",
+    "nicknames": {
+      "en": "Seed",
+      "zh": "席德"
+    },
+    "fullnames": {
+      "en": "Seed",
+      "zh": "「 席德 」"
+    }
+  },
+  {
+    "id": "Orphie",
+    "nicknames": {
+      "en": "Orphie",
+      "zh": "奥菲丝"
+    },
+    "fullnames": {
+      "en": "Orphie Magnusson & Magus",
+      "zh": "奥菲丝·马格努森 &「 鬼火 」"
+    }
+  },
+  {
+    "id": "Lucia",
+    "nicknames": {
+      "en": "Lucia",
+      "zh": "卢西娅"
+    },
+    "fullnames": {
+      "en": "Lucia Elowen",
+      "zh": "卢西娅·艾洛温"
+    }
+  },
+  {
+    "id": "Manato",
+    "nicknames": {
+      "en": "Manato",
+      "zh": "真斗"
+    },
+    "fullnames": {
+      "en": "Komano Manato",
+      "zh": "狛野真斗"
+    }
+  },
+  {
+    "id": "Yidhari",
+    "nicknames": {
+      "en": "Yidhari",
+      "zh": "伊德海莉"
+    },
+    "fullnames": {
+      "en": "Yidhari Murphy",
+      "zh": "伊德海莉·墨菲"
+    }
+  },
+  {
+    "id": "Dialyn",
+    "nicknames": {
+      "en": "Dialyn",
+      "zh": "琉音"
+    },
+    "fullnames": {
+      "en": "Dialyn",
+      "zh": "琉音"
+    }
+  },
+  {
+    "id": "Banyue",
+    "nicknames": {
+      "en": "Banyue",
+      "zh": "般岳"
+    },
+    "fullnames": {
+      "en": "Banyue",
+      "zh": "般岳"
+    }
+  },
+  {
+    "id": "Zhao",
+    "nicknames": {
+      "en": "Zhao",
+      "zh": "照"
+    },
+    "fullnames": {
+      "en": "Zhao",
+      "zh": "照"
+    }
+  },
+  {
+    "id": "YeShunguang",
+    "nicknames": {
+      "en": "YeShunguang",
+      "zh": "叶瞬光"
+    },
+    "fullnames": {
+      "en": "Ye Shunguang",
+      "zh": "叶瞬光"
+    }
+  }
+]
