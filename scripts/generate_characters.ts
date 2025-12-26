@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 
-const charactersJsonPath = path.join(__dirname, "Characters.json");
+const charactersJsonPath = path.join(__dirname, "characters.json");
 const characterTsPath = path.join(rootDir, "src", "shared", "character.ts");
 const enJsonPath = path.join(rootDir, "src", "renderer", "src", "i18n", "locales", "en.json");
 const zhJsonPath = path.join(rootDir, "src", "renderer", "src", "i18n", "locales", "zh.json");
@@ -21,7 +21,7 @@ interface CharacterData {
 
 async function main() {
   try {
-    // Read Characters.json
+    // Read characters.json
     console.log(`Reading characters from ${charactersJsonPath}...`);
     if (!(await fs.pathExists(charactersJsonPath))) {
       throw new Error(`${charactersJsonPath} not found.`);
