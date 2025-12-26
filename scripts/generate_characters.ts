@@ -58,8 +58,10 @@ async function main() {
 
       // Ensure structure exists
       content.characters = content.characters || {};
-      content.characters.nicknames = content.characters.nicknames || {};
-      content.characters.fullnames = content.characters.fullnames || {};
+
+      // Clear existing values to handle deletions
+      content.characters.nicknames = {};
+      content.characters.fullnames = {};
 
       // Update values
       characters.forEach((c) => {
