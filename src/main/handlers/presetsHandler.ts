@@ -3,11 +3,16 @@ import store from "../store";
 import path from "path";
 import fs from "fs-extra";
 
+const backupFileBaseName = "Presets_Backup";
+
 ipcMain.handle("backup-presets", async (_event, backupData: Record<string, string[]>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return false;
 
-  const backupFilePath = path.join(libraryPath, "Presets_Backup.json");
+  /// create timestamp yyyy-mm-dd-hh-mm-ss
+  const timestamp = new Date().toISOString().replace(/T/, "-").replace(/:/g, "-").split(".")[0];
+
+  const backupFilePath = path.join(libraryPath, `${backupFileBaseName}_${timestamp}.json`);
   try {
     await fs.writeJson(backupFilePath, backupData, { spaces: 2 });
     return true;
@@ -17,11 +22,10 @@ ipcMain.handle("backup-presets", async (_event, backupData: Record<string, strin
   }
 });
 
-ipcMain.handle("restore-presets", async () => {
+ipcMain.handle("restore-presets", async (_event, backupFilePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return null;
 
-  const backupFilePath = path.join(libraryPath, "Presets_Backup.json");
   try {
     if (await fs.pathExists(backupFilePath)) {
       return (await fs.readJson(backupFilePath)) as Record<string, string[]>;

@@ -105,8 +105,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       3. remove current preset mods and put in diffList (done in setCurrentPreset action)
     */
     const restoreData = async () => {
-      const backupPresets: Record<string, string[]> | null =
-        await window.electron.ipcRenderer.invoke("restore-presets");
+      const backupPresets: Record<string, string[]> | null = await window.electron.ipcRenderer.invoke(
+        "restore-presets",
+        backupFilePath
+      );
       if (backupPresets) {
         dispatch(setPresets(backupPresets));
         await window.electron.ipcRenderer.invoke("clear-target-path");
@@ -117,9 +119,11 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       }
     };
 
+    const backupFilePath: string | null = await window.electron.ipcRenderer.invoke("select-backup-file");
+    if (!backupFilePath) return;
     showAlert(
       t("settings.restoreConfirm"),
-      undefined,
+      t("settings.restoreConfirmMsg"),
       <>
         <ZzzButton type="Cancel" onClick={hideAlert}>
           {t("common.cancel")}
@@ -129,7 +133,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           onClick={async () => {
             const success = await restoreData();
             hideAlert();
-
             if (success) {
               showAlert(
                 t("settings.restoreSuccess"),
