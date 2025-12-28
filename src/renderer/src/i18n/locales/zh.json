@@ -35,7 +35,6 @@
     "backupSuccess": "预设备份成功！",
     "backupFail": "预设备份失败。",
     "restore": "恢复",
-    "restoreTooltip": "从备份文件恢复预设",
     "restoreConfirm": "确定要恢复预设吗？",
     "restoreConfirmMsg": "此操作将覆盖您当前的预设。",
     "restoreSuccess": "预设恢复成功！",
