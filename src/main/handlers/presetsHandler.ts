@@ -9,7 +9,7 @@ ipcMain.handle("backup-presets", async (_event, backupData: Record<string, strin
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return false;
 
-  /// create timestamp yyyy-mm-dd-hh-mm-ss
+  // create timestamp yyyy-mm-dd-hh-mm-ss
   const timestamp = new Date().toISOString().replace(/T/, "-").replace(/:/g, "-").split(".")[0];
 
   const backupFilePath = path.join(libraryPath, `${backupFileBaseName}_${timestamp}.json`);

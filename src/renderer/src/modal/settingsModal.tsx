@@ -104,6 +104,9 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       2. load all presets from backup
       3. remove current preset mods and put in diffList (done in setCurrentPreset action)
     */
+    const backupFilePath: string | null = await window.electron.ipcRenderer.invoke("select-backup-file");
+    if (!backupFilePath) return;
+
     const restoreData = async () => {
       const backupPresets: Record<string, string[]> | null = await window.electron.ipcRenderer.invoke(
         "restore-presets",
@@ -119,8 +122,6 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
       }
     };
 
-    const backupFilePath: string | null = await window.electron.ipcRenderer.invoke("select-backup-file");
-    if (!backupFilePath) return;
     showAlert(
       t("settings.restoreConfirm"),
       t("settings.restoreConfirmMsg"),
