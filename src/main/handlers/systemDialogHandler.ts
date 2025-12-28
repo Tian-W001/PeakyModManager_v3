@@ -42,3 +42,19 @@ ipcMain.handle("select-cover", async (_event, modName: string) => {
   });
   return result.canceled ? null : result.filePaths[0];
 });
+
+ipcMain.handle("select-backup-file", async () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (!win) return null;
+
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath) return null;
+
+  const result = await dialog.showOpenDialog(win, {
+    defaultPath: libraryPath,
+    properties: ["openFile"],
+    filters: [{ name: "JSON Files", extensions: ["json"] }],
+    title: "Select Backup File",
+  });
+  return result.canceled ? null : result.filePaths[0];
+});
