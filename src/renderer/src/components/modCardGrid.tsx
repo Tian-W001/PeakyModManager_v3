@@ -88,6 +88,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   };
 
   const handleMultiSelect = (value: "selectAll" | "selectNone") => {
+    dispatch(clearDiffList());
     if (value === "selectAll") {
       dispatch(
         addToDiffList(
