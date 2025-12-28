@@ -50,7 +50,7 @@ ipcMain.handle("select-backup-file", async () => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return null;
 
-  const result = await dialog.showOpenDialog({
+  const result = await dialog.showOpenDialog(win, {
     defaultPath: libraryPath,
     properties: ["openFile"],
     filters: [{ name: "JSON Files", extensions: ["json"] }],
