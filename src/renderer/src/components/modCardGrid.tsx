@@ -179,22 +179,27 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
         {/* Multi-Select Dropdown */}
         <div className="absolute bottom-4 left-8 flex flex-col items-start">
-          {isMultiSelectDropdownOpen && (
-            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2">
-              {["selectAll", "selectNone"].map((option) => (
-                <div
-                  key={option}
-                  className="hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-start overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black"
-                  onClick={() => {
-                    handleMultiSelect(option as "selectAll" | "selectNone");
-                    setIsMultiSelectDropdownOpen(false);
-                  }}
-                >
-                  {t(`common.${option}`)}
-                </div>
-              ))}
-            </div>
-          )}
+          <div
+            className={clsx(
+              "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-all duration-300 ease-out",
+              isMultiSelectDropdownOpen
+                ? "pointer-events-auto translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-4 opacity-0"
+            )}
+          >
+            {["selectAll", "selectNone"].map((option) => (
+              <div
+                key={option}
+                className="hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-start overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black"
+                onClick={() => {
+                  handleMultiSelect(option as "selectAll" | "selectNone");
+                  setIsMultiSelectDropdownOpen(false);
+                }}
+              >
+                {t(`common.${option}`)}
+              </div>
+            ))}
+          </div>
           <ZzzButton onClick={() => setIsMultiSelectDropdownOpen(!isMultiSelectDropdownOpen)} className="shadow-xl">
             <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
               <span className="truncate">{t("common.multiSelect")}</span>
@@ -208,22 +213,27 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
 
         {/* Preset Dropdown and Add Button */}
         <div className="absolute right-8 bottom-4 flex flex-col items-end">
-          {isPresetsDropdownOpen && (
-            <div className="mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2">
-              {allPresetNames.map((name) => (
-                <div
-                  key={name}
-                  className={clsx(
-                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
-                    name === currentPresetName && "text-zzzYellow"
-                  )}
-                  onClick={async () => await handleSwitchPreset(name)}
-                >
-                  {name}
-                </div>
-              ))}
-            </div>
-          )}
+          <div
+            className={clsx(
+              "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-all duration-300 ease-out",
+              isPresetsDropdownOpen
+                ? "pointer-events-auto translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-4 opacity-0"
+            )}
+          >
+            {allPresetNames.map((name) => (
+              <div
+                key={name}
+                className={clsx(
+                  "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
+                  name === currentPresetName && "text-zzzYellow"
+                )}
+                onClick={async () => await handleSwitchPreset(name)}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
           <div className="flex items-center gap-2">
             <ZzzButton type="Add" onClick={() => setIsEditPresetsModalOpen(true)} />
 

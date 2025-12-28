@@ -50,22 +50,28 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
         </div>
       </div>
 
-      {isOpen && (
-        <div className="no-scrollbar absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-[#111] p-2 shadow-xl">
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`hover:bg-zzzYellow cursor-pointer rounded-lg px-4 py-2 text-right font-bold text-white transition-colors hover:text-black ${option.value === value ? "text-zzzYellow" : ""}`}
-              onClick={() => {
-                onChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </div>
-          ))}
-        </div>
-      )}
+      <div
+        className={clsx(
+          "no-scrollbar absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-[#111] p-2 shadow-xl transition-all duration-300 ease-out",
+          isOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-4 opacity-0"
+        )}
+      >
+        {options.map((option) => (
+          <div
+            key={option.value}
+            className={clsx(
+              "hover:bg-zzzYellow cursor-pointer rounded-lg px-4 py-2 text-right font-bold text-white transition-colors hover:text-black",
+              option.value === value && "text-zzzYellow"
+            )}
+            onClick={() => {
+              onChange(option.value);
+              setIsOpen(false);
+            }}
+          >
+            {option.label}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
