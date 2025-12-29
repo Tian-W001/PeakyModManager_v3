@@ -56,7 +56,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
 
   const handleOnRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!shouldModalMount) toggleModal();
+    toggleModal(true);
   };
 
   const handleOnClick = () => {

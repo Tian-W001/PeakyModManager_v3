@@ -2,16 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 
 const useMountTransition = (transitionDuration: number = 200) => {
   const [isActive, setIsActive] = useState(false);
-  const toggleActive = useCallback(
-    (value?: boolean) => {
-      if (typeof value === "boolean") {
-        setIsActive(value);
-      } else {
-        setIsActive(!isActive);
-      }
-    },
-    [isActive]
-  );
+  const toggleActive = useCallback((value?: boolean) => {
+    setIsActive((prev) => (typeof value === "boolean" ? value : !prev));
+  }, []);
   const [shouldMount, setShouldMount] = useState(false);
   const [isTransitioned, setIsTransitioned] = useState(false);
 
