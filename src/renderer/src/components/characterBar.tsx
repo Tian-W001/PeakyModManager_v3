@@ -59,6 +59,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
                 onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
                 alt={char}
                 className="h-full skew-x-[25.3deg]"
+                loading="lazy"
               />
             </div>
           ))}
