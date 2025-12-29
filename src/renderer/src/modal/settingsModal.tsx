@@ -25,12 +25,13 @@ import Exit from "@renderer/components/Exit";
 import IconHookBig from "@renderer/assets/icons/HookBig.png";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
+import clsx from "clsx";
 
 const wallpapers = import.meta.glob("@renderer/assets/wallpapers/*", { eager: true, query: "?url", import: "default" });
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
 
-const SettingsModal = ({ onClose }: { onClose: () => void }) => {
+const SettingsModal = ({ onClose, className }: { onClose: () => void; className?: string }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const targetPath = useAppSelector(selectTargetPath);
@@ -192,9 +193,11 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <div className="modal-overlay" id="modal-overlay">
+      <div className={clsx("modal-overlay", className)} id="modal-overlay">
         <div
-          className="chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+          className={
+            "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+          }
           id="modal-container"
         >
           <div className="flex h-16 items-center justify-between bg-black/20 px-4 py-2" id="modal-header">

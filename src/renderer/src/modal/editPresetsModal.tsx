@@ -12,8 +12,9 @@ import IconHook from "@renderer/assets/icons/Hook.png";
 import IconInfo from "@renderer/assets/icons/Info.png";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import ZzzButton from "@renderer/components/zzzButton";
+import clsx from "clsx";
 
-const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
+const EditPresetsModal = ({ onClose, className }: { onClose: () => void; className?: string }) => {
   const dispatch = useAppDispatch();
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
@@ -50,8 +51,12 @@ const EditPresetsModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="modal-overlay" id="modal-overlay">
-      <div className="chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]">
+    <div className={clsx("modal-overlay", className)} id="modal-overlay">
+      <div
+        className={
+          "chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+        }
+      >
         <div className="flex items-center justify-between bg-black/20 px-4 py-2" id="modal-header">
           <div className="title-decorator flex min-w-0 items-center gap-2" id="title-wrapper">
             <p className="text-2xl font-bold text-white italic">{t("presets.managePresets")}</p>

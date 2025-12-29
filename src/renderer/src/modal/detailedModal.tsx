@@ -12,12 +12,21 @@ import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
+import clsx from "clsx";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
 };
 
-const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => void }) => {
+const DetailedModal = ({
+  modInfo,
+  onClose,
+  className,
+}: {
+  modInfo: ModInfo;
+  onClose: () => void;
+  className?: string;
+}) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
@@ -157,7 +166,7 @@ const DetailedModal = ({ modInfo, onClose }: { modInfo: ModInfo; onClose: () => 
 
   return (
     <>
-      <div className="modal-overlay gap-2" id="modal-overlay">
+      <div className={clsx("modal-overlay gap-2", className)} id="modal-overlay">
         <div
           className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
