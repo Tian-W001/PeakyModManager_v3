@@ -12,7 +12,6 @@ const getCharacterImagePath = (char: Character | "All") => {
 const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
-
   const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
     | Character
     | "All"
@@ -34,9 +33,9 @@ const CharacterBar = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div className={clsx("flex items-center p-2", className)}>
+    <div className={clsx("flex items-center", className)}>
       <div
-        className="flex size-full flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
+        className="flex size-full shrink-0 flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
       >
         <TiChevronLeft color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
