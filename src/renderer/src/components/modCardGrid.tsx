@@ -203,10 +203,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           <ZzzButton onClick={() => setIsMultiSelectDropdownOpen(!isMultiSelectDropdownOpen)} className="shadow-xl">
             <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
               <span className="truncate">{t("common.multiSelect")}</span>
-              <FaCaretUp
-                className="transition-all"
-                style={{ transform: isMultiSelectDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-              />
+              <FaCaretUp className={`transition-all ${isMultiSelectDropdownOpen && "rotate-180"}`} />
             </div>
           </ZzzButton>
         </div>
@@ -240,10 +237,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             <ZzzButton onClick={() => setIsPresetsDropdownOpen(!isPresetsDropdownOpen)} className="w-auto max-w-70">
               <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
                 <span className="truncate">{currentPresetName}</span>
-                <FaCaretUp
-                  className="transition-all"
-                  style={{ transform: isPresetsDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-                />
+                <FaCaretUp className={`transition-all ${isPresetsDropdownOpen && "rotate-180"}`} />
               </div>
             </ZzzButton>
           </div>

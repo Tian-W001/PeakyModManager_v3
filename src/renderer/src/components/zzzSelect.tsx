@@ -46,7 +46,7 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
         <span className="truncate">{label}</span>
         <div className="flex flex-1 items-center justify-end gap-2">
           <div className="h-full truncate">{selectedOption ? selectedOption.label : value}</div>
-          <FaCaretDown size={12} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          <FaCaretDown size={12} className={`transition-transform ${isOpen && "rotate-180"}`} />
         </div>
       </div>
 
