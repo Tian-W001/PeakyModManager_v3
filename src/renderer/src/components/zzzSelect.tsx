@@ -53,11 +53,13 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
 
       {shouldMountDropdown && (
         <div
+          aria-hidden={!isDropdownTransitioned}
           className={`no-scrollbar ${isDropdownTransitioned ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-[50%] opacity-0"} absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-[#111] p-2 shadow-xl transition-[opacity_transform] duration-200 ease-in-out`}
         >
           {options.map((option) => (
             <div
               key={option.value}
+              tabIndex={isDropdownTransitioned ? 0 : -1}
               className={clsx(
                 "hover:bg-zzzYellow cursor-pointer rounded-lg px-4 py-2 text-right font-bold text-white transition-colors hover:text-black",
                 option.value === value && "text-zzzYellow"

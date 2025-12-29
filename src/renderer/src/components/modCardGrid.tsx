@@ -182,6 +182,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         <div className="absolute bottom-4 left-8 flex flex-col items-start">
           {shouldMultiSelectMenuMount && (
             <div
+              aria-hidden={!isMultiSelectMenuTransitioned}
               className={clsx(
                 "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_transform] duration-200 ease-in-out",
                 isMultiSelectMenuTransitioned
@@ -192,6 +193,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
               {["selectAll", "selectNone"].map((option) => (
                 <div
                   key={option}
+                  tabIndex={isMultiSelectMenuTransitioned ? 0 : -1}
                   className="hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-start overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black"
                   onClick={() => {
                     handleMultiSelect(option as "selectAll" | "selectNone");
@@ -215,6 +217,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         <div className="absolute right-8 bottom-4 flex flex-col items-end">
           {shouldPresetsMenuMount && (
             <div
+              aria-hidden={!isPresetsMenuTransitioned}
               className={clsx(
                 "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_transform] duration-200 ease-in-out",
                 isPresetsMenuTransitioned
@@ -225,6 +228,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
               {allPresetNames.map((name) => (
                 <div
                   key={name}
+                  tabIndex={isPresetsMenuTransitioned ? 0 : -1}
                   className={clsx(
                     "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
                     name === currentPresetName && "text-zzzYellow"

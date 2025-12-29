@@ -28,11 +28,12 @@ const MainScreen: React.FC = () => {
           <Menu className="w-70" />
           <div className="relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
             <CharacterBar
-              className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-transform duration-300 ease-out ${selectedMenuItem === "Character" ? "translate-y-0" : "-translate-y-[calc(100%+16px)]"}`}
+              aria-hidden={selectedMenuItem !== "Character"}
+              className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-transform duration-300 ease-out ${selectedMenuItem === "Character" ? "translate-y-0" : "pointer-events-none -translate-y-[calc(100%+16px)]"}`}
             />
             <ModCardGrid
               modInfos={selectedModInfos}
-              className={`min-h-0 w-full flex-1 transition-[margin] duration-300 ease-out ${selectedMenuItem === "Character" ? "mt-18" : "mt-0"}`}
+              className={`min-h-0 w-full flex-1 transition-[margin] duration-300 ease-out ${selectedMenuItem === "Character" ? "mt-[70px]" : "mt-0"}`}
             />
           </div>
         </div>
