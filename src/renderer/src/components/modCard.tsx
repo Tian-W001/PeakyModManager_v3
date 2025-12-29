@@ -126,7 +126,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
           <DetailedModal
             modInfo={modInfo}
             onClose={() => toggleModal()}
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${isModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+            className={`transition-[opacity,scale] duration-200 ease-in-out ${isModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
           />,
           document.body
         )}

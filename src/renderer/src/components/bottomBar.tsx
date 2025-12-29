@@ -55,7 +55,7 @@ const BottomBar = ({ className }: { className?: string }) => {
       {shouldSettingsModalMount &&
         createPortal(
           <SettingsModal
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${isSettingsModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+            className={`transition-[opacity,scale] duration-200 ease-in-out ${isSettingsModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
             onClose={() => toggleSettingsModalOpen()}
           />,
           document.body
