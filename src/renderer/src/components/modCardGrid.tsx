@@ -183,7 +183,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           {shouldMultiSelectMenuMount && (
             <div
               className={clsx(
-                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_transform] duration-200 ease-in-out",
+                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
                 isMultiSelectMenuTransitioned
                   ? "pointer-events-auto translate-y-0 opacity-100"
                   : "pointer-events-none translate-y-[50%] opacity-0"
@@ -216,7 +216,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           {shouldPresetsMenuMount && (
             <div
               className={clsx(
-                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_transform] duration-200 ease-in-out",
+                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
                 isPresetsMenuTransitioned
                   ? "pointer-events-auto translate-y-0 opacity-100"
                   : "pointer-events-none translate-y-[50%] opacity-0"
