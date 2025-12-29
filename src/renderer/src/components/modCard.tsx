@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ModInfo } from "src/shared/modInfo";
 import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
@@ -11,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { ModType } from "@shared/modType";
 import { Character } from "@shared/character";
+import useMountTransition from "@renderer/hooks/useMountTransition";
 
 const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
@@ -41,7 +41,7 @@ const getBorderStyle = (modState: ModState) => {
 const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toggleModal, shouldModalMount, isModalTransitioned] = useMountTransition(200);
 
   const isEnabledInPreset = useAppSelector(selectModIsEnabled(modInfo.name));
   const diffEntry = useAppSelector(selectModDiffState(modInfo.name));
@@ -56,7 +56,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
 
   const handleOnRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsModalOpen(true);
+    if (!shouldModalMount) toggleModal();
   };
 
   const handleOnClick = () => {
@@ -121,8 +121,15 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
           </>
         )}
       </div>
-      {isModalOpen &&
-        createPortal(<DetailedModal modInfo={modInfo} onClose={() => setIsModalOpen(false)} />, document.body)}
+      {shouldModalMount &&
+        createPortal(
+          <DetailedModal
+            modInfo={modInfo}
+            onClose={() => toggleModal()}
+            className={`transition-[opacity_scale] duration-200 ease-in-out ${isModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+          />,
+          document.body
+        )}
     </>
   );
 };

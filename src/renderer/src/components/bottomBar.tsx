@@ -7,11 +7,12 @@ import SettingsModal from "../modal/settingsModal";
 import { useTranslation } from "react-i18next";
 import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
 import ZzzButton from "./zzzButton";
+import useMountTransition from "@renderer/hooks/useMountTransition";
 
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [toggleSettingsModalOpen, shouldSettingsModalMount, isSettingsModalTransitioned] = useMountTransition(200);
   const diffList = useAppSelector(selectDiffList);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -38,7 +39,7 @@ const BottomBar = ({ className }: { className?: string }) => {
     <>
       <div className={clsx("flex items-center justify-between gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
         <div className="flex justify-center gap-4">
-          <ZzzButton type="Setting" onClick={() => setIsSettingsModalOpen(true)}>
+          <ZzzButton type="Setting" onClick={() => toggleSettingsModalOpen()}>
             {t("common.settings")}
           </ZzzButton>
         </div>
@@ -51,8 +52,14 @@ const BottomBar = ({ className }: { className?: string }) => {
           </ZzzButton>
         </div>
       </div>
-      {isSettingsModalOpen &&
-        createPortal(<SettingsModal onClose={() => setIsSettingsModalOpen(false)} />, document.body)}
+      {shouldSettingsModalMount &&
+        createPortal(
+          <SettingsModal
+            className={`transition-[opacity_scale] duration-200 ease-in-out ${isSettingsModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+            onClose={() => toggleSettingsModalOpen()}
+          />,
+          document.body
+        )}
     </>
   );
 };
