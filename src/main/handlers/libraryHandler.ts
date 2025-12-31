@@ -65,11 +65,14 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 
 ipcMain.handle("delete-mod", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return false;
+  const targetPath = store.get("targetPath", null) as string | null;
+  if (!libraryPath || !targetPath) return false;
 
   const modPath = path.join(libraryPath, modName);
+  const modLinkPath = path.join(targetPath, modName);
   try {
     await fs.remove(modPath);
+    await fs.remove(modLinkPath);
     return true;
   } catch (error) {
     console.error("Error deleting mod:", error);
