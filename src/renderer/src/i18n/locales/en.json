@@ -17,11 +17,15 @@
     "selectAll": "Select All",
     "selectNone": "Select None"
   },
-  "download": {
+  "import": {
     "downloading": "Downloading {{modName}}...",
+    "downloadSuccess": "{{modName}} downloaded",
+    "downloadError": "Error downloading {{modName}}: {{error}}",
     "unzipping": "Unzipping {{modName}}...",
-    "success": "Successfully installed {{modName}}",
-    "error": "Error downloading {{modName}}: {{error}}"
+    "unzipSuccess": "{{modName}} unzipped",
+    "unzipError": "Error unzipping {{modName}}: {{error}}",
+    "coverDownloadSuccess": "Cover downloaded for {{modName}}",
+    "coverDownloadError": "Error downloading cover for {{modName}}: {{error}}"
   },
   "settings": {
     "title": "Settings",
