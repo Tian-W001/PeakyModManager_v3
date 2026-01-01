@@ -100,11 +100,13 @@ const handleExplorerImport = async (url: string, mainWindow: BrowserWindow) => {
 
 const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWindow) => {
   log.info("Downloading mod:", payload.modName);
-  mainWindow.webContents.send("downloading-mod", { modName: payload.modName });
+
   const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
   await fs.ensureDir(modDest);
+
+  // download all files
+  mainWindow.webContents.send("downloading-mod", { modName: payload.modName });
   try {
-    // download all files
     for (const link of payload.downloadLinks) {
       log.info(`Downloading from: ${link.href}`);
       const fileDest = path.join(modDest, link.filename);
@@ -124,73 +126,85 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
         throw new Error(`Failed to download ${payload.modName}`);
       }
       await fs.writeFile(fileDest, res.data);
-      mainWindow.webContents.send("download-mod-finish", { modName: payload.modName });
     }
+  } catch (error) {
+    log.error("Error downloading mod files:", error);
+    mainWindow.webContents.send("download-mod-error", {
+      modName: payload.modName,
+      error: "Error downloading mod: " + error,
+    });
+    return;
+  }
+  mainWindow.webContents.send("download-mod-finish", { modName: payload.modName });
 
-    // extract the current folder
-    mainWindow.webContents.send("extracting-mod", { modName: payload.modName });
+  // extract the current folder
+  mainWindow.webContents.send("unzipping-mod", { modName: payload.modName });
+  try {
     const files = await fs.readdir(modDest);
     for (const file of files) {
       if (isZippedFile(file)) {
         const filePath = path.join(modDest, file);
 
-        const stream = Seven.extractFull(filePath, modDest, {
-          $bin: asarToAsarUnpacked(sevenBin.path7za),
-          $progress: true,
-        });
-        stream.on("progress", (progress: { percent?: number }) => {
-          if (progress.percent && progress.percent !== 100) {
+        await new Promise<void>((resolve, reject) => {
+          const stream = Seven.extractFull(filePath, modDest, {
+            $bin: asarToAsarUnpacked(sevenBin.path7za),
+            $progress: true,
+          });
+          stream.on("progress", (progress) => {
             mainWindow.webContents.send("unzip-mod-progress", {
               modName: payload.modName,
-              progress: Math.round(progress.percent),
+              progress: progress.percent,
             });
-          }
-        });
-        stream.on("end", () => {
-          fs.removeSync(filePath);
-        });
-        stream.on("error", (error) => {
-          log.error(`Failed to extract archive ${filePath}:`, error);
-          throw new Error(`Failed to extract archive ${file}`);
+          });
+          stream.on("end", () => {
+            fs.removeSync(filePath);
+            resolve();
+          });
+          stream.on("error", (error) => {
+            log.error(`Failed to extract archive ${filePath}:`, error);
+            reject(error);
+          });
         });
       }
     }
-    mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
-
-    // download cover image if provided
-    if (payload.coverImageLink) {
-      try {
-        log.info(`Downloading cover image from: ${payload.coverImageLink}`);
-        const coverDest = path.join(modDest, "cover.jpg");
-        const res = await axios.get(payload.coverImageLink, { responseType: "arraybuffer" });
-        if (res.status === 200) {
-          await fs.writeFile(coverDest, res.data);
-        } else {
-          throw new Error(`Failed to download cover image: ${res.statusText}`);
-        }
-      } catch (error) {
-        throw new Error("Error downloading cover image: " + error);
-      }
-    }
-
-    // generate modinfo.json
-    const modInfoPath = path.join(modDest, "modinfo.json");
-    const modInfo: ModInfo = {
-      name: payload.modName,
-      modType: "Unknown",
-      description: "",
-      source: payload.modSource,
-      coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
-    };
-    fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
-
-    // notify renderer to import
-    mainWindow.webContents.send("import-mod", modDest);
   } catch (error) {
-    log.error("Error imoporting mod:", error);
-    mainWindow.webContents.send("download-mod-error", {
+    log.error("Error extracting mod files:", error);
+    mainWindow.webContents.send("unzip-mod-error", {
       modName: payload.modName,
-      error: error,
+      error: "Error extracting mod: " + error,
     });
+    return;
   }
+  mainWindow.webContents.send("unzip-mod-finish", { modName: payload.modName });
+
+  // download cover image if provided
+  if (payload.coverImageLink) {
+    try {
+      log.info(`Downloading cover image from: ${payload.coverImageLink}`);
+      const coverDest = path.join(modDest, "cover.jpg");
+      const res = await axios.get(payload.coverImageLink, { responseType: "arraybuffer" });
+      if (res.status === 200) {
+        await fs.writeFile(coverDest, res.data);
+      } else {
+        throw new Error(`Failed to download cover image: ${res.statusText}`);
+      }
+    } catch (error) {
+      mainWindow.webContents.send("download-cover-error", { modName: payload.modName, error: error });
+    }
+    mainWindow.webContents.send("download-cover-success", { modName: payload.modName });
+  }
+
+  // generate modinfo.json
+  const modInfoPath = path.join(modDest, "modinfo.json");
+  const modInfo: ModInfo = {
+    name: payload.modName,
+    modType: "Unknown",
+    description: "",
+    source: payload.modSource,
+    coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
+  };
+  fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
+
+  // notify renderer to import
+  mainWindow.webContents.send("import-mod", modDest);
 };

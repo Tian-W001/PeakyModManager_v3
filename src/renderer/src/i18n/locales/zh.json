@@ -17,11 +17,15 @@
     "selectAll": "全选",
     "selectNone": "全不选"
   },
-  "download": {
-    "downloading": "正在下载 {{modName}}...",
-    "unzipping": "正在解压 {{modName}}...",
-    "success": "成功安装 {{modName}}",
-    "error": "下载 {{modName}} 失败: {{error}}"
+  "import": {
+    "downloading": "正在下载{{modName}}...",
+    "downloadSuccess": "已下载{{modName}}",
+    "downloadError": "下载{{modName}}失败: {{error}}",
+    "unzipping": "正在解压{{modName}}...",
+    "unzipSuccess": "已解压{{modName}}",
+    "unzipError": "解压{{modName}}失败: {{error}}",
+    "coverDownloadSuccess": "已下载{{modName}}的封面",
+    "coverDownloadError": "下载{{modName}}的封面失败: {{error}}"
   },
   "settings": {
     "title": "设置",
