@@ -223,12 +223,6 @@ const DetailedModal = ({
               />
             </div>
             <div className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4" id="mod-info-section">
-              <textarea
-                value={localModInfo.description}
-                placeholder={t("modDetails.description")}
-                className="no-scrollbar field-sizing-content min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
-                onChange={(e) => handleModInfoChange("description", e.target.value)}
-              />
               <ZzzSelect
                 label={t("modDetails.modType")}
                 value={localModInfo.modType}
@@ -279,6 +273,12 @@ const DetailedModal = ({
                   <img src={Locate} alt="Locate" className="h-full" />
                 </a>
               </div>
+              <textarea
+                value={localModInfo.description}
+                placeholder={t("modDetails.description")}
+                className="no-scrollbar field-sizing-content min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
+                onChange={(e) => handleModInfoChange("description", e.target.value)}
+              />
             </div>
           </div>
         </div>
