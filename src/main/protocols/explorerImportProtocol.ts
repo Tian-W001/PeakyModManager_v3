@@ -185,13 +185,13 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
       const res = await axios.get(payload.coverImageLink, { responseType: "arraybuffer" });
       if (res.status === 200) {
         await fs.writeFile(coverDest, res.data);
+        mainWindow.webContents.send("download-cover-success", { modName: payload.modName });
       } else {
         throw new Error(`Failed to download cover image: ${res.statusText}`);
       }
     } catch (error) {
       mainWindow.webContents.send("download-cover-error", { modName: payload.modName, error: error });
     }
-    mainWindow.webContents.send("download-cover-success", { modName: payload.modName });
   }
 
   // generate modinfo.json
