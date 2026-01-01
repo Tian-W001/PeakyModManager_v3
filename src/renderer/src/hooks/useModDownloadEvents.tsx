@@ -26,7 +26,7 @@ export const useModDownloadEvents = () => {
     // });
 
     window.electron.ipcRenderer.on("download-mod-error", (_, { modName, error }) => {
-      toast.custom(() => <ZzzToast message={t("download.error", { modName, error })} />, {
+      toast.custom(() => <ZzzToast message={t("import.downloadError", { modName, error })} />, {
         id: modName,
         duration: 5000,
       });
@@ -47,7 +47,7 @@ export const useModDownloadEvents = () => {
     });
 
     window.electron.ipcRenderer.on("unzip-mod-finish", (_, { modName }) => {
-      toast.custom(() => <ZzzToast message={t("download.success", { modName })} />, {
+      toast.custom(() => <ZzzToast message={t("import.unzipSuccess", { modName })} />, {
         id: modName,
         duration: 2000,
       });
