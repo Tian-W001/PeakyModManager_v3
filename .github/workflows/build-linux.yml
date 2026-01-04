@@ -2,6 +2,11 @@ name: Build Linux (Artifact)
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name (e.g. v1.0.0)"
+        required: false
+        default: "v1.0.0"
 
 jobs:
   build-linux:
@@ -20,6 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Update version
+        run: |
+          VERSION="${{ inputs.tag_name }}"
+          if [[ $VERSION == v* ]]; then
+            VERSION="${VERSION:1}"
+          fi
+          npm version $VERSION --no-git-tag-version --allow-same-version
+
       - name: Build
         run: npm run build
 
@@ -30,4 +43,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Linux-AppImage
-          path: dist/*.AppImage
+          path: |
+            dist/*.AppImage
+            dist/latest-linux.yml
