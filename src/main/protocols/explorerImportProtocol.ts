@@ -6,6 +6,7 @@ import sevenBin from "7zip-bin";
 import Seven from "node-7z";
 import log from "electron-log/main";
 import { ModInfo } from "../../shared/modInfo";
+import { Character } from "../../shared/character";
 
 const zippedExtensions = [".zip", ".7z", ".rar", ".tar", ".gz"];
 const isZippedFile = (filename: string) => {
@@ -36,6 +37,7 @@ const asarToAsarUnpacked = (path: string) => {
 interface ExplorerImportPayload {
   modName: string;
   modSource: string;
+  characterName: Character | null;
   coverImageLink: string;
   downloadLinks: {
     filename: string;
@@ -196,13 +198,22 @@ const downloadMod = async (payload: ExplorerImportPayload, mainWindow: BrowserWi
 
   // generate modinfo.json
   const modInfoPath = path.join(modDest, "modinfo.json");
-  const modInfo: ModInfo = {
-    name: payload.modName,
-    modType: "Unknown",
-    description: "",
-    source: payload.modSource,
-    coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
-  };
+  const modInfo: ModInfo = payload.characterName
+    ? {
+        name: payload.modName,
+        description: "",
+        modType: "Character",
+        character: payload.characterName,
+        source: payload.modSource,
+        coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
+      }
+    : {
+        name: payload.modName,
+        description: "",
+        modType: "Unknown",
+        source: payload.modSource,
+        coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
+      };
   fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
 
   // notify renderer to import
