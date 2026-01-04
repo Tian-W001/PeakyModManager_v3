@@ -1,4 +1,4 @@
-name: Build Windows
+name: Release Build
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -30,13 +30,15 @@ jobs:
 
       - name: Update version
         run: |
-          $version = "${{ inputs.tag_name }}"
-          if ($version.StartsWith("v")) {
-            $version = $version.Substring(1)
-          }
-          npm version $version --no-git-tag-version --allow-same-version
+          VERSION="${{ inputs.tag_name }}"
+          if [[ $VERSION == v* ]]; then
+            VERSION="${VERSION:1}"
+          fi
+          npm version $VERSION --no-git-tag-version --allow-same-version
 
       - name: Build and Publish
-        run: npm run build:win:publish
+        run: |
+          npm run build
+          npx electron-builder --win --linux --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

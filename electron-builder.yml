@@ -15,6 +15,7 @@ files:
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asarUnpack:
   - resources/**
+  - "**/node_modules/7zip-bin/**/*"
 win:
   icon: build/icon.ico
   executableName: peakymodmanager-v3
