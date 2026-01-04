@@ -548,5 +548,27 @@
       "en": "Ye Shunguang",
       "zh": "叶瞬光"
     }
+  },
+  {
+    "id": "Sunna",
+    "nicknames": {
+      "en": "Sunna",
+      "zh": "千夏"
+    },
+    "fullnames": {
+      "en": "Sunna",
+      "zh": "千夏"
+    }
+  },
+  {
+    "id": "Aria",
+    "nicknames": {
+      "en": "Aria",
+      "zh": "爱芮"
+    },
+    "fullnames": {
+      "en": "Aria",
+      "zh": "爱芮"
+    }
   }
 ]
