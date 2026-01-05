@@ -17,7 +17,12 @@ import {
 import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
 import { addModInfo } from "@renderer/redux/slices/librarySlice";
-import { selectSelectedCharacter, selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
+import {
+  selectSelectedCharacter,
+  selectSelectedMenuItem,
+  setSelectedCharacter,
+  setSelectedMenuItem,
+} from "@renderer/redux/slices/uiSlice";
 import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
@@ -50,6 +55,9 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       if (newModInfo) {
         dispatch(addModInfo(newModInfo));
         dispatch(setSelectedMenuItem(newModInfo.modType ?? "Unknown"));
+        if (newModInfo.character) {
+          dispatch(setSelectedCharacter(newModInfo.character));
+        }
       }
     },
     [dispatch]
