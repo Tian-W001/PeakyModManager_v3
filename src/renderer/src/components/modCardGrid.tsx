@@ -70,13 +70,24 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       e.preventDefault();
       const item = e.dataTransfer.items[0];
-      if (item.kind !== "file" || !item.webkitGetAsEntry()?.isDirectory) {
-        console.error(item, "not a folder");
+      if (item.kind !== "file") {
         return;
       }
-      const file = item.getAsFile() as File;
+
+      const entry = item.webkitGetAsEntry();
+      const file = item.getAsFile();
+      if (!file) return;
+
+      const isDirectory = entry?.isDirectory;
+      const isZipped = /\.(zip|7z|rar|tar|gz)$/i.test(file.name);
+
+      if (!isDirectory && !isZipped) {
+        console.error(item, "not a folder or zipped file");
+        return;
+      }
+
       const filePath = window.api.getFilePath(file);
-      console.log("Dropped folder:", filePath);
+      console.log("Dropped item:", filePath);
       if (filePath) {
         await importMod(filePath);
       }

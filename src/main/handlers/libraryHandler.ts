@@ -1,9 +1,12 @@
 import path from "path";
 import fs from "fs-extra";
 import { ipcMain } from "electron";
+import sevenBin from "7zip-bin";
+import Seven from "node-7z";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateAndFixModInfo, createModInfoFile } from "./modInfoHandler";
+import { isZippedFile, asarToAsarUnpacked, getMainWindow } from "../utils";
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
@@ -32,20 +35,39 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
   }
 });
 
+// Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return false;
 
   try {
     const stats = await fs.stat(sourcePath);
-    if (!stats.isDirectory()) {
-      console.error("Imported path is not a directory:", sourcePath);
+    let destPath: string;
+
+    if (stats.isFile() && isZippedFile(sourcePath)) {
+      const modName = path.basename(sourcePath, path.extname(sourcePath));
+      destPath = path.join(libraryPath, modName);
+      await fs.ensureDir(destPath);
+
+      getMainWindow()?.webContents.send("unzipping-mod", { modName });
+      await new Promise<void>((resolve, reject) => {
+        const stream = Seven.extractFull(sourcePath, destPath, {
+          $bin: asarToAsarUnpacked(sevenBin.path7za),
+        });
+        stream.on("end", () => {
+          getMainWindow()?.webContents.send("unzip-mod-finish", { modName });
+          resolve();
+        });
+        stream.on("error", (err) => reject(err));
+      });
+    } else if (stats.isDirectory()) {
+      const modName = path.basename(sourcePath);
+      destPath = path.join(libraryPath, modName);
+      await fs.copy(sourcePath, destPath);
+    } else {
+      console.error("Imported path is not a directory or supported archive:", sourcePath);
       return false;
     }
-
-    const modName = path.basename(sourcePath);
-    const destPath = path.join(libraryPath, modName);
-    await fs.copy(sourcePath, destPath);
 
     // Check if modinfo.json exists
     const modInfoPath = path.join(destPath, "modinfo.json");
