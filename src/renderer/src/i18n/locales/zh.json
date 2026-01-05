@@ -61,7 +61,7 @@
     "deleteMod": "删除模组",
     "openModFolder": "打开文件夹",
     "autofill": "自动填充",
-    "deleteConfirm": "确定要删除 {{name}} 吗？",
+    "deleteModConfirm": "确定要删除 {{name}} 吗？",
     "deleteModConfirmMsg": "此操作无法撤销"
   },
   "presets": {
