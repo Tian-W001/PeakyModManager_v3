@@ -36,7 +36,7 @@ const characterNameList = [
   "Trigger",
   "Hugo",
   "Vivian",
-  "YiXuan",
+  "Yixuan",
   "PanYinhu",
   "JuFufu",
   "Yuzuha",
