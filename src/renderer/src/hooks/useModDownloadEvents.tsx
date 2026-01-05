@@ -33,16 +33,9 @@ export const useModDownloadEvents = () => {
     });
 
     window.electron.ipcRenderer.on("unzipping-mod", (_, { modName }) => {
-      toast.custom(() => <ZzzToast message={t("import.unzipping", { modName })} progress={0} />, {
+      toast.custom(() => <ZzzToast message={t("import.unzipping", { modName })} />, {
         id: modName,
         duration: 2000,
-      });
-    });
-
-    window.electron.ipcRenderer.on("unzip-mod-progress", (_, { modName, progress }) => {
-      toast.custom(() => <ZzzToast message={t("import.unzipping", { modName })} progress={progress} />, {
-        id: modName,
-        duration: 10000,
       });
     });
 
@@ -82,7 +75,6 @@ export const useModDownloadEvents = () => {
       window.electron.ipcRenderer.removeAllListeners("download-mod-finish");
       window.electron.ipcRenderer.removeAllListeners("download-mod-error");
       window.electron.ipcRenderer.removeAllListeners("unzipping-mod");
-      window.electron.ipcRenderer.removeAllListeners("unzip-mod-progress");
       window.electron.ipcRenderer.removeAllListeners("unzip-mod-finish");
       window.electron.ipcRenderer.removeAllListeners("unzip-mod-error");
       window.electron.ipcRenderer.removeAllListeners("download-cover-success");
