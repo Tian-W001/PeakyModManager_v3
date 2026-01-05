@@ -25,12 +25,6 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - name: Install Wine and dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y wine wine32 wine64 libwine libwine: i386
-
       - name: Install dependencies
         run: npm install
 
