@@ -16,15 +16,16 @@ export const isZippedFile = (filename: string) => {
   return false;
 };
 
-export const asarToAsarUnpacked = (path: string) => {
-  if (!/app\.asar\.unpacked/.test(path)) {
-    const pathUnpacked = path.replace(/app\.asar/, "app.asar.unpacked");
+export const asarToAsarUnpacked = (filePath: string) => {
+  let resultPath = filePath;
+  if (!/app\.asar\.unpacked/.test(resultPath)) {
+    const pathUnpacked = resultPath.replace(/app\.asar/, "app.asar.unpacked");
 
     if (fs.existsSync(pathUnpacked)) {
-      path = pathUnpacked;
+      resultPath = pathUnpacked;
     }
   }
-  return path;
+  return resultPath;
 };
 
 export const getMainWindow = (): BrowserWindow | null => {
