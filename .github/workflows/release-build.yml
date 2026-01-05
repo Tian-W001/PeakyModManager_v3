@@ -13,7 +13,15 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            args: --win
+          - os: ubuntu-latest
+            args: --linux appimage
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -29,6 +37,7 @@ jobs:
         run: npm install
 
       - name: Update version
+        shell: bash
         run: |
           VERSION="${{ inputs.tag_name }}"
           if [[ $VERSION == v* ]]; then
@@ -39,6 +48,6 @@ jobs:
       - name: Build and Publish
         run: |
           npm run build
-          npx electron-builder --win --linux appimage --publish=always
+          npx electron-builder ${{ matrix.args }} --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
