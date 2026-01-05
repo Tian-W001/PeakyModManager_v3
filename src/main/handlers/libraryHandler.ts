@@ -58,7 +58,10 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
           getMainWindow()?.webContents.send("unzip-mod-finish", { modName });
           resolve();
         });
-        stream.on("error", (err) => reject(err));
+        stream.on("error", (err) => {
+          getMainWindow()?.webContents.send("unzip-mod-error", { modName, error: err.message });
+          reject(err);
+        });
       });
     } else if (stats.isDirectory()) {
       const modName = path.basename(sourcePath);
