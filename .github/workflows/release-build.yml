@@ -25,10 +25,11 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - name: Install Wine
+      - name: Install Wine and dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y wine
+          sudo apt-get install -y wine wine32 wine64 libwine libwine: i386
 
       - name: Install dependencies
         run: npm install
@@ -44,6 +45,6 @@ jobs:
       - name: Build and Publish
         run: |
           npm run build
-          npx electron-builder --win --linux --publish=always
+          npx electron-builder --win --linux appimage --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
