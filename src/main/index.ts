@@ -82,7 +82,7 @@ const createWindow = async () => {
   }
 
   // Register protocol handler after window is created
-  registerExplorerImportProtocol(mainWindow);
+  registerExplorerImportProtocol();
   registerModImageProtocol();
 };
 
