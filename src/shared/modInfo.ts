@@ -3,6 +3,7 @@ import { ModType } from "./modType";
 
 export interface BaseModInfo {
   name: string;
+  title: string | null;
   description: string;
   source: string;
   coverImage: string;
@@ -20,6 +21,7 @@ export type ModInfo =
 
 export const defaultModInfo: ModInfo = {
   name: "Unnamed mod",
+  title: null,
   modType: "Unknown",
   description: "No description provided.",
   source: "",

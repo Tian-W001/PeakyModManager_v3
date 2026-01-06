@@ -68,7 +68,7 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
     const modInfoPath = path.join(destPath, "modinfo.json");
     if (fs.existsSync(modInfoPath)) {
       const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
-      const fixedModInfo = validateAndFixModInfo(modInfo);
+      const fixedModInfo = validateAndFixModInfo(modInfo, path.basename(destPath));
       fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
       return fixedModInfo;
     } else {
@@ -119,7 +119,7 @@ const loadLibrary = async () => {
       if (fs.existsSync(modInfoPath)) {
         const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
         //need to validate modInfo here
-        const fixedModInfo = validateAndFixModInfo(modInfo);
+        const fixedModInfo = validateAndFixModInfo(modInfo, folder);
         fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
         return fixedModInfo;
       } else {

@@ -147,7 +147,7 @@ const DetailedModal = ({
       const sortedChars = [...characterNameList].filter((c) => c !== "Unknown").sort((a, b) => b.length - a.length);
 
       for (const char of sortedChars) {
-        if (modInfo.name.toLowerCase().includes(char.toLowerCase())) {
+        if (modInfo.title?.toLowerCase().includes(char.toLowerCase())) {
           matchedCharacter = char;
           break;
         }
@@ -212,10 +212,15 @@ const DetailedModal = ({
               className="box-border flex h-14 min-w-0 items-center justify-between gap-2 overflow-hidden py-2 pr-4"
               id="modal-title-area"
             >
-              <div className="title-decorator flex min-w-0 items-center justify-between overflow-hidden">
-                <p className="min-w-0 overflow-hidden px-2 text-2xl font-bold text-ellipsis whitespace-nowrap text-white italic">
-                  {modInfo.name}
-                </p>
+              <div className="title-decorator flex h-10 min-w-0 items-center justify-between overflow-hidden">
+                <textarea
+                  value={localModInfo.title ?? "No Title"}
+                  onChange={(e) => handleModInfoChange("title", e.target.value)}
+                  className="no-scrollbar hover:text-zzzYellow field-sizing-content h-full min-w-0 resize-none overflow-x-auto px-2 text-2xl whitespace-nowrap text-white italic"
+                  spellCheck={false}
+                >
+                  {modInfo.title}
+                </textarea>
               </div>
               <Exit
                 className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
