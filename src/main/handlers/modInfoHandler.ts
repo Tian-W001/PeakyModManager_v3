@@ -8,6 +8,7 @@ import store from "../store";
 export const createModInfoFile = (modPath: string) => {
   const modInfo: ModInfo = {
     name: path.basename(modPath),
+    title: path.basename(modPath),
     modType: "Unknown",
     description: "",
     source: "",
@@ -19,12 +20,16 @@ export const createModInfoFile = (modPath: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateAndFixModInfo = (modInfo: any) => {
+export const validateAndFixModInfo = (modInfo: any, folderName: string) => {
   const fixedModInfo: ModInfo = { ...defaultModInfo };
   for (const key in modInfo) {
     if (key in fixedModInfo) {
       fixedModInfo[key] = modInfo[key];
     }
+  }
+  fixedModInfo.name = folderName;
+  if (!fixedModInfo.title) {
+    fixedModInfo.title = folderName;
   }
   if (fixedModInfo.modType === "Character") {
     if (modInfo.character) {

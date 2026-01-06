@@ -111,7 +111,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
               </div>
               <div id="mod-card-info-body" className="flex min-h-0 flex-1 flex-col px-3 py-1.5">
                 <h2 className="overflow-hidden text-xl font-bold text-ellipsis whitespace-nowrap text-white">
-                  {modInfo.name}
+                  {modInfo.title}
                 </h2>
                 <p className="text-s flex-1 overflow-hidden font-bold whitespace-pre-wrap text-[#888]">
                   {modInfo.description || t("modCard.noDescription")}

@@ -129,6 +129,7 @@ const handleExplorerImport = async (url: string) => {
   const modInfo: ModInfo = payload.characterName
     ? {
         name: payload.modName,
+        title: payload.modName,
         description: "",
         modType: "Character",
         character: payload.characterName,
@@ -137,6 +138,7 @@ const handleExplorerImport = async (url: string) => {
       }
     : {
         name: payload.modName,
+        title: payload.modName,
         description: "",
         modType: "Unknown",
         source: payload.modSource,
