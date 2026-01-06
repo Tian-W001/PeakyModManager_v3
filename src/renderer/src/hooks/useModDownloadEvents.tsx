@@ -10,20 +10,20 @@ export const useModDownloadEvents = () => {
     window.electron.ipcRenderer.on("downloading-mod", (_, { modName }) => {
       toast.custom(() => <ZzzToast message={t("import.downloading", { modName })} progress={0} />, {
         id: modName,
-        duration: 2000,
+        duration: Infinity,
       });
     });
 
     window.electron.ipcRenderer.on("download-mod-progress", (_, { modName, progress }) => {
       toast.custom(() => <ZzzToast message={t("import.downloading", { modName })} progress={progress} />, {
         id: modName,
-        duration: 10000,
+        duration: Infinity,
       });
     });
 
-    // window.electron.ipcRenderer.on("download-mod-finish", (_, { modName }) => {
-    //   toast.success(`Download finished: ${modName}`, { id: modName });
-    // });
+    window.electron.ipcRenderer.on("download-mod-finish", (_, { modName }) => {
+      toast.dismiss(modName);
+    });
 
     window.electron.ipcRenderer.on("download-mod-error", (_, { modName, error }) => {
       toast.custom(() => <ZzzToast message={t("import.downloadError", { modName, error })} />, {
@@ -35,15 +35,12 @@ export const useModDownloadEvents = () => {
     window.electron.ipcRenderer.on("unzipping-mod", (_, { modName }) => {
       toast.custom(() => <ZzzToast message={t("import.unzipping", { modName })} />, {
         id: modName,
-        duration: 2000,
+        duration: Infinity,
       });
     });
 
     window.electron.ipcRenderer.on("unzip-mod-finish", (_, { modName }) => {
-      toast.custom(() => <ZzzToast message={t("import.unzipSuccess", { modName })} />, {
-        id: modName,
-        duration: 2000,
-      });
+      toast.dismiss(modName);
     });
 
     window.electron.ipcRenderer.on("unzip-mod-error", (_, { modName, error }) => {
