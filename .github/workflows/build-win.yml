@@ -1,0 +1,49 @@
+name: Build Windows (Artifact)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name (e.g. v1.0.0)"
+        required: false
+        default: "v1.0.0"
+
+jobs:
+  build-win:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update version
+        shell: bash
+        run: |
+          VERSION="${{ inputs.tag_name }}"
+          if [[ $VERSION == v* ]]; then
+            VERSION="${VERSION:1}"
+          fi
+          npm version $VERSION --no-git-tag-version --allow-same-version
+
+      - name: Build
+        run: npm run build
+
+      - name: Build Windows
+        run: npx electron-builder --win --publish=never
+
+      - name: Upload Windows Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Installer
+          path: |
+            dist/*.exe
+            dist/latest.yml
