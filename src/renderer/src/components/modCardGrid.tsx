@@ -79,7 +79,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       if (!file) return;
 
       const isDirectory = entry?.isDirectory;
-      const isZipped = /\.(zip|7z|rar|tar|gz)$/i.test(file.name);
+      const isZipped = /\.(zip|7z|rar|tar)$/i.test(file.name);
 
       if (!isDirectory && !isZipped) {
         console.error(item, "not a folder or zipped file");

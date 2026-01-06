@@ -41,10 +41,10 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
       const { files } = extractor.extract();
       // Iterate over to ensure extraction happens
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      for (const _file of files) {
+      for await (const _file of files) {
         // must iterate over the generator to trigger the extraction
       }
-    } else if ([".zip", ".7z", ".tar", ".gz", ".tgz"].includes(ext)) {
+    } else if (zippedExtensions.filter((ext) => ext !== ".rar").includes(ext)) {
       await new Promise<void>((resolve, reject) => {
         const stream = Seven.extractFull(zippedPath, destPath, {
           $bin: asarToAsarUnpacked(sevenBin.path7za),
