@@ -1,12 +1,10 @@
 import path from "path";
 import fs from "fs-extra";
 import { ipcMain } from "electron";
-import sevenBin from "7zip-bin";
-import Seven from "node-7z";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateAndFixModInfo, createModInfoFile } from "./modInfoHandler";
-import { isZippedFile, asarToAsarUnpacked, getMainWindow } from "../utils";
+import { isZippedFile, getMainWindow, unzipFile } from "../utils";
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
@@ -50,19 +48,13 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
       await fs.ensureDir(destPath);
 
       getMainWindow()?.webContents.send("unzipping-mod", { modName });
-      await new Promise<void>((resolve, reject) => {
-        const stream = Seven.extractFull(sourcePath, destPath, {
-          $bin: asarToAsarUnpacked(sevenBin.path7za),
-        });
-        stream.on("end", () => {
-          getMainWindow()?.webContents.send("unzip-mod-finish", { modName });
-          resolve();
-        });
-        stream.on("error", (err) => {
-          getMainWindow()?.webContents.send("unzip-mod-error", { modName, error: err.message });
-          reject(err);
-        });
-      });
+      try {
+        await unzipFile(sourcePath, destPath);
+        getMainWindow()?.webContents.send("unzip-mod-finish", { modName });
+      } catch (err) {
+        getMainWindow()?.webContents.send("unzip-mod-error", { modName, error: String(err) });
+        throw err;
+      }
     } else if (stats.isDirectory()) {
       const modName = path.basename(sourcePath);
       destPath = path.join(libraryPath, modName);

@@ -2,12 +2,10 @@ import axios from "axios";
 import { app, ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import sevenBin from "7zip-bin";
-import Seven from "node-7z";
 import log from "electron-log/main";
 import { ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
-import { isZippedFile, asarToAsarUnpacked, getMainWindow } from "../utils";
+import { isZippedFile, getMainWindow, unzipFile } from "../utils";
 
 // Chrome Extention calls peakymodmanager://import?data=<base64(JSON)>
 
@@ -183,20 +181,13 @@ const unzipMod = async (modDest: string) => {
   for (const file of files) {
     if (isZippedFile(file)) {
       const filePath = path.join(modDest, file);
-
-      await new Promise<void>((resolve, reject) => {
-        const stream = Seven.extractFull(filePath, modDest, {
-          $bin: asarToAsarUnpacked(sevenBin.path7za),
-        });
-        stream.on("end", () => {
-          fs.removeSync(filePath);
-          resolve();
-        });
-        stream.on("error", (error) => {
-          log.error(`Failed to extract archive ${filePath}:`, error);
-          reject(error);
-        });
-      });
+      try {
+        await unzipFile(filePath, modDest);
+        fs.removeSync(filePath);
+      } catch (error) {
+        log.error(`Failed to extract archive ${filePath}:`, error);
+        throw error;
+      }
     }
   }
 };
