@@ -1,19 +1,15 @@
 import path from "path";
 import fs from "fs-extra";
 import { BrowserWindow } from "electron";
+import { createExtractorFromFile } from "node-unrar-js";
+import sevenBin from "7zip-bin";
+import Seven from "node-7z";
 
-export const zippedExtensions = [".zip", ".7z", ".rar", ".tar", ".gz"];
+export const zippedExtensions = [".zip", ".7z", ".rar", ".tar", ".gz", ".tgz"];
 
 export const isZippedFile = (filename: string) => {
   const ext = path.extname(filename).toLowerCase();
-  if (zippedExtensions.includes(ext)) {
-    return true;
-  }
-  // recognize (.001, .part1, .r00, .z01)
-  if (ext.match(/^\.(001|part1|r00|z01)$/)) {
-    return true;
-  }
-  return false;
+  return zippedExtensions.includes(ext);
 };
 
 export const asarToAsarUnpacked = (filePath: string) => {
@@ -30,4 +26,37 @@ export const asarToAsarUnpacked = (filePath: string) => {
 
 export const getMainWindow = (): BrowserWindow | null => {
   return BrowserWindow.fromId(1);
+};
+
+export const unzipFile = async (zippedPath: string, destPath: string): Promise<void> => {
+  const ext = path.extname(zippedPath).toLowerCase();
+  await fs.ensureDir(destPath);
+
+  try {
+    if (ext === ".rar") {
+      const extractor = await createExtractorFromFile({
+        filepath: zippedPath,
+        targetPath: destPath,
+      });
+      const { files } = extractor.extract();
+      // Iterate over to ensure extraction happens
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for await (const _file of files) {
+        // must iterate over the generator to trigger the extraction
+      }
+    } else if (zippedExtensions.filter((ext) => ext !== ".rar").includes(ext)) {
+      await new Promise<void>((resolve, reject) => {
+        const stream = Seven.extractFull(zippedPath, destPath, {
+          $bin: asarToAsarUnpacked(sevenBin.path7za),
+        });
+        stream.on("end", () => resolve());
+        stream.on("error", (err) => reject(err));
+      });
+    } else {
+      throw new Error(`Unsupported file extension: ${ext}`);
+    }
+  } catch (error) {
+    console.error(`Failed to unzip ${zippedPath}:`, error);
+    throw error;
+  }
 };
