@@ -5,7 +5,7 @@ import { createExtractorFromFile } from "node-unrar-js";
 import sevenBin from "7zip-bin";
 import Seven from "node-7z";
 
-export const zippedExtensions = [".zip", ".7z", ".rar", ".tar", ".gz", ".tgz"];
+export const zippedExtensions = [".zip", ".7z", ".rar", ".tar"];
 
 export const isZippedFile = (filename: string) => {
   const ext = path.extname(filename).toLowerCase();
