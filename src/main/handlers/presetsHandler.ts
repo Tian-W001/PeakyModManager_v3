@@ -7,7 +7,7 @@ const backupFileBaseName = "Presets_Backup";
 
 ipcMain.handle("backup-presets", async (_event, backupData: Record<string, string[]>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   // create timestamp yyyy-mm-dd-hh-mm-ss
   const timestamp = new Date().toISOString().replace(/T/, "-").replace(/:/g, "-").split(".")[0];
@@ -24,7 +24,7 @@ ipcMain.handle("backup-presets", async (_event, backupData: Record<string, strin
 
 ipcMain.handle("restore-presets", async (_event, backupFilePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   try {
     if (await fs.pathExists(backupFilePath)) {

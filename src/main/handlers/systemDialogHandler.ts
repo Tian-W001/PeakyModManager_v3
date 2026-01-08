@@ -1,12 +1,12 @@
 import path from "path";
 import store from "../store";
-import { BrowserWindow, dialog, ipcMain } from "electron/main";
+import { dialog, ipcMain } from "electron/main";
+import { getMainWindow } from "../utils";
+import fs from "fs-extra";
 
 ipcMain.handle("select-path", async () => {
   // Open a dialog to select a folder
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return null;
-  const result = await dialog.showOpenDialog(win, {
+  const result = await dialog.showOpenDialog(getMainWindow()!, {
     properties: ["openDirectory"],
     title: "Select Path",
   });
@@ -15,9 +15,7 @@ ipcMain.handle("select-path", async () => {
 
 ipcMain.handle("select-file", async () => {
   // Open a dialog to select a file
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return null;
-  const result = await dialog.showOpenDialog(win, {
+  const result = await dialog.showOpenDialog(getMainWindow()!, {
     properties: ["openFile"],
     title: "Select File",
   });
@@ -25,17 +23,11 @@ ipcMain.handle("select-file", async () => {
 });
 
 ipcMain.handle("select-cover", async (_event, modName: string) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return null;
-
   const libraryPath = store.get("libraryPath", null) as string | null;
-  let defaultPath: string | undefined = undefined;
-  if (libraryPath && modName) {
-    defaultPath = path.join(libraryPath, modName);
-  }
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
-  const result = await dialog.showOpenDialog(win, {
-    defaultPath,
+  const result = await dialog.showOpenDialog(getMainWindow()!, {
+    defaultPath: path.join(libraryPath, modName),
     properties: ["openFile"],
     filters: [{ name: "Images", extensions: ["jpg", "png", "jpeg", "webp", "gif"] }],
     title: "Select Cover Image",
@@ -44,13 +36,10 @@ ipcMain.handle("select-cover", async (_event, modName: string) => {
 });
 
 ipcMain.handle("select-backup-file", async () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (!win) return null;
-
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
-  const result = await dialog.showOpenDialog(win, {
+  const result = await dialog.showOpenDialog(getMainWindow()!, {
     defaultPath: libraryPath,
     properties: ["openFile"],
     filters: [{ name: "JSON Files", extensions: ["json"] }],

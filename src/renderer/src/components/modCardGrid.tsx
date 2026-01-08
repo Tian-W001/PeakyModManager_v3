@@ -28,6 +28,8 @@ import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
 import useMountTransition from "@renderer/hooks/useMountTransition";
+import { toast } from "react-hot-toast";
+import ZzzToast from "./zzzToast";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -58,9 +60,13 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         if (newModInfo.character) {
           dispatch(setSelectedCharacter(newModInfo.character));
         }
+      } else {
+        toast.custom(() => <ZzzToast message={t("import.importFailed")} />, {
+          duration: 5000,
+        });
       }
     },
-    [dispatch]
+    [dispatch, t]
   );
 
   useEffect(() => {

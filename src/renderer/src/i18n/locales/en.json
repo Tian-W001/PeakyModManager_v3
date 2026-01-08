@@ -15,9 +15,11 @@
     "select": "Select",
     "multiSelect": "Multi-Select",
     "selectAll": "Select All",
-    "selectNone": "Select None"
+    "selectNone": "Select None",
+    "applyModsError": "{{count}} mod(s) failed to apply"
   },
   "import": {
+    "importFailed": "Import failed",
     "downloading": "Downloading {{modName}}...",
     "downloadSuccess": "{{modName}} downloaded",
     "downloadError": "Error downloading {{modName}}: {{error}}",
@@ -62,7 +64,8 @@
     "openModFolder": "Open Folder",
     "autofill": "Autofill",
     "deleteModConfirm": "Delete {{name}}?",
-    "deleteModConfirmMsg": "This action cannot be undone"
+    "deleteModConfirmMsg": "This action cannot be undone",
+    "deleteModFailed": "Failed to delete {{name}}."
   },
   "presets": {
     "managePresets": "Manage Presets",

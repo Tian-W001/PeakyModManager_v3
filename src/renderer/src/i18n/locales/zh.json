@@ -15,9 +15,11 @@
     "select": "选择",
     "multiSelect": "批量操作",
     "selectAll": "全选",
-    "selectNone": "全不选"
+    "selectNone": "全不选",
+    "applyModsError": "{{count}} 个Mod应用失败"
   },
   "import": {
+    "importFailed": "导入失败",
     "downloading": "正在下载{{modName}}...",
     "downloadSuccess": "已下载{{modName}}",
     "downloadError": "下载{{modName}}失败: {{error}}",
@@ -62,7 +64,8 @@
     "openModFolder": "打开文件夹",
     "autofill": "自动填充",
     "deleteModConfirm": "确定要删除 {{name}} 吗？",
-    "deleteModConfirmMsg": "此操作无法撤销"
+    "deleteModConfirmMsg": "此操作无法撤销",
+    "deleteModFailed": "删除 {{name}} 失败。"
   },
   "presets": {
     "managePresets": "管理预设",

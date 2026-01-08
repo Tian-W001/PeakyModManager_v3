@@ -18,8 +18,8 @@ export const registerModImageProtocol = () => {
   protocol.handle("mod-image", async (request) => {
     try {
       const libraryPath = store.get("libraryPath", null) as string | null;
-      if (!libraryPath) {
-        throw new Error("Library path is not set");
+      if (!libraryPath || !fs.pathExistsSync(libraryPath)) {
+        return new Response(null, { status: 404 });
       }
       const url = new URL(request.url);
       const pathname = decodeURIComponent(url.pathname);
