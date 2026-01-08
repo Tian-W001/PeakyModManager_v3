@@ -25,23 +25,25 @@ const BottomBar = ({ className }: { className?: string }) => {
   };
 
   const handleApplyChanges = async () => {
-    const { success, failedMods } = await window.electron.ipcRenderer.invoke("apply-mods", diffList);
-    if (success && failedMods.length === 0) {
+    const { success, successfulMods } = await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+    if (success) {
       dispatch(applyMods(diffList));
       dispatch(clearDiffList());
     } else {
-      // separate diffList into successful and failed
-      const successfulDiffList: Record<string, boolean> = {};
-      const failedDiffList: Record<string, boolean> = {};
-      for (const [modName, enable] of Object.entries(diffList)) {
-        failedMods.includes(modName) ? (failedDiffList[modName] = enable) : (successfulDiffList[modName] = enable);
-      }
+      // Show error toast
+      toast.custom(
+        () => (
+          <ZzzToast
+            message={t("common.applyModsError", { count: Object.keys(diffList).length - successfulMods.length })}
+          />
+        ),
+        { duration: 5000 }
+      );
+      const successfulDiffList: Record<string, boolean> = Object.fromEntries(
+        Object.entries(diffList).filter(([modName]) => successfulMods.includes(modName))
+      );
       dispatch(applyMods(successfulDiffList));
       dispatch(clearDiffList());
-      // Show error toast
-      toast.custom(() => <ZzzToast message={t("common.applyModsError", { count: failedMods.length })} />, {
-        duration: 5000,
-      });
     }
   };
 

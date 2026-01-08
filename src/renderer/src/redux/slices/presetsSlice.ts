@@ -3,13 +3,10 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { RootState } from "../store";
 
-export type Presets = Record<string, string[]>; //<presetName, modNames[]>
-export type DiffList = Record<string, boolean>; //<modName, enable>
-
 export interface PresetsState {
-  presets: Presets;
+  presets: Record<string, string[]>; //<presetName, modNames[]>
   currentPresetName: string;
-  diffList: Record<string, boolean>;
+  diffList: Record<string, boolean>; //<modName, enable>
 }
 
 const DEFAULT_PRESET_NAME = "Default Preset";
@@ -51,7 +48,7 @@ export const presetsSlice = createSlice({
         state.currentPresetName = DEFAULT_PRESET_NAME;
       }
     },
-    setPresets: (state, action: PayloadAction<Presets>) => {
+    setPresets: (state, action: PayloadAction<Record<string, string[]>>) => {
       const backupData = action.payload;
       if (!backupData) return;
 
@@ -68,14 +65,14 @@ export const presetsSlice = createSlice({
       const targetPresetName = action.payload;
       if (state.presets[targetPresetName]) {
         state.currentPresetName = targetPresetName;
-        state.diffList = state.presets[targetPresetName].reduce<DiffList>((acc, modName) => {
+        state.diffList = state.presets[targetPresetName].reduce<Record<string, boolean>>((acc, modName) => {
           acc[modName] = true;
           return acc;
         }, {});
         state.presets[state.currentPresetName] = [];
       }
     },
-    applyMods: (state, action: PayloadAction<DiffList>) => {
+    applyMods: (state, action: PayloadAction<Record<string, boolean>>) => {
       console.log("Applying mods to preset:", action.payload);
       const currentPreset = state.presets[state.currentPresetName];
       if (!currentPreset) {
@@ -120,7 +117,7 @@ export const presetsSlice = createSlice({
         delete state.diffList[modName];
       }
     },
-    addToDiffList: (state, action: PayloadAction<DiffList>) => {
+    addToDiffList: (state, action: PayloadAction<Record<string, boolean>>) => {
       const newDiffList = action.payload;
       for (const [modName, enable] of Object.entries(newDiffList)) {
         if (state.diffList[modName] === undefined) {

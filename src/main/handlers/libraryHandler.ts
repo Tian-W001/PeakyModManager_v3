@@ -151,11 +151,11 @@ ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) =>
   const targetPath = store.get("targetPath", null) as string | null;
   if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath))) {
     console.error("Library path or Target path is not set.");
-    return { success: false, failedMods: Object.keys(changes) }; // Return all mods as failed
+    return { success: false, successfulMods: [] }; // Return no successful mods
   }
 
   let success: boolean = true;
-  const failedMods: string[] = [];
+  const successfulMods: string[] = [];
   for (const modName in changes) {
     const enable = changes[modName];
     const sourcePath = path.join(libraryPath, modName);
@@ -167,12 +167,12 @@ ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) =>
       } else {
         await fs.remove(destPath);
       }
+      successfulMods.push(modName);
     } catch (error) {
       console.error(`Failed to apply change for mod ${modName}:`, error);
       success = false;
-      failedMods.push(modName);
     }
   }
 
-  return { success, failedMods };
+  return { success, successfulMods };
 });
