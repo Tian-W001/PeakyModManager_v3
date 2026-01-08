@@ -36,7 +36,7 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !fs.pathExistsSync(libraryPath)) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   try {
     const stats = await fs.stat(sourcePath);
@@ -93,7 +93,8 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 ipcMain.handle("delete-mod", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
-  if (!libraryPath || !targetPath || !fs.pathExistsSync(libraryPath) || !fs.pathExistsSync(targetPath)) return false;
+  if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath)))
+    return false;
 
   const modPath = path.join(libraryPath, modName);
   const modLinkPath = path.join(targetPath, modName);
@@ -117,7 +118,7 @@ const loadLibrary = async () => {
   // For each folder, check if it contains a modinfo.json file
   // If it does, read the modinfo.json file, and return an array of mod information objects
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !fs.pathExistsSync(libraryPath)) return [];
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return [];
 
   try {
     const entries = await fs.readdir(libraryPath, { withFileTypes: true });
@@ -148,7 +149,7 @@ const loadLibrary = async () => {
 ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
-  if (!libraryPath || !targetPath || !fs.pathExistsSync(libraryPath) || !fs.pathExistsSync(targetPath)) {
+  if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath))) {
     console.error("Library path or Target path is not set.");
     return { success: false, failedMods: Object.keys(changes) }; // Return all mods as failed
   }

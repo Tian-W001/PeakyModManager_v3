@@ -47,7 +47,7 @@ export const validateAndFixModInfo = (modInfo: any, folderName: string) => {
 
 ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !fs.pathExistsSync(libraryPath)) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
   try {
@@ -61,7 +61,7 @@ ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModI
 
 ipcMain.handle("autofill-modinfo", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !fs.pathExistsSync(libraryPath)) return null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const modPath = path.join(libraryPath, modName);
   if (!(await fs.pathExists(modPath))) return null;
