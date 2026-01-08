@@ -78,12 +78,7 @@ const handleExplorerImport = async (url: string) => {
   let modDest: string;
   try {
     getMainWindow()?.webContents.send("downloading-mod", { modName: payload.modName });
-    modDest = await downloadMod(payload, (progress) => {
-      getMainWindow()?.webContents.send("download-mod-progress", {
-        modName: payload.modName,
-        progress: progress,
-      });
-    });
+    modDest = await downloadMod(payload);
     getMainWindow()?.webContents.send("download-mod-finish", { modName: payload.modName });
   } catch (error) {
     log.error("Error downloading mod files:", error);
@@ -144,19 +139,18 @@ const handleExplorerImport = async (url: string) => {
         source: payload.modSource,
         coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
       };
-  fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
+  await fs.writeJson(modInfoPath, modInfo, { spaces: 2 });
 
   // notify renderer to import
   getMainWindow()?.webContents.send("import-mod", modDest);
 };
 
-const downloadMod = async (payload: ExplorerImportPayload, onProgress: (progress: number) => void) => {
+const downloadMod = async (payload: ExplorerImportPayload) => {
   log.info("Downloading mod:", payload.modName);
-
   const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
-  await fs.ensureDir(modDest);
 
   // download all files
+  await fs.ensureDir(modDest);
   for (const link of payload.downloadLinks) {
     log.info(`Downloading from: ${link.href}`);
     const fileDest = path.join(modDest, link.filename);
@@ -164,8 +158,10 @@ const downloadMod = async (payload: ExplorerImportPayload, onProgress: (progress
       responseType: "arraybuffer",
       onDownloadProgress: (progressEvent) => {
         if (progressEvent.total) {
-          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          onProgress(progress);
+          getMainWindow()?.webContents.send("download-mod-progress", {
+            modName: payload.modName,
+            progress: Math.round((progressEvent.loaded * 100) / progressEvent.total),
+          });
         }
       },
     });
@@ -185,7 +181,7 @@ const unzipMod = async (modDest: string) => {
       const filePath = path.join(modDest, file);
       try {
         await unzipFile(filePath, modDest);
-        fs.removeSync(filePath);
+        await fs.remove(filePath);
       } catch (error) {
         log.error(`Failed to extract archive ${filePath}:`, error);
         throw error;

@@ -13,6 +13,8 @@ import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 import clsx from "clsx";
+import toast from "react-hot-toast";
+import ZzzToast from "@renderer/components/zzzToast";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
@@ -62,6 +64,10 @@ const DetailedModal = ({
         dispatch(removeModInfo(modInfo.name));
         dispatch(removeModFromAllPresets(modInfo.name));
         onClose();
+      } else {
+        toast.custom(() => <ZzzToast message={t("modDetails.deleteModFailed", { name: modInfo.name })} />, {
+          duration: Infinity,
+        });
       }
       hideAlert();
     };

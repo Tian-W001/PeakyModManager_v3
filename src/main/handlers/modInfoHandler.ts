@@ -5,7 +5,7 @@ import { Character } from "../../shared/character";
 import { ipcMain } from "electron/main";
 import store from "../store";
 
-export const createModInfoFile = (modPath: string) => {
+export const createModInfoFile = async (modPath: string) => {
   const modInfo: ModInfo = {
     name: path.basename(modPath),
     title: path.basename(modPath),
@@ -15,7 +15,7 @@ export const createModInfoFile = (modPath: string) => {
     coverImage: "",
   };
   const modInfoPath = path.join(modPath, "modinfo.json");
-  fs.writeFileSync(modInfoPath, JSON.stringify(modInfo, null, 2));
+  await fs.writeJson(modInfoPath, modInfo, { spaces: 2 });
   return modInfo;
 };
 
@@ -38,25 +38,33 @@ export const validateAndFixModInfo = (modInfo: any, folderName: string) => {
       fixedModInfo.character = "Unknown";
     }
   }
-  return fixedModInfo;
+  if (JSON.stringify(modInfo, null, 0) === JSON.stringify(fixedModInfo, null, 0)) {
+    return { valid: true, fixedModInfo };
+  } else {
+    return { valid: false, fixedModInfo };
+  }
 };
 
 ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
-  if (fs.existsSync(modInfoPath)) {
-    fs.writeFileSync(modInfoPath, JSON.stringify(newModInfo, null, 2));
+  try {
+    await fs.writeJson(modInfoPath, newModInfo, { spaces: 2 });
+    return true;
+  } catch (err) {
+    console.error("Error editing modinfo.json:", err);
+    return false;
   }
 });
 
 ipcMain.handle("autofill-modinfo", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const modPath = path.join(libraryPath, modName);
-  if (!fs.existsSync(modPath)) return null;
+  if (!(await fs.pathExists(modPath))) return null;
 
   let description = "";
   let coverImage = "";

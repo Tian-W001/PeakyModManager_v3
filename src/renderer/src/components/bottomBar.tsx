@@ -5,9 +5,11 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import SettingsModal from "../modal/settingsModal";
 import { useTranslation } from "react-i18next";
-import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
+import { addToDiffList, applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
 import ZzzButton from "./zzzButton";
 import useMountTransition from "@renderer/hooks/useMountTransition";
+import ZzzToast from "./zzzToast";
+import toast from "react-hot-toast";
 
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
@@ -23,9 +25,25 @@ const BottomBar = ({ className }: { className?: string }) => {
   };
 
   const handleApplyChanges = async () => {
-    dispatch(applyMods(diffList));
-    await window.electron.ipcRenderer.invoke("apply-mods", diffList);
-    dispatch(clearDiffList());
+    const { success, failedMods } = await window.electron.ipcRenderer.invoke("apply-mods", diffList);
+    if (success && failedMods.length === 0) {
+      dispatch(applyMods(diffList));
+      dispatch(clearDiffList());
+    } else {
+      // separate diffList into successful and failed
+      const successfulDiffList: Record<string, boolean> = {};
+      const failedDiffList: Record<string, boolean> = {};
+      for (const [modName, enable] of Object.entries(diffList)) {
+        failedMods.includes(modName) ? (failedDiffList[modName] = enable) : (successfulDiffList[modName] = enable);
+      }
+      dispatch(applyMods(successfulDiffList));
+      dispatch(clearDiffList());
+      dispatch(addToDiffList(failedDiffList));
+      // Show error toast
+      toast.custom(() => <ZzzToast message={t("common.applyModsError", { count: failedMods.length })} />, {
+        duration: 5000,
+      });
+    }
   };
 
   const getApplyButtonText = () => {

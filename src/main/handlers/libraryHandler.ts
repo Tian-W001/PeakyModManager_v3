@@ -36,7 +36,7 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   try {
     const stats = await fs.stat(sourcePath);
@@ -45,6 +45,10 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
     if (stats.isFile() && isZippedFile(sourcePath)) {
       const modName = path.basename(sourcePath, path.extname(sourcePath));
       destPath = path.join(libraryPath, modName);
+      if (await fs.pathExists(destPath)) {
+        console.log("Mod already exists in library: ", modName);
+        return false;
+      }
       await fs.ensureDir(destPath);
 
       getMainWindow()?.webContents.send("unzipping-mod", { modName });
@@ -58,6 +62,10 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
     } else if (stats.isDirectory()) {
       const modName = path.basename(sourcePath);
       destPath = path.join(libraryPath, modName);
+      if (await fs.pathExists(destPath)) {
+        console.log("Mod already exists in library: ", modName);
+        return false;
+      }
       await fs.copy(sourcePath, destPath);
     } else {
       console.error("Imported path is not a directory or supported archive:", sourcePath);
@@ -66,13 +74,15 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 
     // Check if modinfo.json exists
     const modInfoPath = path.join(destPath, "modinfo.json");
-    if (fs.existsSync(modInfoPath)) {
-      const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
-      const fixedModInfo = validateAndFixModInfo(modInfo, path.basename(destPath));
-      fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
+    if (await fs.pathExists(modInfoPath)) {
+      const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
+      const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, path.basename(destPath));
+      if (!valid && fixedModInfo) {
+        await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
+      }
       return fixedModInfo;
     } else {
-      return createModInfoFile(destPath);
+      return await createModInfoFile(destPath);
     }
   } catch (error) {
     console.error("Error importing mod:", error);
@@ -83,7 +93,8 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 ipcMain.handle("delete-mod", async (_event, modName: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
-  if (!libraryPath || !targetPath) return false;
+  if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath)))
+    return false;
 
   const modPath = path.join(libraryPath, modName);
   const modLinkPath = path.join(targetPath, modName);
@@ -107,25 +118,27 @@ const loadLibrary = async () => {
   // For each folder, check if it contains a modinfo.json file
   // If it does, read the modinfo.json file, and return an array of mod information objects
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return [];
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return [];
 
   try {
-    const modFolders = (await fs.readdir(libraryPath)).filter((file) =>
-      fs.statSync(path.join(libraryPath, file)).isDirectory()
-    );
+    const entries = await fs.readdir(libraryPath, { withFileTypes: true });
+    const modFolders = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 
-    const modInfos: ModInfo[] = modFolders.map((folder) => {
-      const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
-      if (fs.existsSync(modInfoPath)) {
-        const modInfo = JSON.parse(fs.readFileSync(modInfoPath, "utf-8"));
-        //need to validate modInfo here
-        const fixedModInfo = validateAndFixModInfo(modInfo, folder);
-        fs.writeFileSync(modInfoPath, JSON.stringify(fixedModInfo, null, 2));
-        return fixedModInfo;
-      } else {
-        return createModInfoFile(path.join(libraryPath, folder));
-      }
-    });
+    const modInfos: ModInfo[] = await Promise.all(
+      modFolders.map(async (folder) => {
+        const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
+        if (await fs.pathExists(modInfoPath)) {
+          const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
+          const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, folder);
+          if (!valid && fixedModInfo) {
+            await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
+          }
+          return fixedModInfo;
+        } else {
+          return await createModInfoFile(path.join(libraryPath, folder));
+        }
+      })
+    );
     return modInfos;
   } catch (error) {
     console.error("Error loading library:", error);
@@ -136,34 +149,30 @@ const loadLibrary = async () => {
 ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   const targetPath = store.get("targetPath", null) as string | null;
-
-  if (!libraryPath || !targetPath) {
+  if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath))) {
     console.error("Library path or Target path is not set.");
-    return;
+    return { success: false, failedMods: Object.keys(changes) }; // Return all mods as failed
   }
 
+  let success: boolean = true;
+  const failedMods: string[] = [];
   for (const modName in changes) {
     const enable = changes[modName];
     const sourcePath = path.join(libraryPath, modName);
     const destPath = path.join(targetPath, modName);
-
     try {
       if (enable) {
-        if (fs.existsSync(sourcePath)) {
-          await fs.ensureDir(targetPath);
-          // Remove existing if it exists to ensure clean link
-          if (fs.existsSync(destPath)) {
-            await fs.remove(destPath);
-          }
-          await fs.ensureSymlink(sourcePath, destPath, "junction");
-        }
+        await fs.remove(destPath); // Remove existing if it exists to ensure clean link
+        await fs.ensureSymlink(sourcePath, destPath, "junction");
       } else {
-        if (fs.existsSync(destPath)) {
-          await fs.remove(destPath);
-        }
+        await fs.remove(destPath);
       }
     } catch (error) {
       console.error(`Failed to apply change for mod ${modName}:`, error);
+      success = false;
+      failedMods.push(modName);
     }
   }
+
+  return { success, failedMods };
 });
