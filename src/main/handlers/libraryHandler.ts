@@ -139,10 +139,38 @@ const loadLibrary = async () => {
         }
       })
     );
+    await validateSymLinks();
     return modInfos;
   } catch (error) {
     console.error("Error loading library:", error);
     return [];
+  }
+};
+
+const validateSymLinks = async () => {
+  // Validate that all symlinks in targetPath point to valid locations in libraryPath
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  const targetPath = store.get("targetPath", null) as string | null;
+  if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath))) {
+    console.error("Library path or Target path is not set.");
+    return;
+  }
+
+  const entries = await fs.readdir(targetPath, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isSymbolicLink()) {
+      const mosResourcePath = path.join(libraryPath, entry.name);
+      if (!(await fs.pathExists(mosResourcePath))) {
+        // Symlink points to a non-existing location, remove it
+        const symlinkPath = path.join(targetPath, entry.name);
+        try {
+          await fs.remove(symlinkPath);
+          console.log(`Removed invalid symlink: ${symlinkPath}`);
+        } catch (error) {
+          console.error(`Failed to remove invalid symlink ${symlinkPath}:`, error);
+        }
+      }
+    }
   }
 };
 
