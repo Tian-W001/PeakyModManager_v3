@@ -196,7 +196,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
       <div className={clsx("modal-overlay", className)} id="modal-overlay">
         <div
           className={
-            "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+            "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl rounded-tr-md border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
           }
           id="modal-container"
         >

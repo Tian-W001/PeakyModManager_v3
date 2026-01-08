@@ -54,7 +54,7 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
     <div className={clsx("modal-overlay", className)} id="modal-overlay">
       <div
         className={
-          "chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+          "chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl rounded-tr-lg border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
         }
       >
         <div className="flex items-center justify-between bg-black/20 px-4 py-2" id="modal-header">

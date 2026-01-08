@@ -174,7 +174,7 @@ const DetailedModal = ({
     <>
       <div className={clsx("modal-overlay gap-2", className)} id="modal-overlay">
         <div
-          className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
+          className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl rounded-tr-xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
         >
           <div
