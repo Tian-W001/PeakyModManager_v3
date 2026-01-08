@@ -40,9 +40,9 @@ ipcMain.handle("clear-target-path", async () => {
   try {
     const files = await fs.readdir(targetPath, { withFileTypes: true });
     for (const file of files) {
-      const filePath = path.join(targetPath, file.name);
       if (!file.isSymbolicLink()) continue;
-      await fs.unlink(filePath);
+      const filePath = path.join(targetPath, file.name);
+      await fs.remove(filePath);
     }
   } catch (error) {
     console.error("Error clearing target path:", error);

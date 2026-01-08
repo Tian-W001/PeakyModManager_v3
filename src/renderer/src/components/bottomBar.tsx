@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import SettingsModal from "../modal/settingsModal";
 import { useTranslation } from "react-i18next";
-import { addToDiffList, applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
+import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
 import ZzzButton from "./zzzButton";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import ZzzToast from "./zzzToast";
@@ -38,7 +38,6 @@ const BottomBar = ({ className }: { className?: string }) => {
       }
       dispatch(applyMods(successfulDiffList));
       dispatch(clearDiffList());
-      dispatch(addToDiffList(failedDiffList));
       // Show error toast
       toast.custom(() => <ZzzToast message={t("common.applyModsError", { count: failedMods.length })} />, {
         duration: 5000,
