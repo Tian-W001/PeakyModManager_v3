@@ -159,13 +159,13 @@ const validateSymLinks = async () => {
   const entries = await fs.readdir(targetPath, { withFileTypes: true });
   for (const entry of entries) {
     if (entry.isSymbolicLink()) {
-      const mosResourcePath = path.join(libraryPath, entry.name);
-      if (!(await fs.pathExists(mosResourcePath))) {
+      const modResourcePath = path.join(libraryPath, entry.name);
+      if (!(await fs.pathExists(modResourcePath))) {
         // Symlink points to a non-existing location, remove it
         const symlinkPath = path.join(targetPath, entry.name);
         try {
           await fs.remove(symlinkPath);
-          console.log(`Removed invalid symlink: ${symlinkPath}`);
+          console.error(`Removed invalid symlink: ${symlinkPath}`);
         } catch (error) {
           console.error(`Failed to remove invalid symlink ${symlinkPath}:`, error);
         }
