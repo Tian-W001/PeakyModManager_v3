@@ -151,7 +151,7 @@ ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) =>
   const targetPath = store.get("targetPath", null) as string | null;
   if (!libraryPath || !targetPath || !(await fs.pathExists(libraryPath)) || !(await fs.pathExists(targetPath))) {
     console.error("Library path or Target path is not set.");
-    return { success: false, successfulMods: [] }; // Return all mods as failed
+    return { success: false, successfulMods: [] }; // Return no successful mods
   }
 
   let success: boolean = true;
