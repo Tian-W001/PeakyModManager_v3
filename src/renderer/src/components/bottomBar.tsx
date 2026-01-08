@@ -30,7 +30,7 @@ const BottomBar = ({ className }: { className?: string }) => {
       dispatch(applyMods(diffList));
       dispatch(clearDiffList());
     } else {
-      //seperate diffList into successful and failed
+      // separate diffList into successful and failed
       const successfulDiffList: Record<string, boolean> = {};
       const failedDiffList: Record<string, boolean> = {};
       for (const [modName, enable] of Object.entries(diffList)) {
