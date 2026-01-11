@@ -6,6 +6,8 @@ function App(): React.JSX.Element {
   /* Listeners for mod download events from main process */
   useModDownloadEvents();
 
+  window.electron.ipcRenderer.invoke("on-startup");
+
   return (
     <>
       <Toaster />
