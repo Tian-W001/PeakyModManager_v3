@@ -1,10 +1,22 @@
 import path from "path";
 import fs from "fs-extra";
-import { ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateAndFixModInfo, createModInfoFile } from "./modInfoHandler";
 import { isZippedFile, getMainWindow, unzipFile } from "../utils";
+
+ipcMain.handle("on-startup", async () => {
+  // clear <userData>/Mods folder on startup
+  const modsPath = path.join(app.getPath("userData"), "Mods");
+  try {
+    if (await fs.pathExists(modsPath)) {
+      await fs.remove(modsPath);
+    }
+  } catch (error) {
+    console.error("Error clearing Mods folder on startup:", error);
+  }
+});
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
