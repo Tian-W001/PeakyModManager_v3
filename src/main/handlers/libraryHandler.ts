@@ -8,10 +8,10 @@ import { isZippedFile, getMainWindow, unzipFile } from "../utils";
 
 ipcMain.handle("on-startup", async () => {
   // clear <userData>/Mods folder on startup
-  const ModsPath = path.join(app.getPath("userData"), "Mods");
+  const modsPath = path.join(app.getPath("userData"), "Mods");
   try {
-    if (await fs.pathExists(ModsPath)) {
-      await fs.remove(ModsPath);
+    if (await fs.pathExists(modsPath)) {
+      await fs.remove(modsPath);
     }
   } catch (error) {
     console.error("Error clearing Mods folder on startup:", error);
