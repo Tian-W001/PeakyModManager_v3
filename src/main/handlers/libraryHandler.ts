@@ -71,6 +71,20 @@ const unzipMod = async (zipPath: string, destPath: string) => {
   getMainWindow()?.webContents.send("unzip-mod-finish", { modName: path.basename(zipPath) });
 };
 
+const askOverwriteMod = async (modName: string): Promise<boolean> => {
+  return new Promise<boolean>((resolve) => {
+    const responseChannel = `overwrite-response-${modName}`;
+    ipcMain.once(responseChannel, (_e, userConfirmed: boolean) => {
+      resolve(userConfirmed);
+    });
+
+    getMainWindow()?.webContents.send("overwrite-ask", {
+      modName: modName,
+      responseChannel: responseChannel,
+    });
+  });
+};
+
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
@@ -93,9 +107,16 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   }
 
   const destPath = path.join(libraryPath, modName);
+
   if (await fs.pathExists(destPath)) {
     console.log("Mod already exists in library: ", modName);
-    return null;
+
+    const shouldOverwrite = await askOverwriteMod(modName);
+    if (shouldOverwrite) {
+      await fs.emptyDir(destPath);
+    } else {
+      return null;
+    }
   }
 
   try {

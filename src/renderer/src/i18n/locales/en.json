@@ -2,6 +2,7 @@
   "common": {
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "overwrite": "Overwrite",
     "save": "Save",
     "close": "Close",
     "delete": "Delete",
@@ -27,7 +28,9 @@
     "unzipSuccess": "{{modName}} unzipped",
     "unzipError": "Error unzipping {{modName}}: {{error}}",
     "coverDownloadSuccess": "Cover downloaded for {{modName}}",
-    "coverDownloadError": "Error downloading cover for {{modName}}: {{error}}"
+    "coverDownloadError": "Error downloading cover for {{modName}}: {{error}}",
+    "modExists": "{{modName}} already exists",
+    "overwriteConfirm": "Overwrite this mod?"
   },
   "settings": {
     "title": "Settings",

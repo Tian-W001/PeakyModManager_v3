@@ -14,7 +14,6 @@ type ZzzButtonType =
   | "Save"
   | "Info"
   | "Setting"
-  | "Refresh"
   | "Track"
   | "FairyAI"
   | "FairyWarning";
