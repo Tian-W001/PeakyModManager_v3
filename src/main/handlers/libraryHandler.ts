@@ -136,25 +136,22 @@ const loadLibrary = async () => {
     const entries = await fs.readdir(libraryPath, { withFileTypes: true });
     const modFolders = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 
-    const modInfosWithTime = await Promise.all(
+    const modInfos: ModInfo[] = await Promise.all(
       modFolders.map(async (folder) => {
         const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
         if (await fs.pathExists(modInfoPath)) {
-          const stats = await fs.stat(modInfoPath);
           const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
           const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, folder);
           if (!valid && fixedModInfo) {
             await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
           }
-          return { modInfo: fixedModInfo, mtime: stats.mtimeMs };
+          return fixedModInfo;
         } else {
-          const modInfo = await createModInfoFile(path.join(libraryPath, folder));
-          return { modInfo, mtime: Date.now() };
+          return await createModInfoFile(path.join(libraryPath, folder));
         }
       })
     );
-
-    return modInfosWithTime.sort((a, b) => b.mtime - a.mtime).map((item) => item.modInfo) as ModInfo[];
+    return modInfos;
   } catch (error) {
     console.error("Error loading library:", error);
     return [];
