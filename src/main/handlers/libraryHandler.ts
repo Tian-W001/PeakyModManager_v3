@@ -157,12 +157,23 @@ const loadLibrary = async () => {
     const entries = await fs.readdir(libraryPath, { withFileTypes: true });
     const modFolders = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 
-    const modInfos: ModInfo[] = await Promise.all(
+    const modInfosWithTime = await Promise.all(
       modFolders.map(async (folder) => {
-        return await processModInfo(path.join(libraryPath, folder));
+        try {
+          const modInfo = await processModInfo(path.join(libraryPath, folder));
+          const stats = await fs.stat(path.join(libraryPath, folder, "modinfo.json"));
+          return { modInfo, mtime: stats.mtime.getTime() };
+        } catch (error) {
+          console.error(`Error processing mod in folder ${folder}:`, error);
+          return null;
+        }
       })
     );
-    return modInfos;
+
+    return modInfosWithTime
+      .filter((item) => item !== null)
+      .sort((a, b) => b.mtime - a.mtime)
+      .map((item) => item.modInfo);
   } catch (error) {
     console.error("Error loading library:", error);
     return [];
