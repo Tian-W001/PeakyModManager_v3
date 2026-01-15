@@ -77,7 +77,7 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   let folderPath = sourcePath;
-  const modName = path.basename(sourcePath);
+  const modName = path.parse(path.basename(sourcePath)).name;
 
   try {
     const stats = await fs.stat(sourcePath);
