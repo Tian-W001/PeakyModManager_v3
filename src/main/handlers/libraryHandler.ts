@@ -76,7 +76,7 @@ const askOverwriteMod = async (modName: string): Promise<boolean> => {
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   let folderPath = sourcePath;
   const modName = path.parse(path.basename(sourcePath)).name;
