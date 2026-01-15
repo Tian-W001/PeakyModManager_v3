@@ -16,7 +16,7 @@ import {
 } from "@renderer/redux/slices/presetsSlice";
 import { createPortal } from "react-dom";
 import EditPresetsModal from "../modal/editPresetsModal";
-import { addModInfo } from "@renderer/redux/slices/librarySlice";
+import { addModInfo, editModInfo } from "@renderer/redux/slices/librarySlice";
 import {
   selectSelectedCharacter,
   selectSelectedMenuItem,
@@ -46,16 +46,58 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const ref = useRef<HTMLDivElement>(null);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
+
   useEffect(() => {
     ref.current?.scrollTo(0, 0);
   }, [selectedMenuItem, selectedCharacter]);
 
+  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+
   const importMod = useCallback(
     async (filePath: string) => {
+      // Setup temporary listener for overwrite confirmation
+      let overwriteConfirmed = false;
+      const overwriteListener = (
+        _event,
+        { modName, responseChannel }: { modName: string; responseChannel: string }
+      ) => {
+        showAlert(
+          t("import.modExists", { modName }),
+          t("import.overwriteConfirm"),
+          <>
+            <ZzzButton
+              type="Cancel"
+              onClick={() => {
+                window.electron.ipcRenderer.send(responseChannel, false);
+                hideAlert();
+              }}
+            >
+              {t("common.cancel")}
+            </ZzzButton>
+            <ZzzButton
+              type="Refresh"
+              onClick={() => {
+                window.electron.ipcRenderer.send(responseChannel, true);
+                overwriteConfirmed = true;
+                hideAlert();
+              }}
+            >
+              {t("common.overwrite")}
+            </ZzzButton>
+          </>
+        );
+      };
+
+      const removeListener = window.electron.ipcRenderer.on("overwrite-ask", overwriteListener);
       const newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo;
-      console.log("Imported mod info:", newModInfo);
+      removeListener();
+
       if (newModInfo) {
-        dispatch(addModInfo(newModInfo));
+        if (overwriteConfirmed) {
+          dispatch(editModInfo({ modName: newModInfo.name, newModInfo }));
+        } else {
+          dispatch(addModInfo(newModInfo));
+        }
         dispatch(setSelectedMenuItem(newModInfo.modType ?? "Unknown"));
         if (newModInfo.character) {
           dispatch(setSelectedCharacter(newModInfo.character));
@@ -66,7 +108,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         });
       }
     },
-    [dispatch, t]
+    [dispatch, t, showAlert, hideAlert]
   );
 
   useEffect(() => {
@@ -146,7 +188,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     }
   };
 
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const handleSwitchPreset = async (name: string) => {
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
@@ -186,7 +227,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     }
     await switchPreset();
   };
-
   return (
     <>
       <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
