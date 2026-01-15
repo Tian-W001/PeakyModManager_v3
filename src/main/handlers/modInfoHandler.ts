@@ -20,7 +20,7 @@ export const createModInfoFile = async (modPath: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateAndFixModInfo = (modInfo: any, folderName: string) => {
+export const validateModInfo = (modInfo: any, folderName: string) => {
   const fixedModInfo: ModInfo = { ...defaultModInfo };
   for (const key in modInfo) {
     if (key in fixedModInfo) {

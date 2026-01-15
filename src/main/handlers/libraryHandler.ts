@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import { app, ipcMain } from "electron";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
-import { validateAndFixModInfo, createModInfoFile } from "./modInfoHandler";
+import { validateModInfo, createModInfoFile } from "./modInfoHandler";
 import { isZippedFile, getMainWindow, unzipFile } from "../utils";
 
 ipcMain.handle("on-startup", async () => {
@@ -49,7 +49,7 @@ const processModInfo = async (modPath: string): Promise<ModInfo> => {
   const modInfoPath = path.join(modPath, "modinfo.json");
   if (await fs.pathExists(modInfoPath)) {
     const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
-    const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, path.basename(modPath));
+    const { valid, fixedModInfo } = validateModInfo(modInfo, path.basename(modPath));
     if (!valid && fixedModInfo) {
       await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
     }
