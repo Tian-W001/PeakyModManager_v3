@@ -41,7 +41,7 @@ const processModInfo = async (modPath: string): Promise<ModInfo> => {
     if (!valid && fixedModInfo) {
       await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
     }
-    return fixedModInfo!;
+    return fixedModInfo;
   } else {
     return await createModInfoFile(modPath);
   }
@@ -95,6 +95,7 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   }
 
   const destPath = path.join(libraryPath, modName);
+  const isTempFolder = folderPath.startsWith(path.join(app.getPath("userData"), "Mods"));
 
   if (await fs.pathExists(destPath)) {
     console.log("Mod already exists in library: ", modName);
@@ -103,14 +104,16 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
     if (shouldOverwrite) {
       await fs.emptyDir(destPath);
     } else {
+      if (isTempFolder) {
+        await fs.remove(folderPath);
+      }
       return null;
     }
   }
 
   try {
     await fs.copy(folderPath, destPath);
-    // if folderPath was in temp folder(<userData>/Mods), clean it up
-    if (folderPath.startsWith(path.join(app.getPath("userData"), "Mods"))) {
+    if (isTempFolder) {
       await fs.remove(folderPath);
     }
     return await processModInfo(destPath);
