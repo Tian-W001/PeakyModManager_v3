@@ -6,18 +6,6 @@ import { ModInfo } from "../../shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfoHandler";
 import { isZippedFile, getMainWindow, unzipFile } from "../utils";
 
-ipcMain.handle("on-startup", async () => {
-  // clear <userData>/Mods folder on startup
-  const modsPath = path.join(app.getPath("userData"), "Mods");
-  try {
-    if (await fs.pathExists(modsPath)) {
-      await fs.emptyDir(modsPath);
-    }
-  } catch (error) {
-    console.error("Error clearing Mods folder on startup:", error);
-  }
-});
-
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return null;
@@ -121,6 +109,10 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 
   try {
     await fs.copy(folderPath, destPath);
+    // if folderPath was in temp folder(<userData>/Mods), clean it up
+    if (folderPath.startsWith(path.join(app.getPath("userData"), "Mods"))) {
+      await fs.remove(folderPath);
+    }
     return await processModInfo(destPath);
   } catch (error) {
     console.error("Error importing mod:", error);
