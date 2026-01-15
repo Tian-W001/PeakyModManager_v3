@@ -3,20 +3,8 @@ import fs from "fs-extra";
 import { app, ipcMain } from "electron";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
-import { validateAndFixModInfo, createModInfoFile } from "./modInfoHandler";
+import { validateModInfo, createModInfoFile } from "./modInfoHandler";
 import { isZippedFile, getMainWindow, unzipFile } from "../utils";
-
-ipcMain.handle("on-startup", async () => {
-  // clear <userData>/Mods folder on startup
-  const modsPath = path.join(app.getPath("userData"), "Mods");
-  try {
-    if (await fs.pathExists(modsPath)) {
-      await fs.remove(modsPath);
-    }
-  } catch (error) {
-    console.error("Error clearing Mods folder on startup:", error);
-  }
-});
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
@@ -45,60 +33,93 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: st
   }
 });
 
+const processModInfo = async (modPath: string): Promise<ModInfo> => {
+  const modInfoPath = path.join(modPath, "modinfo.json");
+  if (await fs.pathExists(modInfoPath)) {
+    const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
+    const { valid, fixedModInfo } = validateModInfo(modInfo, path.basename(modPath));
+    if (!valid && fixedModInfo) {
+      await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
+    }
+    return fixedModInfo;
+  } else {
+    return await createModInfoFile(modPath);
+  }
+};
+
+const unzipMod = async (zipPath: string, destPath: string) => {
+  await fs.emptyDir(destPath);
+  getMainWindow()?.webContents.send("unzipping-mod", { modName: path.basename(zipPath) });
+  try {
+    await unzipFile(zipPath, destPath);
+  } catch (err) {
+    getMainWindow()?.webContents.send("unzip-mod-error", { modName: path.basename(zipPath), error: String(err) });
+    throw err;
+  }
+  getMainWindow()?.webContents.send("unzip-mod-finish", { modName: path.basename(zipPath) });
+};
+
+const askOverwriteMod = async (modName: string): Promise<boolean> => {
+  return new Promise<boolean>((resolve) => {
+    const responseChannel = `overwrite-response-${modName}`;
+    ipcMain.once(responseChannel, (_e, userConfirmed: boolean) => {
+      resolve(userConfirmed);
+    });
+
+    getMainWindow()?.webContents.send("overwrite-ask", {
+      modName: modName,
+      responseChannel: responseChannel,
+    });
+  });
+};
+
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
+
+  let folderPath = sourcePath;
+  const modName = path.parse(path.basename(sourcePath)).name;
 
   try {
     const stats = await fs.stat(sourcePath);
-    let destPath: string;
-
     if (stats.isFile() && isZippedFile(sourcePath)) {
-      const modName = path.basename(sourcePath, path.extname(sourcePath));
-      destPath = path.join(libraryPath, modName);
-      if (await fs.pathExists(destPath)) {
-        console.log("Mod already exists in library: ", modName);
-        return false;
-      }
-      await fs.ensureDir(destPath);
-
-      getMainWindow()?.webContents.send("unzipping-mod", { modName });
-      try {
-        await unzipFile(sourcePath, destPath);
-        getMainWindow()?.webContents.send("unzip-mod-finish", { modName });
-      } catch (err) {
-        getMainWindow()?.webContents.send("unzip-mod-error", { modName, error: String(err) });
-        throw err;
-      }
-    } else if (stats.isDirectory()) {
-      const modName = path.basename(sourcePath);
-      destPath = path.join(libraryPath, modName);
-      if (await fs.pathExists(destPath)) {
-        console.log("Mod already exists in library: ", modName);
-        return false;
-      }
-      await fs.copy(sourcePath, destPath);
-    } else {
-      console.error("Imported path is not a directory or supported archive:", sourcePath);
-      return false;
-    }
-
-    // Check if modinfo.json exists
-    const modInfoPath = path.join(destPath, "modinfo.json");
-    if (await fs.pathExists(modInfoPath)) {
-      const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
-      const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, path.basename(destPath));
-      if (!valid && fixedModInfo) {
-        await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
-      }
-      return fixedModInfo;
-    } else {
-      return await createModInfoFile(destPath);
+      folderPath = path.join(app.getPath("userData"), "Mods", modName);
+      await unzipMod(sourcePath, folderPath);
+    } else if (!stats.isDirectory()) {
+      return null;
     }
   } catch (error) {
+    console.error("Error preparing mod source:", error);
+    return null;
+  }
+
+  const destPath = path.join(libraryPath, modName);
+  const isTempFolder = folderPath.startsWith(path.join(app.getPath("userData"), "Mods"));
+
+  if (await fs.pathExists(destPath)) {
+    console.log("Mod already exists in library: ", modName);
+
+    const shouldOverwrite = await askOverwriteMod(modName);
+    if (shouldOverwrite) {
+      await fs.emptyDir(destPath);
+    } else {
+      if (isTempFolder) {
+        await fs.remove(folderPath);
+      }
+      return null;
+    }
+  }
+
+  try {
+    await fs.copy(folderPath, destPath);
+    if (isTempFolder) {
+      await fs.remove(folderPath);
+    }
+    return await processModInfo(destPath);
+  } catch (error) {
     console.error("Error importing mod:", error);
-    return false;
+    return null;
   }
 });
 
@@ -138,19 +159,10 @@ const loadLibrary = async () => {
 
     const modInfosWithTime = await Promise.all(
       modFolders.map(async (folder) => {
-        const modInfoPath = path.join(libraryPath, folder, "modinfo.json");
-        if (await fs.pathExists(modInfoPath)) {
-          const stats = await fs.stat(modInfoPath);
-          const modInfo = JSON.parse(await fs.readFile(modInfoPath, "utf-8"));
-          const { valid, fixedModInfo } = validateAndFixModInfo(modInfo, folder);
-          if (!valid && fixedModInfo) {
-            await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
-          }
-          return { modInfo: fixedModInfo, mtime: stats.mtimeMs };
-        } else {
-          const modInfo = await createModInfoFile(path.join(libraryPath, folder));
-          return { modInfo, mtime: Date.now() };
-        }
+        const modInfo = await processModInfo(path.join(libraryPath, folder));
+        const stats = await fs.stat(path.join(libraryPath, folder, "modinfo.json"));
+
+        return { modInfo, mtime: stats.mtime.getTime() };
       })
     );
 
