@@ -24,6 +24,10 @@ const BottomBar = ({ className }: { className?: string }) => {
     setIsRefreshing(false);
   };
 
+  const handleDiscardChanges = () => {
+    dispatch(clearDiffList());
+  };
+
   const handleApplyChanges = async () => {
     const { success, successfulMods } = await window.electron.ipcRenderer.invoke("apply-mods", diffList);
     if (success) {
@@ -61,11 +65,16 @@ const BottomBar = ({ className }: { className?: string }) => {
           <ZzzButton type="Setting" onClick={() => toggleSettingsModalOpen()}>
             {t("common.settings")}
           </ZzzButton>
-        </div>
-        <div className="flex justify-center gap-4">
           <ZzzButton type="Refresh" onClick={handleOnClickRefresh} iconClassName={isRefreshing ? "animate-spin" : ""}>
             {isRefreshing ? t("common.refreshing") : t("common.refresh")}
           </ZzzButton>
+        </div>
+        <div className="flex justify-center gap-4">
+          {diffList && Object.keys(diffList).length > 0 && (
+            <ZzzButton type="Cancel" className="w-50" onClick={handleDiscardChanges}>
+              {t("common.cancel")}
+            </ZzzButton>
+          )}
           <ZzzButton type="Apply" className="w-50" onClick={handleApplyChanges}>
             {getApplyButtonText()}
           </ZzzButton>
