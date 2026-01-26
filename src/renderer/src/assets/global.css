@@ -94,3 +94,7 @@
 *:focus {
   outline: none;
 }
+
+img {
+  -webkit-user-drag: none;
+}
