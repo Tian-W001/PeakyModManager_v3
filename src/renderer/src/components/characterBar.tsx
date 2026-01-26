@@ -31,10 +31,9 @@ const CharacterBar = ({ className }: { className?: string }) => {
         const isVisible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
 
         if (!isVisible) {
-          element.scrollIntoView({
+          container.scrollTo({
+            left: container.scrollLeft + elementRect.left - containerRect.left - container.clientLeft,
             behavior: "smooth",
-            block: "nearest",
-            inline: "start",
           });
         }
       }
