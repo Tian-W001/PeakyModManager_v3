@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Character, characterNameList } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
@@ -12,10 +13,33 @@ const getCharacterImagePath = (char: Character | "All") => {
 const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
     | Character
     | "All"
   )[];
+
+  useEffect(() => {
+    if (selectedCharacter && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const element = container.querySelector(`div[data-character="${selectedCharacter}"]`) as HTMLElement;
+
+      if (element) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+
+        const isVisible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
+
+        if (!isVisible) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "start",
+          });
+        }
+      }
+    }
+  }, [selectedCharacter]);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -28,7 +52,6 @@ const CharacterBar = ({ className }: { className?: string }) => {
   };
 
   const handleSelectCharacter = (character: Character | "All") => {
-    console.log("Selected character:", character);
     dispatch(setSelectedCharacter(character));
   };
 
@@ -40,6 +63,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
       >
         <TiChevronLeft color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
         <div
+          ref={scrollContainerRef}
           className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] border-4 bg-black shadow-[4px_1px_0px_#ffffff19,-4px_-1px_0px_#00000051]"
           id="character-bar-images-container"
           onWheel={handleScroll}
@@ -48,7 +72,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
             <div
               key={char}
               className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
-              id="character-bar-image-container"
+              data-character={char}
               onClick={() => handleSelectCharacter(char)}
             >
               {selectedCharacter === char && (
