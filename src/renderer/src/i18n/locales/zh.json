@@ -38,6 +38,7 @@
     "wallpaper": "壁纸",
     "libraryPath": "库路径",
     "targetPath": "目标路径",
+    "d3dxUserPath": "d3dx_user.ini 路径",
     "clickToSetPath": "点击设置路径",
     "backup": "备份",
     "backupTooltip": "将预设信息备份到当前库目录",
@@ -65,10 +66,14 @@
     "setCover": "设置封面",
     "deleteMod": "删除模组",
     "openModFolder": "打开文件夹",
+    "syncToggles": "同步切换项",
     "autofill": "自动填充",
     "deleteModConfirm": "确定要删除 {{name}} 吗？",
     "deleteModConfirmMsg": "此操作无法撤销",
-    "deleteModFailed": "删除 {{name}} 失败。"
+    "deleteModFailed": "删除 {{name}} 失败。",
+    "syncToggleNoD3dxPath": "无法同步切换项：未设置 d3dx_user.ini 路径!",
+    "syncToggleSuccessTitle": "成功同步 {{count}} 个切换项",
+    "syncToggleFailTitle": "同步 {{count}} 个切换项失败"
   },
   "presets": {
     "managePresets": "管理预设",

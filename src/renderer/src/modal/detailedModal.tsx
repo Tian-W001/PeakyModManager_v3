@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { editModInfo, selectLibraryPath, removeModInfo } from "@renderer/redux/slices/librarySlice";
+import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
@@ -31,6 +31,7 @@ const DetailedModal = ({
 }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
+  const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
 
@@ -170,6 +171,38 @@ const DetailedModal = ({
     }
   };
 
+  const handleSyncToggles = async () => {
+    if (!d3dxUserPath) {
+      toast.custom(() => <ZzzToast message={t("modDetails.syncToggleNoD3dxPath")} />, { duration: 4000 });
+      return;
+    }
+    const allToggles: Record<string, Record<string, string>> | null = await window.electron.ipcRenderer.invoke(
+      "sync-toggles",
+      modInfo.name
+    );
+    if (allToggles) {
+      const toggleList = Object.values(allToggles).flatMap((iniToggles, _) =>
+        Object.entries(iniToggles).map(([toggleName, value]) => `${toggleName}=${value}`)
+      );
+      const toggleCount = toggleList.length;
+      showAlert(
+        t("modDetails.syncToggleSuccessTitle", { count: toggleCount }),
+        toggleList.join("\n"),
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.ok")}
+        </ZzzButton>
+      );
+    } else {
+      showAlert(
+        t("modDetails.syncToggleFailTitle"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.ok")}
+        </ZzzButton>
+      );
+    }
+  };
+
   return (
     <>
       <div className={clsx("modal-overlay gap-2", className)} id="modal-overlay">
@@ -303,6 +336,9 @@ const DetailedModal = ({
             </ZzzButton>
             <ZzzButton type="Track" onClick={handleOpenModFolder}>
               {t("modDetails.openModFolder")}
+            </ZzzButton>
+            <ZzzButton type="Refresh" onClick={handleSyncToggles}>
+              {t("modDetails.syncToggles")}
             </ZzzButton>
             <ZzzButton type="Save" onClick={saveModInfoChanges}>
               {t("common.save")}
