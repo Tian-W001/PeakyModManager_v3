@@ -40,7 +40,6 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
       });
       const { files } = extractor.extract();
       // Iterate over to ensure extraction happens
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for await (const _file of files) {
         // must iterate over the generator to trigger the extraction
       }
