@@ -210,3 +210,72 @@ ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) =>
 
   return { success, successfulMods };
 });
+
+ipcMain.handle("sync-ini", async (_event, modName: string) => {
+  /*
+    Sync the toggles from d3dx_user.ini to mod's ini files in the library
+    1. Read d3dx_user.ini from d3dxUserPath
+    2. find lines with "$/mods/<modName>/<iniFilePath>/<toggleName> = <value>"
+    3. edit the corresponding line in the mod's ini file with format "global persist $<toggleName> = <value>"
+  */
+  try {
+    const allToggles = await findAllTogglesInD3dxUser(modName);
+    await updateModIniFile(modName, allToggles);
+    return true;
+  } catch (error) {
+    console.error(`Error syncing ini toggles for mod ${modName}:`, error);
+    return false;
+  }
+});
+
+const findAllTogglesInD3dxUser = async (modName: string) => {
+  const d3dxUserPath = store.get("d3dxUserPath", null) as string | null;
+  if (!d3dxUserPath || !(await fs.pathExists(d3dxUserPath))) throw new Error("d3dxUserPath not set");
+
+  const d3dxUserContent = await fs.readFile(d3dxUserPath, "utf-8");
+  const regex = new RegExp(
+    //matching: $/mods/<modName>/<iniFilePath>/<toggleName> = <value>
+    `/^\\$[\\/\\\\]mods[\\/\\\\]${escapeRegExp(modName)}[\\/\\\\](.+?\\.ini)[\\/\\\\](.+)\\s=\\s(\\d+)\\s*$`,
+    "gim"
+  );
+  const allToggles: Record<string, Record<string, string>> = {};
+  const matches = d3dxUserContent.matchAll(regex);
+  for (const match of matches) {
+    const [, iniFileRelPath, toggleName, newValue] = match;
+    const normalizedIniPath = iniFileRelPath.replace(/[\\/]/g, path.sep);
+    if (!allToggles[normalizedIniPath]) {
+      allToggles[normalizedIniPath] = {};
+    }
+    allToggles[normalizedIniPath][toggleName] = newValue;
+  }
+
+  return allToggles;
+};
+
+const updateModIniFile = async (modName: string, allToggles: Record<string, Record<string, string>>) => {
+  const libraryPath = store.get("libraryPath", null) as string | null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) throw new Error("Library path not set");
+  const modPath = path.join(libraryPath, modName);
+  if (!(await fs.pathExists(modPath))) throw new Error("Mod path not found");
+
+  for (const [iniRelPath, toggles] of Object.entries(allToggles)) {
+    const iniFullPath = path.join(modPath, iniRelPath);
+    let isModified = false;
+    if (!(await fs.pathExists(iniFullPath))) continue;
+    let iniContent = await fs.readFile(iniFullPath, "utf-8");
+
+    for (const [toggleName, newValue] of Object.entries(toggles)) {
+      //matching: global persist $<toggleName> = <value>
+      const regex = new RegExp(`^global\\spersist\\s\\$${escapeRegExp(toggleName)}\\s=\\s\\d+`, "gim");
+      iniContent = iniContent.replace(regex, `global persist $${toggleName} = ${newValue}`);
+      isModified = true;
+    }
+    if (isModified) {
+      await fs.writeFile(iniFullPath, iniContent, "utf-8");
+    }
+  }
+};
+
+const escapeRegExp = (string: string): string => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
