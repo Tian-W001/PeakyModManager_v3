@@ -4,7 +4,7 @@ import { app, ipcMain } from "electron";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfoHandler";
-import { isZippedFile, getMainWindow, unzipFile } from "../utils";
+import { isZippedFile, getMainWindow, unzipFile, escapeRegExp } from "../utils";
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
@@ -211,31 +211,31 @@ ipcMain.handle("apply-mods", async (_event, changes: Record<string, boolean>) =>
   return { success, successfulMods };
 });
 
-ipcMain.handle("sync-ini", async (_event, modName: string) => {
+ipcMain.handle("sync-toggles", async (_event, modName: string) => {
   /*
     Sync the toggles from d3dx_user.ini to mod's ini files in the library
     1. Read d3dx_user.ini from d3dxUserPath
-    2. find lines with "$/mods/<modName>/<iniFilePath>/<toggleName> = <value>"
+    2. find lines with "$\mods\<modName>\<iniFilePath>\<toggleName> = <value>"
     3. edit the corresponding line in the mod's ini file with format "global persist $<toggleName> = <value>"
   */
   try {
     const allToggles = await findAllTogglesInD3dxUser(modName);
     await updateModIniFile(modName, allToggles);
-    return true;
+    return allToggles;
   } catch (error) {
     console.error(`Error syncing ini toggles for mod ${modName}:`, error);
-    return false;
+    return null;
   }
 });
 
-const findAllTogglesInD3dxUser = async (modName: string) => {
+export const findAllTogglesInD3dxUser = async (modName: string) => {
   const d3dxUserPath = store.get("d3dxUserPath", null) as string | null;
   if (!d3dxUserPath || !(await fs.pathExists(d3dxUserPath))) throw new Error("d3dxUserPath not set");
 
   const d3dxUserContent = await fs.readFile(d3dxUserPath, "utf-8");
   const regex = new RegExp(
-    //matching: $/mods/<modName>/<iniFilePath>/<toggleName> = <value>
-    `/^\\$[\\/\\\\]mods[\\/\\\\]${escapeRegExp(modName)}[\\/\\\\](.+?\\.ini)[\\/\\\\](.+)\\s=\\s(\\d+)\\s*$`,
+    //matching: $\mods\<modName>\<iniFilePath>\<toggleName> = <value>
+    `^\\$[/\\\\]mods[/\\\\]${escapeRegExp(modName)}[/\\\\](.+?\\.ini)[/\\\\](.+)\\s=\\s(\\d+)\\s*$`,
     "gim"
   );
   const allToggles: Record<string, Record<string, string>> = {};
@@ -248,7 +248,6 @@ const findAllTogglesInD3dxUser = async (modName: string) => {
     }
     allToggles[normalizedIniPath][toggleName] = newValue;
   }
-
   return allToggles;
 };
 
@@ -274,8 +273,4 @@ const updateModIniFile = async (modName: string, allToggles: Record<string, Reco
       await fs.writeFile(iniFullPath, iniContent, "utf-8");
     }
   }
-};
-
-const escapeRegExp = (string: string): string => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };

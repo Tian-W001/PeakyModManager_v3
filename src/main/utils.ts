@@ -59,3 +59,7 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
     throw error;
   }
 };
+
+export const escapeRegExp = (string: string): string => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
