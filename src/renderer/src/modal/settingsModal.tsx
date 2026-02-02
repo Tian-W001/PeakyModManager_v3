@@ -5,8 +5,10 @@ import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import {
   loadLibrary,
+  selectD3dxUserPath,
   selectLibraryPath,
   selectTargetPath,
+  setD3dxUserPath,
   setLibraryPath,
   setTargetPath,
 } from "@renderer/redux/slices/librarySlice";
@@ -35,6 +37,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const targetPath = useAppSelector(selectTargetPath);
+  const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const presets = useAppSelector(selectAllPresets);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const currentWallpaper = useAppSelector(selectCurrentWallpaper);
@@ -72,6 +75,13 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(clearDiffList());
       dispatch(setCurrentPreset(currentPresetName)); // move current active mods in preset to diffList
+    }
+  };
+
+  const handleSelectD3dxUserPath = async () => {
+    const newPath: string | null = await window.electron.ipcRenderer.invoke("select-file");
+    if (newPath) {
+      await dispatch(setD3dxUserPath(newPath));
     }
   };
 
@@ -256,6 +266,17 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
                 alt="Locate"
                 onClick={handleOpenTargetFolder}
                 className="absolute right-2 h-6 cursor-pointer"
+              />
+            </div>
+
+            {/* d3dx_user.ini Path */}
+            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+              <span className="truncate">{t("settings.d3dxUserPath")}</span>
+              <input
+                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
+                value={d3dxUserPath || t("settings.clickToSetPath")}
+                readOnly
+                onClick={handleSelectD3dxUserPath}
               />
             </div>
 

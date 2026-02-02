@@ -9,19 +9,21 @@ import { Character } from "src/shared/character";
 export interface libraryState {
   libraryPath: string | null;
   targetPath: string | null;
+  d3dxUserPath: string | null;
   modInfos: ModInfo[];
 }
 
 const initialState: libraryState = {
   libraryPath: null,
   targetPath: null,
+  d3dxUserPath: null,
   modInfos: [],
 };
 
 const libraryPersistConfig = {
   key: "library",
   storage,
-  whitelist: ["libraryPath", "targetPath", "modInfos"],
+  whitelist: ["libraryPath", "targetPath", "modInfos", "d3dxUserPath"],
 };
 
 export const setLibraryPath = createAsyncThunk("library/setLibraryPath", async (newPath: string) => {
@@ -31,6 +33,11 @@ export const setLibraryPath = createAsyncThunk("library/setLibraryPath", async (
 
 export const setTargetPath = createAsyncThunk("library/setTargetPath", async (newPath: string) => {
   await window.electron.ipcRenderer.invoke("set-target-path", newPath);
+  return newPath;
+});
+
+export const setD3dxUserPath = createAsyncThunk("library/setD3dxUserPath", async (newPath: string) => {
+  await window.electron.ipcRenderer.invoke("set-d3dx-user-path", newPath);
   return newPath;
 });
 
@@ -68,6 +75,9 @@ const librarySlice = createSlice({
       })
       .addCase(setTargetPath.fulfilled, (state, action) => {
         state.targetPath = action.payload;
+      })
+      .addCase(setD3dxUserPath.fulfilled, (state, action) => {
+        state.d3dxUserPath = action.payload;
       });
   },
 });
@@ -77,6 +87,7 @@ export const { editModInfo, addModInfo, removeModInfo } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;
+export const selectD3dxUserPath = (state: RootState) => state.library.d3dxUserPath;
 export const selectModInfos = (state: RootState) => state.library.modInfos;
 export const selectModByName = (name: string) => (state: RootState) => {
   return state.library.modInfos.find((mod) => mod.name === name);

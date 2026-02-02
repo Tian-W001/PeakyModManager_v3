@@ -38,6 +38,7 @@
     "wallpaper": "Wallpaper",
     "libraryPath": "Library Path",
     "targetPath": "Target Path",
+    "d3dxUserPath": "d3dx_user.ini Path",
     "clickToSetPath": "Click to set path",
     "backup": "Backup",
     "backupTooltip": "Backup presets information into current Library dir",
@@ -65,10 +66,15 @@
     "setCover": "Set Cover",
     "deleteMod": "Delete Mod",
     "openModFolder": "Open Folder",
+    "syncToggles": "Sync Toggles",
     "autofill": "Autofill",
     "deleteModConfirm": "Delete {{name}}?",
     "deleteModConfirmMsg": "This action cannot be undone",
-    "deleteModFailed": "Failed to delete {{name}}."
+    "deleteModFailed": "Failed to delete {{name}}.",
+    "syncToggleNoD3dxPath": "Cannot sync toggles: d3dx_user.ini path not set!",
+    "syncToggleSuccessTitle": "Successfully synced {{count}} toggles",
+    "syncToggleFailTitle": "Failed to sync toggles",
+    "syncToggleNoChangesTitle": "No toggle changes detected"
   },
   "presets": {
     "managePresets": "Manage Presets",

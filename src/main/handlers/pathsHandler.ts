@@ -48,3 +48,11 @@ ipcMain.handle("clear-target-path", async () => {
     console.error("Error clearing target path:", error);
   }
 });
+
+ipcMain.handle("get-d3dx-user-path", async () => {
+  return store.get("d3dxUserPath", null) as string | null;
+});
+
+ipcMain.handle("set-d3dx-user-path", async (_event, d3dxUserPath: string | null) => {
+  store.set("d3dxUserPath", d3dxUserPath);
+});

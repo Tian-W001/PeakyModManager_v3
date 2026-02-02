@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { editModInfo, selectLibraryPath, removeModInfo } from "@renderer/redux/slices/librarySlice";
+import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
@@ -12,6 +12,7 @@ import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
+import Track from "@renderer/assets/icons/Track.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
@@ -31,6 +32,7 @@ const DetailedModal = ({
 }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
+  const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
 
@@ -170,6 +172,43 @@ const DetailedModal = ({
     }
   };
 
+  const handleSyncToggles = async () => {
+    if (!d3dxUserPath) {
+      toast.custom(() => <ZzzToast message={t("modDetails.syncToggleNoD3dxPath")} />, { duration: 4000 });
+      return;
+    }
+    const changedToggles: { toggleName: string; newValue: string }[] | null = await window.electron.ipcRenderer.invoke(
+      "sync-toggles",
+      modInfo.name
+    );
+    if (changedToggles === null) {
+      showAlert(
+        t("modDetails.syncToggleFailTitle"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.confirm")}
+        </ZzzButton>
+      );
+    } else if (changedToggles.length > 0) {
+      const toggleCount = changedToggles.length;
+      showAlert(
+        t("modDetails.syncToggleSuccessTitle", { count: toggleCount }),
+        changedToggles.map(({ toggleName, newValue }) => `${toggleName}=${newValue}`).join("\n"),
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.confirm")}
+        </ZzzButton>
+      );
+    } else {
+      showAlert(
+        t("modDetails.syncToggleNoChangesTitle"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.confirm")}
+        </ZzzButton>
+      );
+    }
+  };
+
   return (
     <>
       <div className={clsx("modal-overlay gap-2", className)} id="modal-overlay">
@@ -215,18 +254,26 @@ const DetailedModal = ({
           </div>
           <div className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden" id="right-section">
             <div
-              className="box-border flex h-14 min-w-0 items-center justify-between gap-2 overflow-hidden py-2 pr-4"
+              className="box-border flex h-14 min-w-0 items-center justify-between overflow-hidden py-2 pr-4"
               id="modal-title-area"
             >
-              <div className="title-decorator flex h-10 min-w-0 items-center justify-between overflow-hidden">
-                <textarea
-                  value={localModInfo.title ?? "No Title"}
-                  onChange={(e) => handleModInfoChange("title", e.target.value)}
-                  className="no-scrollbar hover:text-zzzYellow field-sizing-content h-full min-w-0 resize-none overflow-x-auto px-2 text-2xl whitespace-nowrap text-white italic"
-                  spellCheck={false}
-                >
-                  {modInfo.title}
-                </textarea>
+              <div className="flex h-10 flex-row items-center gap-2 overflow-hidden">
+                <img
+                  src={Track}
+                  alt="Track"
+                  className="h-[80%] transition-transform hover:scale-120 hover:cursor-pointer"
+                  onClick={handleOpenModFolder}
+                />
+                <div className="title-decorator flex h-10 min-w-0 items-center justify-between overflow-hidden">
+                  <textarea
+                    value={localModInfo.title ?? "No Title"}
+                    onChange={(e) => handleModInfoChange("title", e.target.value)}
+                    className="no-scrollbar hover:text-zzzYellow field-sizing-content h-full min-w-0 resize-none overflow-x-auto px-2 text-2xl whitespace-nowrap text-white italic"
+                    spellCheck={false}
+                  >
+                    {modInfo.title}
+                  </textarea>
+                </div>
               </div>
               <Exit
                 className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
@@ -268,7 +315,7 @@ const DetailedModal = ({
                 className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
                 id="mod-source"
               >
-                <span className="">{t("modDetails.source")}</span>
+                <span>{t("modDetails.source")}</span>
                 <input
                   className="mr-6 flex-1 text-right font-bold"
                   placeholder={t("modDetails.unknownSource")}
@@ -301,8 +348,8 @@ const DetailedModal = ({
             <ZzzButton type="FairyAI" onClick={handleAutofill}>
               {t("modDetails.autofill")}
             </ZzzButton>
-            <ZzzButton type="Track" onClick={handleOpenModFolder}>
-              {t("modDetails.openModFolder")}
+            <ZzzButton type="Refresh" onClick={handleSyncToggles}>
+              {t("modDetails.syncToggles")}
             </ZzzButton>
             <ZzzButton type="Save" onClick={saveModInfoChanges}>
               {t("common.save")}

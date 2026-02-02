@@ -30,7 +30,7 @@ export default defineConfig(
       ...eslintPluginReactRefresh.configs.vite.rules,
       "prettier/prettier": ["warn", { semi: true, endOfLine: "auto" }],
       "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "max-len": ["warn", { code: 120 }],
     },
   },
