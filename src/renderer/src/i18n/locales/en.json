@@ -73,7 +73,8 @@
     "deleteModFailed": "Failed to delete {{name}}.",
     "syncToggleNoD3dxPath": "Cannot sync toggles: d3dx_user.ini path not set!",
     "syncToggleSuccessTitle": "Successfully synced {{count}} toggles",
-    "syncToggleFailTitle": "Failed to sync {{count}} toggles"
+    "syncToggleFailTitle": "Failed to sync {{count}} toggles",
+    "syncToggleNoChangesTitle": "No toggle changes detected"
   },
   "presets": {
     "managePresets": "Manage Presets",

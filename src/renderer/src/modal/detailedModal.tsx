@@ -176,14 +176,20 @@ const DetailedModal = ({
       toast.custom(() => <ZzzToast message={t("modDetails.syncToggleNoD3dxPath")} />, { duration: 4000 });
       return;
     }
-    const allToggles: Record<string, Record<string, string>> | null = await window.electron.ipcRenderer.invoke(
+    const changedToggles: { toggleName: string; newValue: string }[] | null = await window.electron.ipcRenderer.invoke(
       "sync-toggles",
       modInfo.name
     );
-    if (allToggles) {
-      const toggleList = Object.values(allToggles).flatMap((iniToggles, _) =>
-        Object.entries(iniToggles).map(([toggleName, value]) => `${toggleName}=${value}`)
+    if (changedToggles === null) {
+      showAlert(
+        t("modDetails.syncToggleFailTitle"),
+        undefined,
+        <ZzzButton type="Ok" onClick={hideAlert}>
+          {t("common.ok")}
+        </ZzzButton>
       );
+    } else if (changedToggles.length > 0) {
+      const toggleList = changedToggles.map(({ toggleName, newValue }) => `${toggleName}=${newValue}`);
       const toggleCount = toggleList.length;
       showAlert(
         t("modDetails.syncToggleSuccessTitle", { count: toggleCount }),
@@ -194,7 +200,7 @@ const DetailedModal = ({
       );
     } else {
       showAlert(
-        t("modDetails.syncToggleFailTitle"),
+        t("modDetails.syncToggleNoChangesTitle"),
         undefined,
         <ZzzButton type="Ok" onClick={hideAlert}>
           {t("common.ok")}

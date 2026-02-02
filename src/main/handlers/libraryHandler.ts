@@ -220,8 +220,7 @@ ipcMain.handle("sync-toggles", async (_event, modName: string) => {
   */
   try {
     const allToggles = await findAllTogglesInD3dxUser(modName);
-    await updateModIniFile(modName, allToggles);
-    return allToggles;
+    return await updateModIniFile(modName, allToggles);
   } catch (error) {
     console.error(`Error syncing ini toggles for mod ${modName}:`, error);
     return null;
@@ -257,6 +256,7 @@ const updateModIniFile = async (modName: string, allToggles: Record<string, Reco
   const modPath = path.join(libraryPath, modName);
   if (!(await fs.pathExists(modPath))) throw new Error("Mod path not found");
 
+  const changedToggles: { toggleName: string; newValue: string }[] = [];
   for (const [iniRelPath, toggles] of Object.entries(allToggles)) {
     const iniFullPath = path.join(modPath, iniRelPath);
     let isModified = false;
@@ -265,12 +265,20 @@ const updateModIniFile = async (modName: string, allToggles: Record<string, Reco
 
     for (const [toggleName, newValue] of Object.entries(toggles)) {
       //matching: global persist $<toggleName> = <value>
-      const regex = new RegExp(`^global\\spersist\\s\\$${escapeRegExp(toggleName)}\\s=\\s\\d+`, "gim");
-      iniContent = iniContent.replace(regex, `global persist $${toggleName} = ${newValue}`);
-      isModified = true;
+      const regex = new RegExp(`^global\\spersist\\s\\$${escapeRegExp(toggleName)}\\s=\\s(\\d+)`, "gim");
+      const match = regex.exec(iniContent);
+      if (match) {
+        const oldValue = match[1];
+        if (oldValue !== newValue) {
+          iniContent = iniContent.replace(regex, `global persist $${toggleName} = ${newValue}`);
+          changedToggles.push({ toggleName, newValue });
+          isModified = true;
+        }
+      }
     }
     if (isModified) {
       await fs.writeFile(iniFullPath, iniContent, "utf-8");
     }
   }
+  return changedToggles;
 };
