@@ -29,11 +29,15 @@ vi.mock("electron", () => ({
 }));
 
 // Mock other dependencies if necessary
-vi.mock("../src/main/utils", () => ({
-  isZippedFile: vi.fn(),
-  getMainWindow: vi.fn(),
-  unzipFile: vi.fn(),
-}));
+vi.mock("../src/main/utils", async () => {
+  const actual = await vi.importActual<typeof import("../src/main/utils")>("../src/main/utils");
+  return {
+    ...actual,
+    isZippedFile: vi.fn(),
+    getMainWindow: vi.fn(),
+    unzipFile: vi.fn(),
+  };
+});
 
 vi.mock("../src/main/handlers/modInfoHandler", () => ({
   validateModInfo: vi.fn(),
