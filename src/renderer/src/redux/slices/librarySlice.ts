@@ -51,7 +51,8 @@ const librarySlice = createSlice({
   initialState,
   reducers: {
     addModInfo: (state, action: PayloadAction<ModInfo>) => {
-      state.modInfos.push(action.payload);
+      //push to head
+      state.modInfos.unshift(action.payload);
     },
     removeModInfo: (state, action: PayloadAction<string>) => {
       state.modInfos = state.modInfos.filter((mod) => mod.name !== action.payload);
