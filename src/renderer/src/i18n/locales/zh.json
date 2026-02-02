@@ -73,7 +73,7 @@
     "deleteModFailed": "删除 {{name}} 失败。",
     "syncToggleNoD3dxPath": "无法同步切换项：未设置 d3dx_user.ini 路径!",
     "syncToggleSuccessTitle": "成功同步 {{count}} 个切换项",
-    "syncToggleFailTitle": "同步 {{count}} 个切换项失败",
+    "syncToggleFailTitle": "同步切换项失败",
     "syncToggleNoChangesTitle": "未检测到切换项更改"
   },
   "presets": {
