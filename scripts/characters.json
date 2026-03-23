@@ -570,5 +570,27 @@
       "en": "Aria",
       "zh": "爱芮"
     }
+  },
+  {
+    "id": "Nangong",
+    "nicknames": {
+      "en": "Nangong",
+      "zh": "南宫"
+    },
+    "fullnames": {
+      "en": "Nangong Yu",
+      "zh": "南宫羽"
+    }
+  },
+  {
+    "id": "Cissia",
+    "nicknames": {
+      "en": "Cissia",
+      "zh": "希希芙"
+    },
+    "fullnames": {
+      "en": "Cissia",
+      "zh": "希希芙"
+    }
   }
 ]

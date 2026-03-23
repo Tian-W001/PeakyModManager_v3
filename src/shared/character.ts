@@ -52,6 +52,8 @@ const characterNameList = [
   "YeShunguang",
   "Sunna",
   "Aria",
+  "Nangong",
+  "Cissia",
   // AUTO-GENERATED-END
 ] as const;
 
