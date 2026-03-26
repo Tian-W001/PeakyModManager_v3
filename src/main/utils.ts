@@ -1,8 +1,7 @@
 import path from "path";
 import fs from "fs-extra";
 import { BrowserWindow } from "electron";
-import { createExtractorFromFile } from "node-unrar-js";
-import sevenBin from "7zip-bin";
+import sevenBin from "7zip-bin-full";
 import Seven from "node-7z";
 
 export const zippedExtensions = [".zip", ".7z", ".rar", ".tar"];
@@ -33,20 +32,10 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
   await fs.ensureDir(destPath);
 
   try {
-    if (ext === ".rar") {
-      const extractor = await createExtractorFromFile({
-        filepath: zippedPath,
-        targetPath: destPath,
-      });
-      const { files } = extractor.extract();
-      // Iterate over to ensure extraction happens
-      for await (const _file of files) {
-        // must iterate over the generator to trigger the extraction
-      }
-    } else if (zippedExtensions.filter((ext) => ext !== ".rar").includes(ext)) {
+    if (zippedExtensions.includes(ext)) {
       await new Promise<void>((resolve, reject) => {
         const stream = Seven.extractFull(zippedPath, destPath, {
-          $bin: asarToAsarUnpacked(sevenBin.path7za),
+          $bin: asarToAsarUnpacked(sevenBin.path7z),
         });
         stream.on("end", () => resolve());
         stream.on("error", (err) => reject(err));
