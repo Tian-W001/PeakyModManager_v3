@@ -56,6 +56,7 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
     }
   } catch (error) {
     console.error(`Failed to unzip ${zippedPath}:`, error);
+    await fs.remove(destPath); // Clean up any partially extracted files
     throw error;
   }
 };
