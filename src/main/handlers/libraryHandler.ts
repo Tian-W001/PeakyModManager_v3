@@ -1,35 +1,57 @@
 import path from "path";
 import fs from "fs-extra";
-import { app, ipcMain } from "electron";
+import { app, ipcMain, net } from "electron";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfoHandler";
 import { isZippedFile, getMainWindow, unzipFile, escapeRegExp } from "../utils";
 
-ipcMain.handle("import-mod-cover", async (_event, modName: string, imagePath: string) => {
+ipcMain.handle("import-mod-cover", async (_event, modName: string, imageSource: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath) return null;
 
   const modPath = path.join(libraryPath, modName);
 
-  // Check if the image is already inside the mod folder
-  const relativePath = path.relative(modPath, imagePath);
-  const isInside = !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
+  if (/^https?:\/\//i.test(imageSource)) {
+    // Download the image and save it to the mod folder
+    let response: Response;
+    try {
+      response = await net.fetch(imageSource);
+    } catch (error) {
+      console.error("Failed to fetch cover URL:", error);
+      return null;
+    }
 
-  if (isInside) {
-    return relativePath;
-  }
+    if (!response.ok) return null;
 
-  const ext = path.extname(imagePath);
-  const newCoverName = `preview${ext}`;
-  const destPath = path.join(modPath, newCoverName);
+    const mimeType = (response.headers.get("content-type") ?? "").split(";")[0].trim();
+    if (!mimeType.startsWith("image/")) return null;
 
-  try {
-    await fs.copy(imagePath, destPath);
-    return newCoverName;
-  } catch (error) {
-    console.error("Error importing mod cover:", error);
-    return null;
+    const ext = "." + mimeType.slice("image/".length);
+    const newCoverName = `preview${ext}`;
+    try {
+      const buffer = await response.arrayBuffer();
+      await fs.writeFile(path.join(modPath, newCoverName), Buffer.from(buffer));
+      return newCoverName;
+    } catch (error) {
+      console.error("Failed to save cover from URL:", error);
+      return null;
+    }
+  } else {
+    // copy from local path, and check if it's within the mod folder to avoid unnecessary copy
+    const relativePath = path.relative(modPath, imageSource);
+    if (!relativePath.startsWith("..") && !path.isAbsolute(relativePath)) {
+      return relativePath;
+    }
+
+    const newCoverName = `preview${path.extname(imageSource)}`;
+    try {
+      await fs.copy(imageSource, path.join(modPath, newCoverName));
+      return newCoverName;
+    } catch (error) {
+      console.error("Failed to copy cover file:", error);
+      return null;
+    }
   }
 });
 
