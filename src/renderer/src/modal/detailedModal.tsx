@@ -111,11 +111,12 @@ const DetailedModal = ({
 
     const url = (e.dataTransfer.getData("text/uri-list") || e.dataTransfer.getData("text/plain")).trim();
     const file = e.dataTransfer.files[0];
+    const filePath = file ? window.api.getFilePath(file) : null;
 
     if (/^https?:\/\//i.test(url)) {
       await saveCover(url);
-    } else if (file?.type.startsWith("image/")) {
-      await saveCover(window.api.getFilePath(file));
+    } else if (file?.type.startsWith("image/") && filePath) {
+      await saveCover(filePath);
     }
   };
 
