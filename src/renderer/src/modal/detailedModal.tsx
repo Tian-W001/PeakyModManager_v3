@@ -87,14 +87,17 @@ const DetailedModal = ({
     );
   };
 
+  const syncCover = async (imagePath: string) => {
+    const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
+    if (newCoverName) {
+      handleModInfoChange("coverImage", newCoverName);
+    }
+  };
+
   const handleSetCover = async () => {
     const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
-    console.log("Selected cover image path:", imagePath);
     if (imagePath) {
-      const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
-      if (newCoverName) {
-        handleModInfoChange("coverImage", newCoverName);
-      }
+      await syncCover(imagePath);
     }
   };
 
@@ -119,12 +122,8 @@ const DetailedModal = ({
         return;
       }
       const imagePath = window.api.getFilePath(file);
-      console.error("Dropped image path:", imagePath);
       if (imagePath) {
-        const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
-        if (newCoverName) {
-          handleModInfoChange("coverImage", newCoverName);
-        }
+        await syncCover(imagePath);
       }
     }
   };
