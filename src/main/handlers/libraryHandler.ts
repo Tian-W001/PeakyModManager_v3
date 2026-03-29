@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs-extra";
 import { app, ipcMain, net } from "electron";
+import mime from "mime-types";
 import store from "../store";
 import { ModInfo } from "../../shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfoHandler";
@@ -26,8 +27,9 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imageSource: 
 
     const mimeType = (response.headers.get("content-type") ?? "").split(";")[0].trim();
     if (!mimeType.startsWith("image/")) return null;
+    const ext = mime.extension(mimeType);
+    if (!ext) return null;
 
-    const ext = "." + mimeType.slice("image/".length);
     const newCoverName = `preview${ext}`;
     try {
       const buffer = await response.arrayBuffer();
