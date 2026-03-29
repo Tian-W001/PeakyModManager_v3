@@ -9,7 +9,7 @@ import { isZippedFile, getMainWindow, unzipFile, escapeRegExp } from "../utils";
 
 ipcMain.handle("import-mod-cover", async (_event, modName: string, imageSource: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath) return null;
+  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const modPath = path.join(libraryPath, modName);
 
@@ -30,7 +30,7 @@ ipcMain.handle("import-mod-cover", async (_event, modName: string, imageSource: 
     const ext = mime.extension(mimeType);
     if (!ext) return null;
 
-    const newCoverName = `preview${ext}`;
+    const newCoverName = `preview.${ext}`;
     try {
       const buffer = await response.arrayBuffer();
       await fs.writeFile(path.join(modPath, newCoverName), Buffer.from(buffer));

@@ -87,8 +87,8 @@ const DetailedModal = ({
     );
   };
 
-  const saveCover = async (imagePath: string) => {
-    const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
+  const saveCover = async (imageSource: string) => {
+    const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imageSource);
     if (newCoverName) {
       handleModInfoChange("coverImage", newCoverName);
     }
