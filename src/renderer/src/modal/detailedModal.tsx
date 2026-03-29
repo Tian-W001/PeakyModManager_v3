@@ -87,14 +87,17 @@ const DetailedModal = ({
     );
   };
 
+  const saveCover = async (imageSource: string) => {
+    const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imageSource);
+    if (newCoverName) {
+      handleModInfoChange("coverImage", newCoverName);
+    }
+  };
+
   const handleSetCover = async () => {
     const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
-    console.log("Selected cover image path:", imagePath);
     if (imagePath) {
-      const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
-      if (newCoverName) {
-        handleModInfoChange("coverImage", newCoverName);
-      }
+      await saveCover(imagePath);
     }
   };
 
@@ -103,29 +106,17 @@ const DetailedModal = ({
   };
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
     e.stopPropagation();
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      e.preventDefault();
-      const item = e.dataTransfer.items[0];
-      // Check if it is an image
-      if (item.kind !== "file" || !item.webkitGetAsEntry()?.isFile) {
-        console.error(item, "is not a file");
-        return;
-      }
-      const file = item.getAsFile() as File;
-      if (!file.type.startsWith("image/")) {
-        console.error(file, "is not an image file");
-        return;
-      }
-      const imagePath = window.api.getFilePath(file);
-      console.error("Dropped image path:", imagePath);
-      if (imagePath) {
-        const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imagePath);
-        if (newCoverName) {
-          handleModInfoChange("coverImage", newCoverName);
-        }
-      }
+    const url = (e.dataTransfer.getData("text/uri-list") || e.dataTransfer.getData("text/plain")).trim();
+    const file = e.dataTransfer.files[0];
+    const filePath = file ? window.api.getFilePath(file) : null;
+
+    if (/^https?:\/\//i.test(url)) {
+      await saveCover(url);
+    } else if (file?.type.startsWith("image/") && filePath) {
+      await saveCover(filePath);
     }
   };
 
