@@ -300,7 +300,7 @@ const DetailedModal = ({
                         <img
                           src={getCharacterAvatarPath(char)}
                           alt={char}
-                          className="h-6"
+                          className="h-6 rounded-full"
                           onError={(e) => (e.currentTarget.src = getCharacterAvatarPath("Unknown"))}
                           loading="lazy"
                         />
