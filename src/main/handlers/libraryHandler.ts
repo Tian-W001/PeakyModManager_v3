@@ -73,17 +73,36 @@ const askOverwriteMod = async (modName: string): Promise<boolean> => {
   });
 };
 
+const flattenSingleRootFolder = async (folderPath: string) => {
+  const entries = await fs.readdir(folderPath, { withFileTypes: true });
+  if (entries.length !== 1 || !entries[0].isDirectory()) {
+    return;
+  }
+  const innerFolderPath = path.join(folderPath, entries[0].name);
+  const tempInnerFolderPath = path.join(folderPath, `tmp_${entries[0].name}`);
+  await fs.rename(innerFolderPath, tempInnerFolderPath);
+  const innerEntries = await fs.readdir(tempInnerFolderPath);
+  for (const entry of innerEntries) {
+    const srcPath = path.join(tempInnerFolderPath, entry);
+    const destPath = path.join(folderPath, entry);
+    await fs.move(srcPath, destPath, { overwrite: true });
+  }
+  await fs.remove(tempInnerFolderPath);
+};
+
 // Import a mod from the given source path (directory or archive) into the library
 ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   const libraryPath = store.get("libraryPath", null) as string | null;
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   let folderPath = sourcePath;
+  let isZipped = false;
   const modName = path.parse(path.basename(sourcePath)).name;
 
   try {
     const stats = await fs.stat(sourcePath);
     if (stats.isFile() && isZippedFile(sourcePath)) {
+      isZipped = true;
       folderPath = path.join(app.getPath("userData"), "Mods", modName);
       await unzipMod(sourcePath, folderPath);
     } else if (!stats.isDirectory()) {
@@ -95,7 +114,6 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
   }
 
   const destPath = path.join(libraryPath, modName);
-  const isTempFolder = folderPath.startsWith(path.join(app.getPath("userData"), "Mods"));
 
   if (await fs.pathExists(destPath)) {
     console.log("Mod already exists in library: ", modName);
@@ -104,7 +122,7 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
     if (shouldOverwrite) {
       await fs.emptyDir(destPath);
     } else {
-      if (isTempFolder) {
+      if (isZipped) {
         await fs.remove(folderPath);
       }
       return null;
@@ -113,9 +131,10 @@ ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
 
   try {
     await fs.copy(folderPath, destPath);
-    if (isTempFolder) {
+    if (isZipped) {
       await fs.remove(folderPath);
     }
+    await flattenSingleRootFolder(destPath);
     return await processModInfo(destPath);
   } catch (error) {
     console.error("Error importing mod:", error);
