@@ -16,6 +16,7 @@ import Track from "@renderer/assets/icons/Track.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
+import { selectVisibleCharacters } from "@renderer/redux/selectors/CharacterSelector";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
@@ -33,6 +34,7 @@ const DetailedModal = ({
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
+  const visibleCharacters = useAppSelector(selectVisibleCharacters);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
 
@@ -283,7 +285,7 @@ const DetailedModal = ({
                 <ZzzSelect
                   label={t("modDetails.character")}
                   value={localModInfo.character}
-                  options={characterNameList.toReversed().map((char) => ({
+                  options={visibleCharacters.toReversed().map((char) => ({
                     value: char,
                     label: (
                       <div className="flex h-full flex-row items-center justify-end gap-2">

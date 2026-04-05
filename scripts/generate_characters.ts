@@ -15,6 +15,7 @@ const zhJsonPath = path.join(rootDir, "src", "renderer", "src", "i18n", "locales
 // Define types
 interface CharacterData {
   id: string;
+  gender?: string;
   nicknames: { en: string; zh: string };
   fullnames: { en: string; zh: string };
 }
@@ -38,7 +39,17 @@ async function main() {
 
       if (markerRegex.test(characterTsContent)) {
         const newCharacterTsContent = characterTsContent.replace(markerRegex, `$1\n${characterListString}\n  $2`);
-        await fs.writeFile(characterTsPath, newCharacterTsContent, "utf-8");
+
+        // Generate and insert character gender map
+        const genderMapString = characters.map((c) => `  ${c.id}: "${c.gender || "unknown"}" as const,`).join("\n");
+
+        const genderMarkerRegex = /(\/\/ GENDER_MAP_START)[\s\S]*?(\/\/ GENDER_MAP_END)/;
+        let finalContent = newCharacterTsContent;
+        if (genderMarkerRegex.test(newCharacterTsContent)) {
+          finalContent = newCharacterTsContent.replace(genderMarkerRegex, `$1\n${genderMapString}\n  $2`);
+        }
+
+        await fs.writeFile(characterTsPath, finalContent, "utf-8");
       } else {
         console.error(`Error: Could not find AUTO-GENERATED markers in ${characterTsPath}`);
       }

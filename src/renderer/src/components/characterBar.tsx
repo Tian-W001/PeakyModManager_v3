@@ -1,9 +1,14 @@
 import { useEffect, useRef } from "react";
 import clsx from "clsx";
-import { Character, characterNameList } from "../../../shared/character";
+import { Character, characterGenderMap } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
+import {
+  selectSelectedCharacter,
+  setSelectedCharacter,
+  selectHideMaleCharacters,
+} from "@renderer/redux/slices/uiSlice";
+import { selectVisibleCharacters } from "@renderer/redux/selectors/CharacterSelector";
 import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
 
 const getCharacterImagePath = (char: Character | "All") => {
@@ -13,11 +18,19 @@ const getCharacterImagePath = (char: Character | "All") => {
 const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
+  const hideMaleCharacters = useAppSelector(selectHideMaleCharacters);
+  const visibleCharacters = useAppSelector(selectVisibleCharacters);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
-    | Character
-    | "All"
-  )[];
+
+  // Reset selection if previously selected character becomes hidden
+  useEffect(() => {
+    if (selectedCharacter !== "All" && hideMaleCharacters) {
+      const gender = characterGenderMap[selectedCharacter as Character];
+      if (gender === "male") {
+        dispatch(setSelectedCharacter("All"));
+      }
+    }
+  }, [hideMaleCharacters, selectedCharacter, dispatch]);
 
   useEffect(() => {
     if (selectedCharacter && scrollContainerRef.current) {
@@ -67,7 +80,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
           id="character-bar-images-container"
           onWheel={handleScroll}
         >
-          {characterBarImageList.map((char) => (
+          {([...visibleCharacters, "All"] as (Character | "All")[]).reverse().map((char) => (
             <div
               key={char}
               className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"

@@ -12,6 +12,7 @@
   },
   {
     "id": "Belle",
+    "gender": "female",
     "nicknames": {
       "en": "Belle",
       "zh": "玲"
@@ -23,6 +24,7 @@
   },
   {
     "id": "Wise",
+    "gender": "male",
     "nicknames": {
       "en": "Wise",
       "zh": "哲"
@@ -34,6 +36,7 @@
   },
   {
     "id": "Anby",
+    "gender": "female",
     "nicknames": {
       "en": "Anby",
       "zh": "安比"
@@ -45,6 +48,7 @@
   },
   {
     "id": "Billy",
+    "gender": "male",
     "nicknames": {
       "en": "Billy",
       "zh": "比利"
@@ -56,6 +60,7 @@
   },
   {
     "id": "Nicole",
+    "gender": "female",
     "nicknames": {
       "en": "Nicole",
       "zh": "妮可"
@@ -67,6 +72,7 @@
   },
   {
     "id": "Nekomata",
+    "gender": "female",
     "nicknames": {
       "en": "Nekomata",
       "zh": "猫又"
@@ -78,6 +84,7 @@
   },
   {
     "id": "Koleda",
+    "gender": "female",
     "nicknames": {
       "en": "Koleda",
       "zh": "柯蕾妲"
@@ -89,6 +96,7 @@
   },
   {
     "id": "Ben",
+    "gender": "male",
     "nicknames": {
       "en": "Ben",
       "zh": "本"
@@ -100,6 +108,7 @@
   },
   {
     "id": "Grace",
+    "gender": "female",
     "nicknames": {
       "en": "Grace",
       "zh": "格莉丝"
@@ -111,6 +120,7 @@
   },
   {
     "id": "Anton",
+    "gender": "male",
     "nicknames": {
       "en": "Anton",
       "zh": "安东"
@@ -122,6 +132,7 @@
   },
   {
     "id": "Lycaon",
+    "gender": "male",
     "nicknames": {
       "en": "Lycaon",
       "zh": "莱卡恩"
@@ -133,6 +144,7 @@
   },
   {
     "id": "Rina",
+    "gender": "female",
     "nicknames": {
       "en": "Rina",
       "zh": "丽娜"
@@ -144,6 +156,7 @@
   },
   {
     "id": "Corin",
+    "gender": "female",
     "nicknames": {
       "en": "Corin",
       "zh": "可琳"
@@ -155,6 +168,7 @@
   },
   {
     "id": "Soldier11",
+    "gender": "female",
     "nicknames": {
       "en": "Soldier11",
       "zh": "11号"
@@ -166,6 +180,7 @@
   },
   {
     "id": "Soukaku",
+    "gender": "female",
     "nicknames": {
       "en": "Soukaku",
       "zh": "苍角"
@@ -177,6 +192,7 @@
   },
   {
     "id": "Lucy",
+    "gender": "female",
     "nicknames": {
       "en": "Lucy",
       "zh": "露西"
@@ -188,6 +204,7 @@
   },
   {
     "id": "Piper",
+    "gender": "female",
     "nicknames": {
       "en": "Piper",
       "zh": "派派"
@@ -199,6 +216,7 @@
   },
   {
     "id": "Ellen",
+    "gender": "female",
     "nicknames": {
       "en": "Ellen",
       "zh": "艾莲"
@@ -210,6 +228,7 @@
   },
   {
     "id": "ZhuYuan",
+    "gender": "female",
     "nicknames": {
       "en": "ZhuYuan",
       "zh": "朱鸢"
@@ -221,6 +240,7 @@
   },
   {
     "id": "Qingyi",
+    "gender": "female",
     "nicknames": {
       "en": "Qingyi",
       "zh": "青衣"
@@ -232,6 +252,7 @@
   },
   {
     "id": "Jane",
+    "gender": "female",
     "nicknames": {
       "en": "Jane",
       "zh": "简"
@@ -243,6 +264,7 @@
   },
   {
     "id": "Seith",
+    "gender": "male",
     "nicknames": {
       "en": "Seith",
       "zh": "塞斯"
@@ -254,6 +276,7 @@
   },
   {
     "id": "Caesar",
+    "gender": "female",
     "nicknames": {
       "en": "Caesar",
       "zh": "凯撒"
@@ -265,6 +288,7 @@
   },
   {
     "id": "Burnice",
+    "gender": "female",
     "nicknames": {
       "en": "Burnice",
       "zh": "柏妮思"
@@ -276,6 +300,7 @@
   },
   {
     "id": "Yanagi",
+    "gender": "female",
     "nicknames": {
       "en": "Yanagi",
       "zh": "柳"
@@ -287,6 +312,7 @@
   },
   {
     "id": "Lighter",
+    "gender": "male",
     "nicknames": {
       "en": "Lighter",
       "zh": "莱特"
@@ -298,6 +324,7 @@
   },
   {
     "id": "Harumasa",
+    "gender": "male",
     "nicknames": {
       "en": "Harumasa",
       "zh": "悠真"
@@ -309,6 +336,7 @@
   },
   {
     "id": "Miyabi",
+    "gender": "female",
     "nicknames": {
       "en": "Miyabi",
       "zh": "雅"
@@ -320,6 +348,7 @@
   },
   {
     "id": "Astra",
+    "gender": "female",
     "nicknames": {
       "en": "Astra",
       "zh": "耀佳音"
@@ -331,6 +360,7 @@
   },
   {
     "id": "Evelyn",
+    "gender": "female",
     "nicknames": {
       "en": "Evelyn",
       "zh": "伊芙琳"
@@ -342,6 +372,7 @@
   },
   {
     "id": "Pulchra",
+    "gender": "female",
     "nicknames": {
       "en": "Pulchra",
       "zh": "波可娜"
@@ -353,6 +384,7 @@
   },
   {
     "id": "Anby0",
+    "gender": "female",
     "nicknames": {
       "en": "Anby0",
       "zh": "零号安比"
@@ -364,6 +396,7 @@
   },
   {
     "id": "Trigger",
+    "gender": "female",
     "nicknames": {
       "en": "Trigger",
       "zh": "扳机"
@@ -375,6 +408,7 @@
   },
   {
     "id": "Hugo",
+    "gender": "male",
     "nicknames": {
       "en": "Hugo",
       "zh": "雨果"
@@ -386,6 +420,7 @@
   },
   {
     "id": "Vivian",
+    "gender": "female",
     "nicknames": {
       "en": "Vivian",
       "zh": "薇薇安"
@@ -397,6 +432,7 @@
   },
   {
     "id": "Yixuan",
+    "gender": "female",
     "nicknames": {
       "en": "Yixuan",
       "zh": "仪玄"
@@ -408,6 +444,7 @@
   },
   {
     "id": "PanYinhu",
+    "gender": "male",
     "nicknames": {
       "en": "PanYinhu",
       "zh": "潘引壶"
@@ -419,6 +456,7 @@
   },
   {
     "id": "JuFufu",
+    "gender": "female",
     "nicknames": {
       "en": "JuFufu",
       "zh": "橘福福"
@@ -430,6 +468,7 @@
   },
   {
     "id": "Yuzuha",
+    "gender": "female",
     "nicknames": {
       "en": "Yuzuha",
       "zh": "柚叶"
@@ -441,6 +480,7 @@
   },
   {
     "id": "Alice",
+    "gender": "female",
     "nicknames": {
       "en": "Alice",
       "zh": "爱丽丝"
@@ -452,6 +492,7 @@
   },
   {
     "id": "Seed",
+    "gender": "female",
     "nicknames": {
       "en": "Seed",
       "zh": "席德"
@@ -463,6 +504,7 @@
   },
   {
     "id": "Orphie",
+    "gender": "female",
     "nicknames": {
       "en": "Orphie",
       "zh": "奥菲丝"
@@ -474,6 +516,7 @@
   },
   {
     "id": "Lucia",
+    "gender": "female",
     "nicknames": {
       "en": "Lucia",
       "zh": "卢西娅"
@@ -485,6 +528,7 @@
   },
   {
     "id": "Manato",
+    "gender": "male",
     "nicknames": {
       "en": "Manato",
       "zh": "真斗"
@@ -496,6 +540,7 @@
   },
   {
     "id": "Yidhari",
+    "gender": "female",
     "nicknames": {
       "en": "Yidhari",
       "zh": "伊德海莉"
@@ -507,6 +552,7 @@
   },
   {
     "id": "Dialyn",
+    "gender": "female",
     "nicknames": {
       "en": "Dialyn",
       "zh": "琉音"
@@ -518,6 +564,7 @@
   },
   {
     "id": "Banyue",
+    "gender": "male",
     "nicknames": {
       "en": "Banyue",
       "zh": "般岳"
@@ -529,6 +576,7 @@
   },
   {
     "id": "Zhao",
+    "gender": "female",
     "nicknames": {
       "en": "Zhao",
       "zh": "照"
@@ -540,6 +588,7 @@
   },
   {
     "id": "YeShunguang",
+    "gender": "female",
     "nicknames": {
       "en": "YeShunguang",
       "zh": "叶瞬光"
@@ -551,6 +600,7 @@
   },
   {
     "id": "Sunna",
+    "gender": "female",
     "nicknames": {
       "en": "Sunna",
       "zh": "千夏"
@@ -562,6 +612,7 @@
   },
   {
     "id": "Aria",
+    "gender": "female",
     "nicknames": {
       "en": "Aria",
       "zh": "爱芮"
@@ -573,6 +624,7 @@
   },
   {
     "id": "Nangong",
+    "gender": "female",
     "nicknames": {
       "en": "Nangong",
       "zh": "南宫"
@@ -584,6 +636,7 @@
   },
   {
     "id": "Cissia",
+    "gender": "female",
     "nicknames": {
       "en": "Cissia",
       "zh": "希希芙"

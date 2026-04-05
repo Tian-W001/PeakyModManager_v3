@@ -19,7 +19,12 @@ import {
   setCurrentPreset,
   clearDiffList,
 } from "@renderer/redux/slices/presetsSlice";
-import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
+import {
+  selectCurrentWallpaper,
+  setCurrentWallpaper,
+  selectHideMaleCharacters,
+  setHideMaleCharacters,
+} from "@renderer/redux/slices/uiSlice";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
@@ -41,6 +46,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
   const presets = useAppSelector(selectAllPresets);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const currentWallpaper = useAppSelector(selectCurrentWallpaper);
+  const hideMaleCharacters = useAppSelector(selectHideMaleCharacters);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const { t, i18n } = useTranslation();
 
@@ -234,6 +240,17 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
               ]}
               className="px-3 py-1 shadow-[1px_1px_1px_#fff2]"
             />
+
+            {/* Hide Male Characters Toggle */}
+            <div className="hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+              <span className="truncate">{t("settings.hideMaleCharacters", "Hide Male Characters")}</span>
+              <input
+                type="checkbox"
+                checked={hideMaleCharacters}
+                onChange={(e) => dispatch(setHideMaleCharacters(e.target.checked))}
+                className="h-5 w-5 cursor-pointer rounded"
+              />
+            </div>
 
             {/* Library Path */}
             <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
