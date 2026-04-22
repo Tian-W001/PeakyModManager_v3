@@ -592,5 +592,27 @@
       "en": "Cissia",
       "zh": "希希芙"
     }
+  },
+  {
+    "id": "Promeia",
+    "nicknames": {
+      "en": "Promeia",
+      "zh": "普罗米娅"
+    },
+    "fullnames": {
+      "en": "Promeia",
+      "zh": "普罗米娅"
+    }
+  },
+  {
+    "id": "StarlightBilly",
+    "nicknames": {
+      "en": "Starlight Billy",
+      "zh": "星徽比利"
+    },
+    "fullnames": {
+      "en": "Starlight - Billy",
+      "zh": "星徽·比利"
+    }
   }
 ]
