@@ -46,24 +46,27 @@ export const loadLibrary = createAsyncThunk("library/load", async () => {
   return mods;
 });
 
+export const editModInfo = createAsyncThunk(
+  "library/editModInfo",
+  async (payload: { modName: string; newModInfo: Partial<ModInfo> }, { getState }) => {
+    const state = getState() as RootState;
+    const existing = state.library.modInfos.find((m) => m.name === payload.modName);
+    if (!existing) return payload;
+    const merged = { ...existing, ...payload.newModInfo } as ModInfo;
+    await window.electron.ipcRenderer.invoke("edit-mod-info", payload.modName, merged);
+    return payload;
+  }
+);
+
 const librarySlice = createSlice({
   name: "library",
   initialState,
   reducers: {
     addModInfo: (state, action: PayloadAction<ModInfo>) => {
-      //push to head
       state.modInfos.unshift(action.payload);
     },
     removeModInfo: (state, action: PayloadAction<string>) => {
       state.modInfos = state.modInfos.filter((mod) => mod.name !== action.payload);
-    },
-    editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
-      const { modName, newModInfo } = action.payload;
-      const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
-      if (modIndex !== -1) {
-        Object.assign(state.modInfos[modIndex], newModInfo);
-      }
-      window.electron.ipcRenderer.invoke("edit-mod-info", modName, { ...state.modInfos[modIndex] });
     },
   },
   extraReducers: (builder) => {
@@ -79,12 +82,19 @@ const librarySlice = createSlice({
       })
       .addCase(setD3dxUserPath.fulfilled, (state, action) => {
         state.d3dxUserPath = action.payload;
+      })
+      .addCase(editModInfo.fulfilled, (state, action) => {
+        const { modName, newModInfo } = action.payload;
+        const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
+        if (modIndex !== -1) {
+          Object.assign(state.modInfos[modIndex], newModInfo);
+        }
       });
   },
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, addModInfo, removeModInfo } = librarySlice.actions;
+export const { addModInfo, removeModInfo } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;
