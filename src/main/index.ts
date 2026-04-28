@@ -9,14 +9,7 @@ import { getMainWindow } from "./services/windowService";
 import { createWindow } from "./window";
 import installExtensions from "./extensions";
 
-import "./handlers/modImportHandler";
-import "./handlers/modLibraryHandler";
-import "./handlers/modApplyHandler";
-import "./handlers/iniSyncHandler";
-import "./handlers/modInfoHandler";
-import "./handlers/systemDialogHandler";
-import "./handlers/pathsHandler";
-import "./handlers/presetsHandler";
+import "./handlers";
 
 protocol.registerSchemesAsPrivileged([explorerImportProtocolScheme, modImageProtocolScheme]);
 

@@ -15,12 +15,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "eslint.useFlatConfig": true,
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "typescriptreact",
-    "javascriptreact"
-  ],
+  "eslint.validate": ["javascript", "typescript", "typescriptreact", "javascriptreact"],
   "editor.codeActionsOnSave": {},
   "editor.formatOnSave": true
 }

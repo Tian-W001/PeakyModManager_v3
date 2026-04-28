@@ -1,22 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-
-vi.mock("electron/main", () => ({
-  ipcMain: {
-    handle: vi.fn(),
-  },
-}));
-
-vi.mock("../src/main/store", () => ({
-  default: {
-    get: vi.fn(),
-  },
-}));
-
-vi.mock("fs-extra");
-
-import fs from "fs-extra";
-import { validateModInfo, createModInfoFile } from "../src/main/handlers/modInfoHandler";
+import { describe, it, expect, vi } from "vitest";
+import { validateModInfo, createModInfoFile } from "../src/main/domain/modInfo";
 
 describe("validateModInfo", () => {
   it("should return valid=true when modInfo matches defaults already", () => {
@@ -94,16 +77,17 @@ describe("validateModInfo", () => {
 });
 
 describe("createModInfoFile", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it("should create a modinfo.json with default values", async () => {
-    (fs.writeJson as any).mockResolvedValue(undefined);
+    const written: string[] = [];
+    const deps = {
+      writeJson: vi.fn(async (p: string) => {
+        written.push(p);
+      }),
+    };
 
-    const result = await createModInfoFile("/lib/SomeMod");
+    const result = await createModInfoFile("/lib/SomeMod", deps);
 
-    expect(fs.writeJson).toHaveBeenCalled();
+    expect(deps.writeJson).toHaveBeenCalled();
     expect(result.name).toBe("SomeMod");
     expect(result.title).toBe("SomeMod");
     expect(result.modType).toBe("Unknown");

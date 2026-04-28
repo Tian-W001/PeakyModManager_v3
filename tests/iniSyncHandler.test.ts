@@ -1,42 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { findAllTogglesInD3dxUser } from "../src/main/handlers/iniSyncHandler";
-import fs from "fs-extra";
+import { describe, it, expect } from "vitest";
+import { findAllTogglesInD3dxUser } from "../src/main/domain/iniSync";
+import { IniSyncDeps } from "../src/main/domain/iniSync";
 
-vi.mock("fs-extra");
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-vi.mock("../src/main/services/storeService", () => ({
-  getD3dxUserPath: vi.fn(),
-}));
-
-vi.mock("electron", () => ({
-  app: {
-    getPath: vi.fn(),
-  },
-  ipcMain: {
-    handle: vi.fn(),
-  },
-  BrowserWindow: {
-    getAllWindows: vi.fn(),
-  },
-}));
-
-vi.mock("../src/main/utils", async () => {
-  const actual = await vi.importActual<typeof import("../src/main/utils")>("../src/main/utils");
-  return {
-    ...actual,
-    escapeRegExp: actual.escapeRegExp,
-  };
+const makeDeps = (overrides: Partial<IniSyncDeps> = {}): IniSyncDeps => ({
+  getD3dxUserPath: () => "/path/to/d3dx_user.ini",
+  getLibraryPath: () => "/path/to/library",
+  pathExists: async () => true,
+  readFile: async () => "",
+  writeFile: async () => {},
+  pathJoin: (...args: string[]) => args.join("/"),
+  escapeRegExp,
+  ...overrides,
 });
 
 describe("findAllTogglesInD3dxUser", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it("should correctly parse toggles from d3dx_user.ini", async () => {
     const modName = "TestMod";
-    const d3dxUserPath = "/path/to/d3dx_user.ini";
     const d3dxUserContent = `
 [SomeSection]
 some_key = 1
@@ -47,25 +28,18 @@ $/mods/OtherMod/Part1.ini/ToggleC = 1
 $/mods/TestMod/SubFolder/Part2.ini/ToggleD = 2
     `;
 
-    const { getD3dxUserPath } = await import("../src/main/services/storeService");
-    (getD3dxUserPath as any).mockReturnValue(d3dxUserPath);
-    (fs.pathExists as any).mockResolvedValue(true);
-    (fs.readFile as any).mockResolvedValue(d3dxUserContent);
+    const deps = makeDeps({ readFile: async () => d3dxUserContent });
 
-    const result = await findAllTogglesInD3dxUser(modName);
+    const result = await findAllTogglesInD3dxUser(modName, deps);
 
-    const path = await import("path");
-    const part1Path = `Part1.ini`.replace(/[\\/]/g, path.sep);
-    const part2Path = `SubFolder/Part2.ini`.replace(/[\\/]/g, path.sep);
-
-    expect(result).toHaveProperty(part1Path);
-    expect(result[part1Path]).toEqual({
+    expect(result).toHaveProperty("Part1.ini");
+    expect(result["Part1.ini"]).toEqual({
       ToggleA: "1",
       ToggleB: "0",
     });
 
-    expect(result).toHaveProperty(part2Path);
-    expect(result[part2Path]).toEqual({
+    expect(result).toHaveProperty("SubFolder/Part2.ini");
+    expect(result["SubFolder/Part2.ini"]).toEqual({
       ToggleD: "2",
     });
 
@@ -74,15 +48,12 @@ $/mods/TestMod/SubFolder/Part2.ini/ToggleD = 2
   });
 
   it("should throw error if d3dxUserPath is not set", async () => {
-    const { getD3dxUserPath } = await import("../src/main/services/storeService");
-    (getD3dxUserPath as any).mockReturnValue(null);
-    await expect(findAllTogglesInD3dxUser("TestMod")).rejects.toThrow("d3dxUserPath not set");
+    const deps = makeDeps({ getD3dxUserPath: () => null });
+    await expect(findAllTogglesInD3dxUser("TestMod", deps)).rejects.toThrow("d3dxUserPath not set");
   });
 
   it("should throw error if d3dx_user.ini does not exist", async () => {
-    const { getD3dxUserPath } = await import("../src/main/services/storeService");
-    (getD3dxUserPath as any).mockReturnValue("/path/to/d3dx_user.ini");
-    (fs.pathExists as any).mockResolvedValue(false);
-    await expect(findAllTogglesInD3dxUser("TestMod")).rejects.toThrow("d3dxUserPath not set");
+    const deps = makeDeps({ pathExists: async () => false });
+    await expect(findAllTogglesInD3dxUser("TestMod", deps)).rejects.toThrow("d3dxUserPath not set");
   });
 });
