@@ -3,7 +3,7 @@ import path from "path";
 import log from "electron-log";
 import mime from "mime-types";
 import fs from "fs-extra";
-import store from "../store";
+import { getLibraryPath } from "../services/storeService";
 
 export const modImageProtocolScheme: Electron.CustomScheme = {
   scheme: "mod-image",
@@ -14,10 +14,9 @@ export const modImageProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerModImageProtocol = () => {
-  // renderer calls mod-image://local/{modName}/{imageFileName} (ignore hostname)
   protocol.handle("mod-image", async (request) => {
     try {
-      const libraryPath = store.get("libraryPath", null) as string | null;
+      const libraryPath = getLibraryPath();
       if (!libraryPath || !(await fs.pathExists(libraryPath))) {
         return new Response(null, { status: 404 });
       }

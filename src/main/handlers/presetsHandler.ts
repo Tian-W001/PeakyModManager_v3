@@ -1,12 +1,12 @@
 import { ipcMain } from "electron/main";
-import store from "../store";
+import { getLibraryPath } from "../services/storeService";
 import path from "path";
 import fs from "fs-extra";
 
 const backupFileBaseName = "Presets_Backup";
 
 ipcMain.handle("backup-presets", async (_event, backupData: Record<string, string[]>) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   // create timestamp yyyy-mm-dd-hh-mm-ss
@@ -23,7 +23,7 @@ ipcMain.handle("backup-presets", async (_event, backupData: Record<string, strin
 });
 
 ipcMain.handle("restore-presets", async (_event, backupFilePath: string) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   try {

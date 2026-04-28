@@ -1,7 +1,7 @@
 import path from "path";
-import store from "../store";
+import { getLibraryPath } from "../services/storeService";
 import { dialog, ipcMain } from "electron/main";
-import { getMainWindow } from "../utils";
+import { getMainWindow } from "../services/windowService";
 import fs from "fs-extra";
 
 ipcMain.handle("select-path", async () => {
@@ -23,7 +23,7 @@ ipcMain.handle("select-file", async () => {
 });
 
 ipcMain.handle("select-cover", async (_event, modName: string) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const result = await dialog.showOpenDialog(getMainWindow()!, {
@@ -36,7 +36,7 @@ ipcMain.handle("select-cover", async (_event, modName: string) => {
 });
 
 ipcMain.handle("select-backup-file", async () => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const result = await dialog.showOpenDialog(getMainWindow()!, {

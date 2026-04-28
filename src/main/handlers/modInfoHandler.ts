@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import { defaultModInfo, ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
 import { ipcMain } from "electron/main";
-import store from "../store";
+import { getLibraryPath } from "../services/storeService";
 
 export const createModInfoFile = async (modPath: string) => {
   const modInfo: ModInfo = {
@@ -46,7 +46,7 @@ export const validateModInfo = (modInfo: any, folderName: string) => {
 };
 
 ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
 
   const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
@@ -60,7 +60,7 @@ ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModI
 });
 
 ipcMain.handle("autofill-modinfo", async (_event, modName: string) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
   const modPath = path.join(libraryPath, modName);

@@ -1,41 +1,47 @@
 import { ipcMain } from "electron/main";
-import store from "../store";
+import {
+  getLibraryPath,
+  setLibraryPath,
+  getTargetPath,
+  setTargetPath,
+  getD3dxUserPath,
+  setD3dxUserPath,
+} from "../services/storeService";
 import { shell } from "electron";
 import path from "path";
 import fs from "fs-extra";
 
 ipcMain.handle("get-library-path", async () => {
-  return store.get("libraryPath", null) as string | null;
+  return getLibraryPath();
 });
 
 ipcMain.handle("set-library-path", async (_event, libraryPath: string | null) => {
-  store.set("libraryPath", libraryPath);
+  setLibraryPath(libraryPath);
 });
 
 ipcMain.handle("get-target-path", async () => {
-  return store.get("targetPath", null) as string | null;
+  return getTargetPath();
 });
 
 ipcMain.handle("set-target-path", async (_event, targetPath: string | null) => {
-  store.set("targetPath", targetPath);
+  setTargetPath(targetPath);
 });
 
 ipcMain.handle("open-mod-folder", async (_event, modName?: string) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
+  const libraryPath = getLibraryPath();
   if (!libraryPath || !(await fs.pathExists(libraryPath))) return;
   const fullPath = modName ? path.join(libraryPath, modName) : libraryPath;
   await shell.openPath(fullPath);
 });
 
 ipcMain.handle("open-target-folder", async () => {
-  const targetPath = store.get("targetPath", null) as string | null;
+  const targetPath = getTargetPath();
   if (!targetPath || !(await fs.pathExists(targetPath))) return;
   await shell.openPath(targetPath);
 });
 
 ipcMain.handle("clear-target-path", async () => {
-  // remove all symlinks ONLY
-  const targetPath = store.get("targetPath", null) as string | null;
+  const targetPath = getTargetPath();
   if (!targetPath || !(await fs.pathExists(targetPath))) return;
   try {
     const files = await fs.readdir(targetPath, { withFileTypes: true });
@@ -50,9 +56,9 @@ ipcMain.handle("clear-target-path", async () => {
 });
 
 ipcMain.handle("get-d3dx-user-path", async () => {
-  return store.get("d3dxUserPath", null) as string | null;
+  return getD3dxUserPath();
 });
 
 ipcMain.handle("set-d3dx-user-path", async (_event, d3dxUserPath: string | null) => {
-  store.set("d3dxUserPath", d3dxUserPath);
+  setD3dxUserPath(d3dxUserPath);
 });

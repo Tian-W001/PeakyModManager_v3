@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs-extra";
-import { BrowserWindow } from "electron";
 import sevenBin from "7zip-bin-full";
 import Seven from "node-7z";
 
@@ -21,10 +20,6 @@ export const asarToAsarUnpacked = (filePath: string) => {
     }
   }
   return resultPath;
-};
-
-export const getMainWindow = (): BrowserWindow | null => {
-  return BrowserWindow.fromId(1);
 };
 
 export const unzipFile = async (zippedPath: string, destPath: string): Promise<void> => {
