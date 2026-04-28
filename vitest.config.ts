@@ -10,7 +10,7 @@ export default defineConfig({
     alias: {
       "@renderer": resolve(__dirname, "src/renderer/src"),
       "@shared": resolve(__dirname, "src/shared"),
-      // Add other aliases if used in the files being tested
+      src: resolve(__dirname, "src"),
     },
   },
 });
