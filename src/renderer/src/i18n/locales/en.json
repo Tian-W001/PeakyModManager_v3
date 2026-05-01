@@ -53,7 +53,11 @@
     "testAlert": "Test Alert",
     "testAlertMessage": "This is a test alert!",
     "wallpaperTooltip": "Double-click to apply new wallpaper",
-    "appVersion": "App Version"
+    "appVersion": "App Version",
+    "clearSettings": "Clear All Settings",
+    "clearSettingsConfirm": "Clear all settings?",
+    "clearSettingsConfirmMsg": "This will remove all paths, presets, mod cache and reset the app to defaults.",
+    "clearSettingsSuccess": "All settings cleared successfully!"
   },
   "modDetails": {
     "description": "Description",

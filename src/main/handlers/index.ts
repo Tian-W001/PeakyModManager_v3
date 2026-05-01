@@ -6,6 +6,7 @@ import { registerModInfoHandlers } from "./modInfoHandlers";
 import { registerPathsHandlers } from "./pathsHandlers";
 import { registerPresetsHandlers } from "./presetsHandlers";
 import { registerDialogHandlers } from "./dialogHandlers";
+import { registerClearSettingsHandler } from "./clearSettingsHandler";
 
 registerImportHandlers();
 registerLibraryHandlers();
@@ -15,3 +16,4 @@ registerModInfoHandlers();
 registerPathsHandlers();
 registerPresetsHandlers();
 registerDialogHandlers();
+registerClearSettingsHandler();

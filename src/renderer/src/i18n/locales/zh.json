@@ -53,7 +53,11 @@
     "testAlert": "测试弹窗",
     "testAlertMessage": "这是一个测试弹窗！",
     "wallpaperTooltip": "双击应用新壁纸",
-    "appVersion": "版本号"
+    "appVersion": "版本号",
+    "clearSettings": "清除所有设置",
+    "clearSettingsConfirm": "确定要清除所有设置？",
+    "clearSettingsConfirmMsg": "此操作将移除所有路径、预设、模组缓存并将应用重置为默认设置。",
+    "clearSettingsSuccess": "所有设置已清除！"
   },
   "modDetails": {
     "description": "描述",

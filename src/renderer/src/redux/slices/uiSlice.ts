@@ -36,6 +36,7 @@ const uiSlice = createSlice({
     setCurrentWallpaper: (state, action: PayloadAction<string>) => {
       state.currentWallpaper = action.payload;
     },
+    resetState: () => initialState,
   },
 });
 
@@ -44,4 +45,9 @@ export const selectSelectedCharacter = (state: RootState) => state.ui.selectedCh
 export const selectCurrentWallpaper = (state: RootState) => state.ui.currentWallpaper;
 
 export default persistReducer(uiPersistConfig, uiSlice.reducer);
-export const { setSelectedMenuItem, setSelectedCharacter, setCurrentWallpaper } = uiSlice.actions;
+export const {
+  setSelectedMenuItem,
+  setSelectedCharacter,
+  setCurrentWallpaper,
+  resetState: resetUiState,
+} = uiSlice.actions;

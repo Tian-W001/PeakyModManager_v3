@@ -11,6 +11,7 @@ import {
   setD3dxUserPath,
   setLibraryPath,
   setTargetPath,
+  resetLibraryState,
 } from "@renderer/redux/slices/librarySlice";
 import {
   selectAllPresets,
@@ -18,8 +19,10 @@ import {
   selectCurrentPresetName,
   setCurrentPreset,
   clearDiffList,
+  resetPresetsState,
 } from "@renderer/redux/slices/presetsSlice";
-import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
+import { selectCurrentWallpaper, setCurrentWallpaper, resetUiState } from "@renderer/redux/slices/uiSlice";
+import { persistor } from "@renderer/redux/store";
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
@@ -189,6 +192,39 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
     );
   };
 
+  const handleClearSettings = () => {
+    showAlert(
+      t("settings.clearSettingsConfirm"),
+      t("settings.clearSettingsConfirmMsg"),
+      <>
+        <ZzzButton type="Cancel" onClick={hideAlert}>
+          {t("common.cancel")}
+        </ZzzButton>
+        <ZzzButton
+          type="Ok"
+          onClick={async () => {
+            hideAlert();
+            await window.electron.ipcRenderer.invoke("clear-all-settings");
+            await persistor.purge();
+            dispatch(resetLibraryState());
+            dispatch(resetPresetsState());
+            dispatch(resetUiState());
+            localStorage.removeItem("app_lang");
+            showAlert(
+              t("settings.clearSettingsSuccess"),
+              undefined,
+              <ZzzButton type="Ok" onClick={hideAlert}>
+                {t("common.confirm")}
+              </ZzzButton>
+            );
+          }}
+        >
+          {t("common.confirm")}
+        </ZzzButton>
+      </>
+    );
+  };
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -306,6 +342,13 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
               </ZzzButton>
               <ZzzButton type="Refresh" onClick={handleRestorePresets}>
                 {t("settings.restore")}
+              </ZzzButton>
+            </div>
+
+            {/* Clear Settings Button */}
+            <div className="flex flex-row items-center gap-4">
+              <ZzzButton type="Save" onClick={handleClearSettings}>
+                {t("settings.clearSettings")}
               </ZzzButton>
             </div>
 

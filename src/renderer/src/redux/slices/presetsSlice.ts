@@ -130,6 +130,7 @@ export const presetsSlice = createSlice({
     clearDiffList: (state) => {
       state.diffList = {};
     },
+    resetState: () => initialState,
   },
 });
 
@@ -143,6 +144,7 @@ export const {
   removeModFromAllPresets,
   addToDiffList,
   clearDiffList,
+  resetState: resetPresetsState,
 } = presetsSlice.actions;
 export default persistReducer(presetsPresistConfig, presetsSlice.reducer);
 

@@ -27,3 +27,7 @@ export const getD3dxUserPath = (): string | null => {
 export const setD3dxUserPath = (d3dxUserPath: string | null): void => {
   store.set("d3dxUserPath", d3dxUserPath);
 };
+
+export const clearStore = (): void => {
+  store.clear();
+};

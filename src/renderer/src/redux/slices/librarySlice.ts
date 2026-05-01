@@ -65,6 +65,7 @@ const librarySlice = createSlice({
       }
       window.electron.ipcRenderer.invoke("edit-mod-info", modName, { ...state.modInfos[modIndex] });
     },
+    resetState: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -84,7 +85,7 @@ const librarySlice = createSlice({
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, addModInfo, removeModInfo } = librarySlice.actions;
+export const { editModInfo, addModInfo, removeModInfo, resetState: resetLibraryState } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;
