@@ -34,9 +34,11 @@ Before using PeakyModManager, you need to configure the required paths:
 
   Drag a mod folder directly into the application window to import it into your Library.
   Newly imported mods will appear in the **Unknown** category by default.
+
 - **Use [PMM-Mod-Importer](https://github.com/Tian-W001/PMM_Mod_Importer)**
 
   Use the Chrome Extension to import the mod, the app will be opened and start downloading the mod.
+
 - **Manual Import Notice**
 
   If you add mod folders directly through the file system instead of the app:

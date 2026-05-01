@@ -1,11 +1,8 @@
 import path from "path";
-import fs from "fs-extra";
 import { defaultModInfo, ModInfo } from "../../shared/modInfo";
 import { Character } from "../../shared/character";
-import { ipcMain } from "electron/main";
-import store from "../store";
 
-export const createModInfoFile = async (modPath: string) => {
+export const createModInfoFile = async (modPath: string, deps: ModInfoFileWriter): Promise<ModInfo> => {
   const modInfo: ModInfo = {
     name: path.basename(modPath),
     title: path.basename(modPath),
@@ -14,17 +11,15 @@ export const createModInfoFile = async (modPath: string) => {
     source: "",
     coverImage: "",
   };
-  const modInfoPath = path.join(modPath, "modinfo.json");
-  await fs.writeJson(modInfoPath, modInfo, { spaces: 2 });
+  await deps.writeJson(path.join(modPath, "modinfo.json"), modInfo);
   return modInfo;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateModInfo = (modInfo: any, folderName: string) => {
+export const validateModInfo = (modInfo: Record<string, unknown>, folderName: string) => {
   const fixedModInfo: ModInfo = { ...defaultModInfo };
   for (const key in modInfo) {
     if (key in fixedModInfo) {
-      fixedModInfo[key] = modInfo[key];
+      (fixedModInfo as unknown as Record<string, unknown>)[key] = modInfo[key];
     }
   }
   fixedModInfo.name = folderName;
@@ -45,44 +40,24 @@ export const validateModInfo = (modInfo: any, folderName: string) => {
   }
 };
 
-ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
-
-  const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
-  try {
-    await fs.writeJson(modInfoPath, newModInfo, { spaces: 2 });
-    return true;
-  } catch (err) {
-    console.error("Error editing modinfo.json:", err);
-    return false;
-  }
-});
-
-ipcMain.handle("autofill-modinfo", async (_event, modName: string) => {
-  const libraryPath = store.get("libraryPath", null) as string | null;
-  if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
-
-  const modPath = path.join(libraryPath, modName);
-  if (!(await fs.pathExists(modPath))) return null;
+export const autofillModInfo = async (modPath: string, deps: ModInfoFileSystem): Promise<AutofillResult> => {
+  if (!(await deps.pathExists(modPath))) return { description: null, coverImage: null };
 
   let description = "";
   let coverImage = "";
 
   try {
-    const files = await fs.readdir(modPath);
+    const files = await deps.readdir(modPath);
 
-    // Find readme
     const readmeFile = files.find((file) => file.toLowerCase().includes("readme"));
     if (readmeFile) {
       const readmePath = path.join(modPath, readmeFile);
-      const stats = await fs.stat(readmePath);
+      const stats = await deps.stat(readmePath);
       if (stats.isFile()) {
-        description = await fs.readFile(readmePath, "utf-8");
+        description = await deps.readFile(readmePath, "utf-8");
       }
     }
 
-    // Find cover image
     const imageExtensions = [".jpg", ".png", ".gif", ".webp", ".jpeg"];
     const imageFiles = files.filter((file) => imageExtensions.includes(path.extname(file).toLowerCase()));
 
@@ -90,9 +65,25 @@ ipcMain.handle("autofill-modinfo", async (_event, modName: string) => {
       const previewImage = imageFiles.find((file) => path.parse(file).name.toLowerCase() === "preview");
       coverImage = previewImage || imageFiles[0];
     }
-  } catch (error) {
-    console.error("Error autofilling mod info:", error);
+  } catch {
+    //
   }
 
   return { description: description || null, coverImage: coverImage || null };
-});
+};
+
+export interface ModInfoFileWriter {
+  writeJson: (filePath: string, data: unknown) => Promise<void>;
+}
+
+export interface ModInfoFileSystem {
+  pathExists: (p: string) => Promise<boolean>;
+  readdir: (p: string) => Promise<string[]>;
+  stat: (p: string) => Promise<{ isFile(): boolean }>;
+  readFile: (p: string, encoding: string) => Promise<string>;
+}
+
+export interface AutofillResult {
+  description: string | null;
+  coverImage: string | null;
+}

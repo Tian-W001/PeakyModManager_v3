@@ -1,10 +1,6 @@
 # AGENTS.md
 
-
-
 ## Quick commands
-
-
 
 ```bash
 
@@ -24,15 +20,9 @@ npm run gen:characters   # Regenerate character list + i18n from scripts/charact
 
 ```
 
-
-
 ## Architecture
 
-
-
 This is an **Electron-Vite** app. The build tool (`electron-vite`) understands three build targets:
-
-
 
 | Directory | Target | Runtime | Notes |
 
@@ -46,15 +36,9 @@ This is an **Electron-Vite** app. The build tool (`electron-vite`) understands t
 
 | `src/shared/` | — | — | Pure TypeScript types shared across all targets |
 
-
-
 **Build outputs**: `out/main/`, `out/preload/`, `out/renderer/` → packaged by electron-builder into `dist/`.
 
-
-
 ## Path aliases (defined in electron.vite.config.ts, tsconfig.web.json, vitest.config.ts)
-
-
 
 ```
 
@@ -64,51 +48,27 @@ This is an **Electron-Vite** app. The build tool (`electron-vite`) understands t
 
 ```
 
-
-
 ## Code generation
-
-
 
 `src/shared/character.ts` has `// AUTO-GENERATED-START` / `// AUTO-GENERATED-END` markers. Running `npm run gen:characters` regenerates the character list from `scripts/characters.json` and updates i18n locale files (`en.json`, `zh.json`). Never manually edit between those markers.
 
-
-
 ## IPC pattern
-
-
 
 Main process handlers are registered via side-effect imports at the top of `src/main/index.ts`:
 
-
-
 ```ts
-
 import "./handlers/libraryHandler";
-
 ```
-
-
 
 Each handler file calls `ipcMain.handle("handler-name", ...)`. The renderer invokes them via:
 
-
-
 ```ts
-
-window.electron.ipcRenderer.invoke("handler-name", ...args)
-
+window.electron.ipcRenderer.invoke("handler-name", ...args);
 ```
-
-
 
 ## State management (renderer)
 
-
-
 Redux Toolkit with `redux-persist` (localStorage). Three slices in `src/renderer/src/redux/slices/`:
-
-
 
 - `librarySlice` — mod library, paths, modInfos (persisted keys: libraryPath, targetPath, d3dxUserPath, modInfos)
 
@@ -116,19 +76,11 @@ Redux Toolkit with `redux-persist` (localStorage). Three slices in `src/renderer
 
 - `uiSlice` — menu selection, character filter, wallpaper (persisted key: currentWallpaper)
 
-
-
 Import typed hooks from `@renderer/redux/hooks` (`useAppDispatch`, `useAppSelector`) — not from react-redux directly.
-
-
 
 ## Testing
 
-
-
 Vitest with `globals: true`, `environment: "node"`. Tests are in `tests/`. Module mocking required for Electron and native Node modules (`electron`, `fs-extra`, `electron-store`).
-
-
 
 ```bash
 
@@ -138,11 +90,7 @@ npx vitest              # watch mode
 
 ```
 
-
-
 ## Dev environment quirks
-
-
 
 - `src/main/setup.ts` **redirects userData** to `<userData>/dev` in development to avoid data conflicts with production.
 
@@ -152,11 +100,7 @@ npx vitest              # watch mode
 
 - `sandbox: false` in main window creation — needed for preload.
 
-
-
 ## Build & packaging
-
-
 
 - `npm run build:win` → `typecheck → electron-vite build → electron-builder --win`
 
@@ -168,11 +112,7 @@ npx vitest              # watch mode
 
 - Release publishes via GitHub Actions (`release-build.yml`) using `GITHUB_TOKEN` secret.
 
-
-
 ## Lint/formatter conventions
-
-
 
 - Indent: 2 spaces (`.editorconfig`)
 
@@ -188,10 +128,6 @@ npx vitest              # watch mode
 
 - Tailwind CSS v4: uses `@tailwindcss/vite` Vite plugin, NOT PostCSS config
 
-
-
 ## Node / TypeScript version
-
-
 
 - CI builds with Node 24. TypeScript 5.9. `package-lock.json` is used (npm, not pnpm/yarn).

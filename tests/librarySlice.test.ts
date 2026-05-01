@@ -23,26 +23,25 @@ import libraryReducer, {
   selectModByName,
   selectModByType,
   selectModByCharacter,
-  setLibraryPath,
-  setTargetPath,
-  setD3dxUserPath,
-  loadLibrary,
 } from "../src/renderer/src/redux/slices/librarySlice";
+import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
+import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
 import { ModInfo } from "../src/shared/modInfo";
 
-const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo => ({
-  name: "TestMod",
-  title: "TestMod",
-  modType: "Unknown" as const,
-  description: "",
-  source: "",
-  coverImage: "",
-  ...overrides,
-});
+const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
+  ({
+    name: "TestMod",
+    title: "TestMod",
+    modType: "Unknown",
+    description: "",
+    source: "",
+    coverImage: "",
+    ...overrides,
+  }) as ModInfo;
 
 function createLibraryStore() {
   return configureStore({
-    reducer: { library: libraryReducer },
+    reducer: { library: libraryReducer, ui: uiReducer, presets: presetsReducer },
     middleware: (gm) =>
       gm({
         serializableCheck: {
@@ -116,18 +115,18 @@ describe("librarySlice - selectors", () => {
   });
 
   it("selectModByType: should filter by type", () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "UI" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "UI" })));
+    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" })));
     expect(selectModByType("UI")(store.getState())).toHaveLength(2);
     expect(selectModByType("Character")(store.getState())).toHaveLength(1);
     expect(selectModByType("Unknown")(store.getState())).toHaveLength(0);
   });
 
   it("selectModByCharacter: should filter character mods", () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" })));
+    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" })));
     expect(selectModByCharacter("Ellen")(store.getState())).toHaveLength(1);
     expect(selectModByCharacter("Nicole")(store.getState())).toHaveLength(1);
   });

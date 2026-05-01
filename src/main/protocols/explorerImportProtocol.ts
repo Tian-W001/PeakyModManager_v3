@@ -1,24 +1,15 @@
-import axios from "axios";
 import { app, ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
+import axios from "axios";
 import log from "electron-log/main";
-import { ModInfo } from "../../shared/modInfo";
-import { Character } from "../../shared/character";
-import { isZippedFile, getMainWindow, unzipFile } from "../utils";
-
-// Chrome Extention calls peakymodmanager://import?data=<base64(JSON)>
-
-interface ExplorerImportPayload {
-  modName: string;
-  modSource: string;
-  characterName: Character | null;
-  coverImageLink: string;
-  downloadLinks: {
-    filename: string;
-    href: string;
-  }[];
-}
+import { getMainWindow } from "../services/windowService";
+import {
+  downloadMod,
+  unzipMod,
+  generateModInfo,
+  parseExplorerImportUrl,
+} from "../services/chromeExtensionImportService";
 
 export const explorerImportProtocolScheme: Electron.CustomScheme = {
   scheme: "peakymodmanager",
@@ -29,9 +20,7 @@ export const explorerImportProtocolScheme: Electron.CustomScheme = {
 };
 
 export const registerExplorerImportProtocol = () => {
-  // make sure renderer is ready to receive IPC messages
   ipcMain.once("renderer-ready", () => {
-    // Windows: check if launched with protocol URL
     const args = process.argv;
     log.info("Process args:", args);
     const url = args.find((a) => a.startsWith("peakymodmanager://"));
@@ -41,7 +30,6 @@ export const registerExplorerImportProtocol = () => {
     }
   });
   app.on("second-instance", (_event, argv) => {
-    // check if launched with protocol URL
     const url = argv.find((a) => a.startsWith("peakymodmanager://"));
     log.info("Second instance with URL:", url);
     if (url) {
@@ -52,20 +40,9 @@ export const registerExplorerImportProtocol = () => {
 
 const handleExplorerImport = async (url: string) => {
   log.info("Received URL:", url);
-  let payload: ExplorerImportPayload;
+  let payload;
   try {
-    const data = url.split("data=")[1];
-    if (!data) {
-      throw new Error("No data found in URL");
-    }
-    const base64Str = decodeURIComponent(data);
-    payload = JSON.parse(Buffer.from(base64Str, "base64").toString("utf-8"));
-    // sanitize mod name
-    payload.modName = payload.modName
-      .split("\n")[0]
-      .replace(/[^a-zA-Z0-9_\- ]/g, "")
-      .trim();
-    log.info("Parsed payload:", payload);
+    payload = parseExplorerImportUrl(url);
   } catch (error) {
     log.error("Error handling explorer import:", error);
     getMainWindow()?.webContents.send("download-mod-error", {
@@ -102,7 +79,6 @@ const handleExplorerImport = async (url: string) => {
     return;
   }
 
-  // download cover image if provided
   if (payload.coverImageLink) {
     try {
       log.info(`Downloading cover image from: ${payload.coverImageLink}`);
@@ -119,73 +95,9 @@ const handleExplorerImport = async (url: string) => {
     }
   }
 
-  // generate modinfo.json
+  const modInfo = generateModInfo(payload, modDest);
   const modInfoPath = path.join(modDest, "modinfo.json");
-  const modInfo: ModInfo = payload.characterName
-    ? {
-        name: payload.modName,
-        title: payload.modName,
-        description: "",
-        modType: "Character",
-        character: payload.characterName,
-        source: payload.modSource,
-        coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
-      }
-    : {
-        name: payload.modName,
-        title: payload.modName,
-        description: "",
-        modType: "Unknown",
-        source: payload.modSource,
-        coverImage: fs.existsSync(path.join(modDest, "cover.jpg")) ? "cover.jpg" : "",
-      };
   await fs.writeJson(modInfoPath, modInfo, { spaces: 2 });
 
-  // notify renderer to import
   getMainWindow()?.webContents.send("import-mod", modDest);
-};
-
-const downloadMod = async (payload: ExplorerImportPayload) => {
-  log.info("Downloading mod:", payload.modName);
-  const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
-
-  // download all files
-  await fs.ensureDir(modDest);
-  for (const link of payload.downloadLinks) {
-    log.info(`Downloading from: ${link.href}`);
-    const fileDest = path.join(modDest, link.filename);
-    const res = await axios.get(link.href, {
-      responseType: "arraybuffer",
-      onDownloadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          getMainWindow()?.webContents.send("download-mod-progress", {
-            modName: payload.modName,
-            progress: Math.round((progressEvent.loaded * 100) / progressEvent.total),
-          });
-        }
-      },
-    });
-    if (res.status !== 200) {
-      throw new Error(`Failed to download ${payload.modName}`);
-    }
-    await fs.writeFile(fileDest, res.data);
-  }
-
-  return modDest;
-};
-
-const unzipMod = async (modDest: string) => {
-  const files = await fs.readdir(modDest);
-  for (const file of files) {
-    if (isZippedFile(file)) {
-      const filePath = path.join(modDest, file);
-      try {
-        await unzipFile(filePath, modDest);
-        await fs.remove(filePath);
-      } catch (error) {
-        log.error(`Failed to extract archive ${filePath}:`, error);
-        throw error;
-      }
-    }
-  }
 };
