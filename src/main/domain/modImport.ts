@@ -19,6 +19,8 @@ export interface ModImportDeps {
   parsePathName: (p: string) => string;
   pathJoin: (...segments: string[]) => string;
   log: (msg: string) => void;
+  readFile: (p: string, encoding: string) => Promise<string>;
+  writeJson: (p: string, data: unknown) => Promise<void>;
   processModInfo: typeof processModInfo;
 }
 

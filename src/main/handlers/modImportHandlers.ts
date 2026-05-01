@@ -27,6 +27,8 @@ const importDeps: ModImportDeps = {
   parsePathName: (p: string) => path.parse(path.basename(p)).name,
   pathJoin: (...segments: string[]) => path.join(...segments),
   log: (msg: string) => console.log(msg),
+  readFile: (p: string, encoding: string) => fs.readFile(p, encoding),
+  writeJson: async (p: string, data: unknown) => fs.writeJson(p, data, { spaces: 2 }),
   processModInfo,
 };
 
