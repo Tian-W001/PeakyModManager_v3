@@ -6,15 +6,16 @@ import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
 import { selectModTypeFilteredModCards } from "../src/renderer/src/redux/selectors/ModCardsSelector";
 import { ModInfo } from "../src/shared/modInfo";
 
-const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo => ({
-  name: "TestMod",
-  title: "TestMod",
-  modType: "Unknown" as const,
-  description: "",
-  source: "",
-  coverImage: "",
-  ...overrides,
-});
+const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
+  ({
+    name: "TestMod",
+    title: "TestMod",
+    modType: "Unknown",
+    description: "",
+    source: "",
+    coverImage: "",
+    ...overrides,
+  }) as ModInfo;
 
 function createStore() {
   return configureStore({
@@ -40,14 +41,14 @@ describe("selectModTypeFilteredModCards", () => {
   });
 
   it('should return all mods when menuItem is "All"', () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "UI" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "UI" })));
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(2);
   });
 
   it("should filter by modType", () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "UI" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Ellen" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "UI" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Ellen" })));
     store.dispatch(setSelectedMenuItem("UI"));
     const result = selectModTypeFilteredModCards(store.getState());
     expect(result).toHaveLength(1);
@@ -55,8 +56,8 @@ describe("selectModTypeFilteredModCards", () => {
   });
 
   it('should filter Character mods by selectedCharacter when not "All"', () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" })));
     store.dispatch(setSelectedMenuItem("Character"));
     store.dispatch(setSelectedCharacter("Ellen"));
     const result = selectModTypeFilteredModCards(store.getState());
@@ -65,9 +66,9 @@ describe("selectModTypeFilteredModCards", () => {
   });
 
   it('should return all Character mods when character filter is "All"', () => {
-    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" } as ModInfo)));
-    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" } as ModInfo)));
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Ellen" })));
+    store.dispatch(addModInfo(makeMod({ name: "B", modType: "Character", character: "Nicole" })));
+    store.dispatch(addModInfo(makeMod({ name: "C", modType: "UI" })));
     store.dispatch(setSelectedMenuItem("Character"));
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(2);
   });

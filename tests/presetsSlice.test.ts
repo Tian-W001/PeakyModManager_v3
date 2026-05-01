@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
+import libraryReducer from "../src/renderer/src/redux/slices/librarySlice";
+import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
 import presetsReducer, {
   addPreset,
   removePreset,
@@ -21,7 +23,7 @@ import presetsReducer, {
 
 function createPresetStore() {
   return configureStore({
-    reducer: { presets: presetsReducer },
+    reducer: { library: libraryReducer, ui: uiReducer, presets: presetsReducer },
     middleware: (gm) =>
       gm({
         serializableCheck: {

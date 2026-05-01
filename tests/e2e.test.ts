@@ -4,8 +4,8 @@ import libraryReducer, {
   addModInfo,
   removeModInfo,
   selectModInfos,
-  selectModByName,
 } from "../src/renderer/src/redux/slices/librarySlice";
+import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
 import presetsReducer, {
   addPreset,
   setCurrentPreset,
@@ -16,24 +16,25 @@ import presetsReducer, {
   selectAllPresets,
   selectCurrentPresetMods,
   selectDiffList,
-  selectCurrentPresetName,
 } from "../src/renderer/src/redux/slices/presetsSlice";
 import { ModInfo } from "../src/shared/modInfo";
 
-const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo => ({
-  name: "TestMod",
-  title: "TestMod",
-  modType: "Unknown" as const,
-  description: "",
-  source: "",
-  coverImage: "",
-  ...overrides,
-});
+const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
+  ({
+    name: "TestMod",
+    title: "TestMod",
+    modType: "Unknown",
+    description: "",
+    source: "",
+    coverImage: "",
+    ...overrides,
+  }) as ModInfo;
 
 function createStore() {
   return configureStore({
     reducer: {
       library: libraryReducer,
+      ui: uiReducer,
       presets: presetsReducer,
     },
     middleware: (gm) =>
@@ -52,8 +53,8 @@ describe("E2E: Import → Enable → Apply → Switch Preset → Delete", () => 
 
   beforeEach(() => {
     store = createStore();
-    modA = makeMod({ name: "ModAlpha", modType: "Character", character: "Ellen" } as ModInfo);
-    modB = makeMod({ name: "ModBeta", modType: "UI" } as ModInfo);
+    modA = makeMod({ name: "ModAlpha", modType: "Character", character: "Ellen" });
+    modB = makeMod({ name: "ModBeta", modType: "UI" });
   });
 
   it("full lifecycle: import, enable, apply, switch preset, delete", () => {
