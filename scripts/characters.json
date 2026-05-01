@@ -614,5 +614,38 @@
       "en": "Starlight - Billy",
       "zh": "星徽·比利"
     }
+  },
+  {
+    "id": "Pyrois",
+    "nicknames": {
+      "en": "Pyrois",
+      "zh": "佩洛伊斯"
+    },
+    "fullnames": {
+      "en": "Pyrois",
+      "zh": "佩洛伊斯"
+    }
+  },
+  {
+    "id": "Velina",
+    "nicknames": {
+      "en": "Velina",
+      "zh": "维琳娜"
+    },
+    "fullnames": {
+      "en": "Velina Airgid",
+      "zh": "维琳娜·艾嘉德"
+    }
+  },
+  {
+    "id": "Norma",
+    "nicknames": {
+      "en": "Norma",
+      "zh": "诺姆"
+    },
+    "fullnames": {
+      "en": "Norma Hollowell",
+      "zh": "诺姆·霍洛维尔"
+    }
   }
 ]
