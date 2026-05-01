@@ -1,3 +1,4 @@
+import path from "path";
 import { ModInfo } from "../../shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfo";
 
@@ -23,7 +24,7 @@ export const processModInfo = async (modPath: string, deps: ModLibraryDeps): Pro
   const modInfoPath = deps.pathJoin(modPath, "modinfo.json");
   if (await deps.pathExists(modInfoPath)) {
     const modInfo = JSON.parse(await deps.readFile(modInfoPath, "utf-8"));
-    const { valid, fixedModInfo } = validateModInfo(modInfo, modPath.split("/").pop() || modPath);
+    const { valid, fixedModInfo } = validateModInfo(modInfo, path.basename(modPath));
     if (!valid && fixedModInfo) {
       await deps.writeJson(modInfoPath, fixedModInfo);
     }
