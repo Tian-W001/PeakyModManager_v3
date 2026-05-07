@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ModInfo } from "src/shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import { RootState } from "../store";
-import { ModType } from "src/shared/modType";
-import { Character } from "src/shared/character";
+import { ModType } from "@shared/modType";
+import { Character } from "@shared/character";
 
 export interface libraryState {
   libraryPath: string | null;

@@ -1,4 +1,4 @@
-import { ModInfo } from "src/shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
