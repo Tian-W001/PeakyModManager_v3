@@ -36,7 +36,7 @@ const MainScreen: React.FC = () => {
           <div className="relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
             {shouldCharacterbarMount && (
               <CharacterBar
-                className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-transform duration-300 ease-out ${isCharacterbarTransitioned ? "translate-y-0" : "-translate-y-[calc(100%+16px)]"}`}
+                className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-transform duration-100 ease-out ${isCharacterbarTransitioned ? "translate-y-0" : "-translate-y-[calc(100%+16px)]"}`}
               />
             )}
             <ModCardGrid
