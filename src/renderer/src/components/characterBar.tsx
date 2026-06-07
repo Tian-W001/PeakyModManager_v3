@@ -50,6 +50,28 @@ const CharacterBar = ({ className }: { className?: string }) => {
     });
   };
 
+  const handleScrollLeft = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTo({
+        top: 0,
+        left: container.scrollWidth - container.clientWidth,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleSelectCharacter = (character: Character | "All") => {
     dispatch(setSelectedCharacter(character));
   };
@@ -57,10 +79,13 @@ const CharacterBar = ({ className }: { className?: string }) => {
   return (
     <div className={clsx("flex items-center", className)}>
       <div
-        className="flex size-full shrink-0 flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
+        className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
       >
-        <TiChevronLeft color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
+        <TiChevronLeft
+          onClick={handleScrollLeft}
+          className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
+        />
         <div
           ref={scrollContainerRef}
           className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] border-4 bg-black shadow-[4px_1px_0px_#ffffff19,-4px_-1px_0px_#00000051]"
@@ -87,7 +112,10 @@ const CharacterBar = ({ className }: { className?: string }) => {
             </div>
           ))}
         </div>
-        <TiChevronRight color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
+        <TiChevronRight
+          onClick={handleScrollRight}
+          className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
+        />
       </div>
     </div>
   );
