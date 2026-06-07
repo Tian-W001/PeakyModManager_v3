@@ -14,30 +14,48 @@ const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
     | Character
     | "All"
   )[];
 
   useEffect(() => {
-    if (selectedCharacter && scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const element = container.querySelector(`div[data-character="${selectedCharacter}"]`) as HTMLElement;
+    if (!selectedCharacter || !scrollContainerRef.current) return;
 
-      if (element) {
-        const containerRect = container.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
+    const container = scrollContainerRef.current;
+    const wrapper = wrapperRef.current;
+    const element = container.querySelector(`div[data-character="${selectedCharacter}"]`) as HTMLElement;
+    if (!element) return;
 
-        const isVisible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
-
-        if (!isVisible) {
-          container.scrollTo({
-            left: container.scrollLeft + elementRect.left - containerRect.left - container.clientLeft,
-            behavior: "smooth",
-          });
-        }
+    const tryScroll = () => {
+      const elementRect = element.getBoundingClientRect();
+      if (elementRect.left < 0) return;
+      const containerRect = container.getBoundingClientRect();
+      const visible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
+      if (!visible) {
+        container.scrollTo({
+          left: container.scrollLeft + elementRect.left - containerRect.left - container.clientLeft,
+          behavior: "smooth",
+        });
       }
+    };
+
+    const onTransitionEnd = (_e: TransitionEvent) => {
+      requestAnimationFrame(() => {
+        tryScroll();
+      });
+    };
+
+    if (wrapper) {
+      wrapper.addEventListener("transitionend", onTransitionEnd);
     }
+
+    return () => {
+      if (wrapper) {
+        wrapper.removeEventListener("transitionend", onTransitionEnd);
+      }
+    };
   }, [selectedCharacter]);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -77,7 +95,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div className={clsx("flex items-center", className)}>
+    <div ref={wrapperRef} className={clsx("flex items-center", className)}>
       <div
         className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
@@ -100,14 +118,19 @@ const CharacterBar = ({ className }: { className?: string }) => {
               onClick={() => handleSelectCharacter(char)}
             >
               {selectedCharacter === char && (
-                <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />
+                <img
+                  src={charActiveMask}
+                  alt="active mask"
+                  loading="lazy"
+                  className="fixed z-10 h-full skew-x-[25.3deg]"
+                />
               )}
               <img
                 src={getCharacterImagePath(char)}
                 onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
                 alt={char}
-                className="h-full skew-x-[25.3deg]"
                 loading="lazy"
+                className="h-full skew-x-[25.3deg]"
               />
             </div>
           ))}

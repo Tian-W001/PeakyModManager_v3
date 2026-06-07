@@ -9,10 +9,12 @@ import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
+import { setSelectedCharacter, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 import Track from "@renderer/assets/icons/Track.png";
+import Agent from "@renderer/assets/icons/Agent.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
@@ -35,6 +37,12 @@ const DetailedModal = ({
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
+
+  const handleLocateSelectedCharacter = (character: Character) => {
+    dispatch(setSelectedMenuItem("Character"));
+    dispatch(setSelectedCharacter(character));
+    onClose();
+  };
 
   const handleModInfoChange = (field: keyof ModInfo, value: string) => {
     setLocalModInfo((prev) => ({
@@ -280,27 +288,37 @@ const DetailedModal = ({
                 className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
               />
               {localModInfo.modType === "Character" && (
-                <ZzzSelect
-                  label={t("modDetails.character")}
-                  value={localModInfo.character}
-                  options={characterNameList.toReversed().map((char) => ({
-                    value: char,
-                    label: (
-                      <div className="flex h-full flex-row items-center justify-end gap-2">
-                        {t(`characters.fullnames.${char}`)}
-                        <img
-                          src={getCharacterAvatarPath(char)}
-                          alt={char}
-                          className="h-6 rounded-full"
-                          onError={(e) => (e.currentTarget.src = getCharacterAvatarPath("Unknown"))}
-                          loading="lazy"
-                        />
-                      </div>
-                    ),
-                  }))}
-                  onChange={(val) => handleModInfoChange("character", val)}
-                  className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
-                />
+                <div className="group flex flex-row items-center justify-start">
+                  <button
+                    onClick={() => handleLocateSelectedCharacter(localModInfo.character as Character)}
+                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-all duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
+                  >
+                    <img src={Agent} alt="Agent" className="h-full w-full object-contain p-1" />
+                  </button>
+                  <div className="min-w-0 flex-1">
+                    <ZzzSelect
+                      label={t("modDetails.character")}
+                      value={localModInfo.character}
+                      options={characterNameList.toReversed().map((char) => ({
+                        value: char,
+                        label: (
+                          <div className="flex h-full flex-row items-center justify-end gap-2">
+                            {t(`characters.fullnames.${char}`)}
+                            <img
+                              src={getCharacterAvatarPath(char)}
+                              alt={char}
+                              className="h-6 rounded-full"
+                              onError={(e) => (e.currentTarget.src = getCharacterAvatarPath("Unknown"))}
+                              loading="lazy"
+                            />
+                          </div>
+                        ),
+                      }))}
+                      onChange={(val) => handleModInfoChange("character", val)}
+                      className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+                    />
+                  </div>
+                </div>
               )}
               <div
                 className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
