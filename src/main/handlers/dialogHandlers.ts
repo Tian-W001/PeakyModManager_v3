@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import { dialog, ipcMain } from "electron";
+import { dialog, ipcMain, shell } from "electron";
 import { getLibraryPath } from "../services/storeService";
 import { getMainWindow } from "../services/windowService";
 
@@ -19,6 +19,15 @@ export const registerDialogHandlers = () => {
       title: "Select File",
     });
     return result.canceled ? null : result.filePaths[0];
+  });
+
+  ipcMain.handle("view-cover", async (_event, modName: string, coverImage: string) => {
+    const libraryPath = getLibraryPath();
+    if (!libraryPath || !(await fs.pathExists(libraryPath))) return;
+    const coverPath = path.join(libraryPath, modName, coverImage);
+    if (await fs.pathExists(coverPath)) {
+      await shell.openPath(coverPath);
+    }
   });
 
   ipcMain.handle("select-cover", async (_event, modName: string) => {
