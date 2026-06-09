@@ -87,24 +87,24 @@ const CharacterBar = ({ className }: { className?: string }) => {
             <div
               key={char}
               ref={char === selectedCharacter ? selectedCharBlockRef : null}
-              className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
+              className="relative -ml-1.25 aspect-8/3 h-full shrink-0 snap-start -scroll-m-1 overflow-hidden" // images are 160:60
               onClick={() => handleSelectCharacter(char)}
             >
-              {selectedCharacter === char && (
-                <img
-                  src={charActiveMask}
-                  alt="active mask"
-                  loading="lazy"
-                  className="fixed z-10 h-full skew-x-[25.3deg]"
-                />
-              )}
               <img
                 src={getCharacterImagePath(char)}
                 onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
                 alt={char}
                 loading="lazy"
-                className="aspect-[calc(8/3)] h-full skew-x-[25.3deg]" // images are 160:60
+                className="h-full skew-x-[25.3deg]"
               />
+              {selectedCharacter === char && (
+                <img
+                  src={charActiveMask}
+                  alt="active mask"
+                  loading="lazy"
+                  className="absolute top-0 z-10 h-full skew-x-[25.3deg]"
+                />
+              )}
             </div>
           ))}
         </div>
