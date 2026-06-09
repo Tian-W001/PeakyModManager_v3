@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const [toggleSettingsModalOpen, shouldSettingsModalMount, isSettingsModalTransitioned] = useMountTransition(200);
+  const [toggleSettingsModalOpen, shouldSettingsModalMount, shouldSettingsModalTransition] = useMountTransition(200);
   const diffList = useAppSelector(selectDiffList);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -74,7 +74,7 @@ const BottomBar = ({ className }: { className?: string }) => {
       {shouldSettingsModalMount &&
         createPortal(
           <SettingsModal
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${isSettingsModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+            className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldSettingsModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
             onClose={() => toggleSettingsModalOpen()}
           />,
           document.body
