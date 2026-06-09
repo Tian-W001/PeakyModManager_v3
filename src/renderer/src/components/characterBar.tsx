@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import clsx from "clsx";
 import { Character, characterNameList } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
@@ -14,49 +14,22 @@ const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const selectedCharBlockRef = useRef<HTMLDivElement>(null);
   const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
     | Character
     | "All"
   )[];
 
-  useEffect(() => {
-    if (!selectedCharacter || !scrollContainerRef.current) return;
-
+  useLayoutEffect(() => {
+    const target = selectedCharBlockRef.current;
     const container = scrollContainerRef.current;
-    const wrapper = wrapperRef.current;
-    const element = container.querySelector(`div[data-character="${selectedCharacter}"]`) as HTMLElement;
-    if (!element) return;
-
-    const tryScroll = () => {
-      const elementRect = element.getBoundingClientRect();
-      if (elementRect.left < 0) return;
-      const containerRect = container.getBoundingClientRect();
-      const visible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
-      if (!visible) {
-        container.scrollTo({
-          left: container.scrollLeft + elementRect.left - containerRect.left - container.clientLeft,
-          behavior: "smooth",
-        });
-      }
-    };
-
-    const onTransitionEnd = (_e: TransitionEvent) => {
-      requestAnimationFrame(() => {
-        tryScroll();
-      });
-    };
-
-    if (wrapper) {
-      wrapper.addEventListener("transitionend", onTransitionEnd);
-    }
-
-    return () => {
-      if (wrapper) {
-        wrapper.removeEventListener("transitionend", onTransitionEnd);
-      }
-    };
-  }, [selectedCharacter]);
+    if (!target || !container) return;
+    const scrollToPosition = target.offsetLeft - container.clientWidth / 2 + target.clientWidth / 2;
+    container.scrollTo({
+      left: scrollToPosition,
+      behavior: "smooth",
+    });
+  }, []);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -95,7 +68,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div ref={wrapperRef} className={clsx("flex items-center", className)}>
+    <div className={clsx("flex items-center", className)}>
       <div
         className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
@@ -113,8 +86,8 @@ const CharacterBar = ({ className }: { className?: string }) => {
           {characterBarImageList.map((char) => (
             <div
               key={char}
+              ref={char === selectedCharacter ? selectedCharBlockRef : null}
               className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
-              data-character={char}
               onClick={() => handleSelectCharacter(char)}
             >
               {selectedCharacter === char && (
@@ -130,7 +103,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
                 onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
                 alt={char}
                 loading="lazy"
-                className="h-full skew-x-[25.3deg]"
+                className="aspect-[calc(8/3)] h-full skew-x-[25.3deg]" // images are 160:60
               />
             </div>
           ))}
