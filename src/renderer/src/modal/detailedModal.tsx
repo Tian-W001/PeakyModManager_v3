@@ -102,6 +102,10 @@ const DetailedModal = ({
     }
   };
 
+  const handleViewCover = async () => {
+    await window.electron.ipcRenderer.invoke("view-cover", modInfo.name, localModInfo.coverImage);
+  };
+
   const handleSetCover = async () => {
     const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
     if (imagePath) {
@@ -233,11 +237,14 @@ const DetailedModal = ({
                     : `url("${defaultCover}")`,
                 }}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 opacity-0 transition-all duration-300 group-hover:opacity-100">
                 {localModInfo.coverImage ? (
                   <>
                     <ZzzButton onClick={handleRemoveCover} className="w-40">
                       {t("modDetails.removeCover")}
+                    </ZzzButton>
+                    <ZzzButton onClick={handleViewCover} className="w-40">
+                      {t("modDetails.viewCover")}
                     </ZzzButton>
                     <ZzzButton onClick={handleSetCover} className="w-40">
                       {t("modDetails.changeCover")}
