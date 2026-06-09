@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useLayoutEffect } from "react";
 
 const useMountTransition = (transitionDuration: number = 200) => {
   const [isActive, setIsActive] = useState(false);
@@ -6,7 +6,7 @@ const useMountTransition = (transitionDuration: number = 200) => {
     setIsActive((prev) => (typeof value === "boolean" ? value : !prev));
   }, []);
   const [shouldMount, setShouldMount] = useState(false);
-  const [isTransitioned, setIsTransitioned] = useState(false);
+  const [shouldTransition, setShouldTransition] = useState(false);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -14,7 +14,7 @@ const useMountTransition = (transitionDuration: number = 200) => {
     if (isActive && !shouldMount) {
       setShouldMount(true);
     } else if (!isActive && shouldMount) {
-      setIsTransitioned(false);
+      setShouldTransition(false);
       timeoutId = setTimeout(() => setShouldMount(false), transitionDuration);
     }
 
@@ -23,13 +23,13 @@ const useMountTransition = (transitionDuration: number = 200) => {
     };
   }, [isActive, transitionDuration, shouldMount]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (shouldMount) {
-      requestAnimationFrame(() => setIsTransitioned(true));
+      setShouldTransition(true);
     }
   }, [shouldMount]);
 
-  return [toggleActive, shouldMount, isTransitioned] as const;
+  return [toggleActive, shouldMount, shouldTransition] as const;
 };
 
 export default useMountTransition;
