@@ -10,7 +10,7 @@ export const useAlertModal = () => {
     children?: React.ReactNode;
   } | null>(null);
 
-  const [toggleAlert, shouldMount, isTransitioned] = useMountTransition(100);
+  const [toggleAlert, shouldMount, shouldTransition] = useMountTransition(100);
 
   const hideAlert = useCallback(() => {
     toggleAlert(false);
@@ -30,7 +30,7 @@ export const useAlertModal = () => {
       <AlertModal
         title={alertConfig.title}
         message={alertConfig.message}
-        className={`transition-[opacity_scale] duration-100 ease-in-out ${isTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+        className={`transition-[opacity_scale] duration-100 ease-in-out ${shouldTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
       >
         {alertConfig.children}
       </AlertModal>,

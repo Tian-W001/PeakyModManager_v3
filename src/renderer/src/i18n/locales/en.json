@@ -62,6 +62,7 @@
     "source": "Source",
     "unknownSource": "Unknown Source",
     "removeCover": "Remove Cover",
+    "viewCover": "View Cover",
     "changeCover": "Change Cover",
     "setCover": "Set Cover",
     "deleteMod": "Delete Mod",

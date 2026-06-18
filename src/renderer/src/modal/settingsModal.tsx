@@ -29,7 +29,11 @@ import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 import clsx from "clsx";
 
-const wallpaperModules = import.meta.glob("@renderer/assets/wallpapers/*", { eager: false, query: "?url", import: "default" });
+const wallpaperModules = import.meta.glob("@renderer/assets/wallpapers/*", {
+  eager: false,
+  query: "?url",
+  import: "default",
+});
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
 
@@ -317,10 +321,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
               >
                 {!wallpapers
                   ? Array.from({ length: 5 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="aspect-video w-48 shrink-0 animate-pulse rounded-2xl bg-white/5"
-                      />
+                      <div key={i} className="aspect-video w-48 shrink-0 animate-pulse rounded-2xl bg-white/5" />
                     ))
                   : Object.entries(wallpapers).map(([path, url]) => {
                       const filename = path.split("/").pop() || "";

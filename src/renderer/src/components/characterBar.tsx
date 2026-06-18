@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import clsx from "clsx";
 import { Character, characterNameList } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
@@ -14,31 +14,22 @@ const CharacterBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const selectedCharBlockRef = useRef<HTMLDivElement>(null);
   const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
     | Character
     | "All"
   )[];
 
-  useEffect(() => {
-    if (selectedCharacter && scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const element = container.querySelector(`div[data-character="${selectedCharacter}"]`) as HTMLElement;
-
-      if (element) {
-        const containerRect = container.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
-
-        const isVisible = elementRect.left >= containerRect.left && elementRect.right <= containerRect.right;
-
-        if (!isVisible) {
-          container.scrollTo({
-            left: container.scrollLeft + elementRect.left - containerRect.left - container.clientLeft,
-            behavior: "smooth",
-          });
-        }
-      }
-    }
-  }, [selectedCharacter]);
+  useLayoutEffect(() => {
+    const target = selectedCharBlockRef.current;
+    const container = scrollContainerRef.current;
+    if (!target || !container) return;
+    const scrollToPosition = target.offsetLeft - container.clientWidth / 2 + target.clientWidth / 2;
+    container.scrollTo({
+      left: scrollToPosition,
+      behavior: "smooth",
+    });
+  }, []);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -50,6 +41,28 @@ const CharacterBar = ({ className }: { className?: string }) => {
     });
   };
 
+  const handleScrollLeft = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTo({
+        top: 0,
+        left: container.scrollWidth - container.clientWidth,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleSelectCharacter = (character: Character | "All") => {
     dispatch(setSelectedCharacter(character));
   };
@@ -57,10 +70,13 @@ const CharacterBar = ({ className }: { className?: string }) => {
   return (
     <div className={clsx("flex items-center", className)}>
       <div
-        className="flex size-full shrink-0 flex-row items-center justify-between gap-4 rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
+        className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
       >
-        <TiChevronLeft color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
+        <TiChevronLeft
+          onClick={handleScrollLeft}
+          className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
+        />
         <div
           ref={scrollContainerRef}
           className="no-scrollbar flex h-full flex-1 -skew-x-[25.3deg] snap-x flex-row items-center justify-start overflow-x-scroll overflow-y-hidden rounded-[14px] border-4 bg-black shadow-[4px_1px_0px_#ffffff19,-4px_-1px_0px_#00000051]"
@@ -70,24 +86,32 @@ const CharacterBar = ({ className }: { className?: string }) => {
           {characterBarImageList.map((char) => (
             <div
               key={char}
-              className="-mx-1 h-full shrink-0 snap-start -scroll-m-1"
-              data-character={char}
+              ref={char === selectedCharacter ? selectedCharBlockRef : null}
+              className="relative -ml-1.25 aspect-8/3 h-full shrink-0 snap-start -scroll-m-1 overflow-hidden" // images are 160:60
               onClick={() => handleSelectCharacter(char)}
             >
-              {selectedCharacter === char && (
-                <img src={charActiveMask} alt="active mask" className="fixed z-10 h-full skew-x-[25.3deg]" />
-              )}
               <img
                 src={getCharacterImagePath(char)}
                 onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
                 alt={char}
-                className="h-full skew-x-[25.3deg]"
                 loading="lazy"
+                className="h-full skew-x-[25.3deg]"
               />
+              {selectedCharacter === char && (
+                <img
+                  src={charActiveMask}
+                  alt="active mask"
+                  loading="lazy"
+                  className="absolute top-0 z-10 h-full skew-x-[25.3deg]"
+                />
+              )}
             </div>
           ))}
         </div>
-        <TiChevronRight color="#111" className="h-full scale-200 drop-shadow-[1px_0px_0px_#ffffff19]" />
+        <TiChevronRight
+          onClick={handleScrollRight}
+          className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
+        />
       </div>
     </div>
   );

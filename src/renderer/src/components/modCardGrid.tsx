@@ -1,4 +1,4 @@
-import { ModInfo } from "src/shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
 import clsx from "clsx";
@@ -39,9 +39,9 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const diffList = useAppSelector(selectDiffList);
   const currentPresetMods = useAppSelector(selectCurrentPresetMods);
 
-  const [toggleMultiSelectMenu, shouldMultiSelectMenuMount, isMultiSelectMenuTransitioned] = useMountTransition(200);
-  const [togglePresetsMenu, shouldPresetsMenuMount, isPresetsMenuTransitioned] = useMountTransition(200);
-  const [togglePresetsModalOpen, shouldPresetsModalMount, isPresetsModalTransitioned] = useMountTransition(200);
+  const [toggleMultiSelectMenu, shouldMultiSelectMenuMount, shouldMultiSelectMenuTransition] = useMountTransition(200);
+  const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
+  const [togglePresetsModalOpen, shouldPresetsModalMount, shouldPresetsModalTransition] = useMountTransition(200);
 
   const ref = useRef<HTMLDivElement>(null);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
@@ -249,7 +249,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             <div
               className={clsx(
                 "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
-                isMultiSelectMenuTransitioned
+                shouldMultiSelectMenuTransition
                   ? "pointer-events-auto translate-y-0 opacity-100"
                   : "pointer-events-none translate-y-[50%] opacity-0"
               )}
@@ -282,7 +282,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             <div
               className={clsx(
                 "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
-                isPresetsMenuTransitioned
+                shouldPresetsMenuTransition
                   ? "pointer-events-auto translate-y-0 opacity-100"
                   : "pointer-events-none translate-y-[50%] opacity-0"
               )}
@@ -315,7 +315,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         {shouldPresetsModalMount &&
           createPortal(
             <EditPresetsModal
-              className={`transition-[opacity_scale] duration-200 ease-in-out ${isPresetsModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+              className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldPresetsModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
               onClose={() => togglePresetsModalOpen()}
             />,
             document.body

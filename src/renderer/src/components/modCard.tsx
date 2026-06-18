@@ -1,4 +1,4 @@
-import { ModInfo } from "src/shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
@@ -41,7 +41,7 @@ const getBorderStyle = (modState: ModState) => {
 const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [toggleModal, shouldModalMount, isModalTransitioned] = useMountTransition(200);
+  const [toggleModal, shouldModalMount, shouldModalTransition] = useMountTransition(200);
 
   const isEnabledInPreset = useAppSelector(selectModIsEnabled(modInfo.name));
   const diffEntry = useAppSelector(selectModDiffState(modInfo.name));
@@ -126,7 +126,7 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
           <DetailedModal
             modInfo={modInfo}
             onClose={() => toggleModal()}
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${isModalTransitioned ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
+            className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
           />,
           document.body
         )}

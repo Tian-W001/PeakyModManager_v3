@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Character } from "src/shared/character";
-import { ModType } from "src/shared/modType";
+import { Character } from "@shared/character";
+import { ModType } from "@shared/modType";
 import { RootState } from "../store";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
