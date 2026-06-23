@@ -158,7 +158,9 @@
       "StarlightBilly": "Starlight - Billy",
       "Pyrois": "Pyrois",
       "Velina": "Velina Airgid",
-      "Norma": "Norma Hollowell"
+      "Norma": "Norma Hollowell",
+      "Remielle": "Remielle Dan",
+      "Sigrid": "Sigrid de L'Azur"
     },
     "nicknames": {
       "Unknown": "Unknown",
@@ -219,7 +221,9 @@
       "StarlightBilly": "Starlight Billy",
       "Pyrois": "Pyrois",
       "Velina": "Velina",
-      "Norma": "Norma"
+      "Norma": "Norma",
+      "Remielle": "Remielle",
+      "Sigrid": "Sigrid"
     }
   }
 }

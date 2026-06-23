@@ -59,6 +59,8 @@ const characterNameList = [
   "Pyrois",
   "Velina",
   "Norma",
+  "Remielle",
+  "Sigrid",
   // AUTO-GENERATED-END
 ] as const;
 
