@@ -89,8 +89,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       };
 
       const removeListener = window.electron.ipcRenderer.on("overwrite-ask", overwriteListener);
-      const newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo;
-      removeListener();
+      let newModInfo: ModInfo | null = null;
+      try {
+        newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo | null;
+      } finally {
+        removeListener();
+      }
 
       if (newModInfo) {
         if (overwriteConfirmed) {
@@ -112,11 +116,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   );
 
   useEffect(() => {
-    window.electron.ipcRenderer.on("import-mod", (_event, filePath) => {
+    const removeListener = window.electron.ipcRenderer.on("import-mod", (_event, filePath) => {
       importMod(filePath);
     });
     return () => {
-      window.electron.ipcRenderer.removeAllListeners("import-mod");
+      removeListener();
     };
   }, [importMod]);
 
