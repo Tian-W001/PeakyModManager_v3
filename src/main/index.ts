@@ -2,7 +2,7 @@ import "./setup";
 import { app, BrowserWindow, protocol } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import { explorerImportProtocolScheme } from "./protocols/explorerImportProtocol";
+import { explorerImportProtocolScheme, registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { modImageProtocolScheme } from "./protocols/modImageProtocol";
 import { ipcMain } from "electron/main";
 import { getMainWindow } from "./services/windowService";
@@ -51,6 +51,7 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window);
   });
 
+  registerExplorerImportProtocol();
   createWindow();
 
   app.on("activate", function () {

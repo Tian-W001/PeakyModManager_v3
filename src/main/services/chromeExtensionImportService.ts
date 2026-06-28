@@ -19,11 +19,57 @@ export interface ExplorerImportPayload {
   }[];
 }
 
+const sanitizeModName = (modName: unknown): string => {
+  if (typeof modName !== "string") {
+    return "";
+  }
+  return modName
+    .split("\n")[0]
+    .replace(/[^a-zA-Z0-9_\- ]/g, "")
+    .trim();
+};
+
+const isHttpUrl = (url: string): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+const validateDownloadLinks = (downloadLinks: unknown): ExplorerImportPayload["downloadLinks"] => {
+  if (!Array.isArray(downloadLinks) || downloadLinks.length === 0) {
+    throw new Error("No download links found in payload");
+  }
+
+  return downloadLinks.map((link, index) => {
+    if (
+      !link ||
+      typeof link !== "object" ||
+      typeof (link as { filename?: unknown }).filename !== "string" ||
+      typeof (link as { href?: unknown }).href !== "string"
+    ) {
+      throw new Error(`Invalid download link at index ${index}`);
+    }
+
+    const filename = path.basename((link as { filename: string }).filename).trim();
+    const href = (link as { href: string }).href.trim();
+    if (!filename) {
+      throw new Error(`Invalid download filename at index ${index}`);
+    }
+    if (!isHttpUrl(href)) {
+      throw new Error(`Invalid download URL at index ${index}`);
+    }
+    return { filename, href };
+  });
+};
+
 export const downloadMod = async (payload: ExplorerImportPayload): Promise<string> => {
   log.info("Downloading mod:", payload.modName);
   const modDest = path.join(app.getPath("userData"), "Mods", payload.modName);
 
-  await fs.ensureDir(modDest);
+  await fs.emptyDir(modDest);
   for (const link of payload.downloadLinks) {
     log.info(`Downloading from: ${link.href}`);
     const fileDest = path.join(modDest, link.filename);
@@ -45,6 +91,11 @@ export const downloadMod = async (payload: ExplorerImportPayload): Promise<strin
   }
 
   return modDest;
+};
+
+export const removeDownloadedMod = async (modName: string): Promise<void> => {
+  if (!modName) return;
+  await fs.remove(path.join(app.getPath("userData"), "Mods", modName));
 };
 
 export const unzipMod = async (modDest: string) => {
@@ -87,16 +138,34 @@ export const generateModInfo = (payload: ExplorerImportPayload, modDest: string)
 };
 
 export const parseExplorerImportUrl = (url: string): ExplorerImportPayload => {
-  const data = url.split("data=")[1];
+  const data = new URL(url).searchParams.get("data");
   if (!data) {
     throw new Error("No data found in URL");
   }
   const base64Str = decodeURIComponent(data);
-  const payload: ExplorerImportPayload = JSON.parse(Buffer.from(base64Str, "base64").toString("utf-8"));
-  payload.modName = payload.modName
-    .split("\n")[0]
-    .replace(/[^a-zA-Z0-9_\- ]/g, "")
-    .trim();
+  const rawPayload = JSON.parse(Buffer.from(base64Str, "base64").toString("utf-8")) as Record<string, unknown>;
+  const modName = sanitizeModName(rawPayload.modName);
+  if (!modName) {
+    throw new Error("Invalid mod name in payload");
+  }
+
+  const modSource = typeof rawPayload.modSource === "string" ? rawPayload.modSource : "";
+  const coverImageLink = typeof rawPayload.coverImageLink === "string" ? rawPayload.coverImageLink : "";
+  if (coverImageLink && !isHttpUrl(coverImageLink)) {
+    throw new Error("Invalid cover image URL in payload");
+  }
+
+  const payload: ExplorerImportPayload = {
+    modName,
+    modSource,
+    characterName: (typeof rawPayload.characterName === "string" ? rawPayload.characterName : null) as Character | null,
+    coverImageLink,
+    downloadLinks: validateDownloadLinks(rawPayload.downloadLinks),
+  };
   log.info("Parsed payload:", payload);
   return payload;
+};
+
+export const getExplorerImportKey = (url: string, payload: ExplorerImportPayload): string => {
+  return `${payload.modName}::${payload.modSource || url}`;
 };

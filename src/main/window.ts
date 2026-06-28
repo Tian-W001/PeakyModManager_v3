@@ -4,7 +4,6 @@ import icon from "../../resources/icon.png?asset";
 import { is } from "@electron-toolkit/utils";
 import { setMainWindow } from "./services/windowService";
 import { setupAutoUpdater } from "./updater";
-import { registerExplorerImportProtocol } from "./protocols/explorerImportProtocol";
 import { registerModImageProtocol } from "./protocols/modImageProtocol";
 
 export const createWindow = async () => {
@@ -40,6 +39,5 @@ export const createWindow = async () => {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
-  registerExplorerImportProtocol();
   registerModImageProtocol();
 };
