@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Character } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
@@ -44,17 +44,21 @@ const CharacterBarItem = memo(
 );
 CharacterBarItem.displayName = "CharacterBarItem";
 
-const CharacterBar = ({ className }: { className?: string }) => {
+const CharacterBar = ({ className, isVisible }: { className?: string; isVisible: boolean }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const selectedCharacterSelector = useMemo(() => `[data-character="${selectedCharacter}"]`, [selectedCharacter]);
+  const wasVisibleRef = useRef(false);
 
   useEffect(() => {
+    const becameVisible = isVisible && !wasVisibleRef.current;
+    wasVisibleRef.current = isVisible;
+    if (!becameVisible) return;
+
     const container = scrollContainerRef.current;
     if (!container) return;
     const frameId = requestAnimationFrame(() => {
-      const target = container.querySelector<HTMLElement>(selectedCharacterSelector);
+      const target = container.querySelector<HTMLElement>(`[data-character="${selectedCharacter}"]`);
       if (!target) return;
       const scrollToPosition = target.offsetLeft - container.clientWidth / 2 + target.clientWidth / 2;
       container.scrollTo({
@@ -63,7 +67,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
       });
     });
     return () => cancelAnimationFrame(frameId);
-  }, [selectedCharacterSelector]);
+  }, [isVisible, selectedCharacter]);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;

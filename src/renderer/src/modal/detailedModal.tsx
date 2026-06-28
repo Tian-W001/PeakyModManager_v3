@@ -282,7 +282,7 @@ const DetailedModal = ({
                 </div>
               </div>
               <Exit
-                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill,transform] hover:scale-110"
+                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
                 onClick={onClose}
               />
             </div>
@@ -298,7 +298,7 @@ const DetailedModal = ({
                 <div className="group flex flex-row items-center justify-start">
                   <button
                     onClick={() => handleLocateSelectedCharacter(localModInfo.character as Character)}
-                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[margin,width,opacity] duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
+                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[margin_width_opacity] duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
                   >
                     <img src={Agent} alt="Agent" className="h-full w-full object-contain p-1" />
                   </button>

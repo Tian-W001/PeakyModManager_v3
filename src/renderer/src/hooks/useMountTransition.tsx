@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useLayoutEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const useMountTransition = (transitionDuration: number = 200) => {
   const [isActive, setIsActive] = useState(false);
@@ -23,11 +23,17 @@ const useMountTransition = (transitionDuration: number = 200) => {
     };
   }, [isActive, transitionDuration, shouldMount]);
 
-  useLayoutEffect(() => {
-    if (shouldMount) {
+  useEffect(() => {
+    if (!shouldMount || !isActive) return;
+
+    const frameId = requestAnimationFrame(() => {
       setShouldTransition(true);
-    }
-  }, [shouldMount]);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [isActive, shouldMount]);
 
   return [toggleActive, shouldMount, shouldTransition] as const;
 };

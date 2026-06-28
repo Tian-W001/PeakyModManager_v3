@@ -38,7 +38,8 @@ const MainScreen: React.FC = () => {
           <Menu className="w-70" />
           <div className="relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
             <CharacterBar
-              className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-[opacity,transform] duration-150 ease-out ${isCharacterMenu ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-[calc(100%+16px)] opacity-0"}`}
+              isVisible={isCharacterMenu}
+              className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-[opacity_translate] duration-150 ease-out ${isCharacterMenu ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-[calc(100%+16px)] opacity-0"}`}
             />
             <ModCardGrid
               modInfos={selectedModInfos}

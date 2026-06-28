@@ -79,6 +79,7 @@ const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModSta
                 id="mod-card-cover"
                 src={`${`mod-image://local/${modInfo.name}/${modInfo.coverImage}`}`}
                 alt={modInfo.name}
+                decoding="async"
                 className="size-full flex-1 object-cover"
                 onError={(e) => (e.currentTarget.src = defaultCover)}
               />

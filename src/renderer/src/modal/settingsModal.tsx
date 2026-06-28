@@ -238,7 +238,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
               <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
             </div>
             <Exit
-              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill,transform] hover:scale-110"
+              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
               onClick={onClose}
             />
           </div>
