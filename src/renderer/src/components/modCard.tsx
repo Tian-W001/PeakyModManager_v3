@@ -2,8 +2,8 @@ import { ModInfo } from "@shared/modInfo";
 import DetailedModal from "../modal/detailedModal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
-import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { addToDiffList, selectModDiffState, selectModIsEnabled } from "@renderer/redux/slices/presetsSlice";
+import { useAppDispatch } from "@renderer/redux/hooks";
+import { addToDiffList } from "@renderer/redux/slices/presetsSlice";
 import SmoothCornerPatch from "./CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { ModType } from "@shared/modType";
 import { Character } from "@shared/character";
 import useMountTransition from "@renderer/hooks/useMountTransition";
+import { memo } from "react";
 
 const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
@@ -38,15 +39,10 @@ const getBorderStyle = (modState: ModState) => {
   }
 };
 
-const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
+const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModState: ModState }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [toggleModal, shouldModalMount, shouldModalTransition] = useMountTransition(200);
-
-  const isEnabledInPreset = useAppSelector(selectModIsEnabled(modInfo.name));
-  const diffEntry = useAppSelector(selectModDiffState(modInfo.name));
-  const currentModState: ModState =
-    diffEntry !== null ? (diffEntry ? "WillEnable" : "WillDisable") : isEnabledInPreset ? "Enabled" : "Disabled";
 
   const [ref, entry] = useIntersectionObserver({
     threshold: 0,
@@ -134,4 +130,4 @@ const ModCard = ({ modInfo }: { modInfo: ModInfo }) => {
   );
 };
 
-export default ModCard;
+export default memo(ModCard);

@@ -2,7 +2,7 @@ import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
 import clsx from "clsx";
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   addToDiffList,
@@ -30,6 +30,7 @@ import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
 import ZzzToast from "./zzzToast";
+import { ModState } from "@shared/modState";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -38,6 +39,17 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const diffList = useAppSelector(selectDiffList);
   const currentPresetMods = useAppSelector(selectCurrentPresetMods);
+  const currentPresetModSet = useMemo(() => new Set(currentPresetMods), [currentPresetMods]);
+  const getModState = useCallback(
+    (modName: string): ModState => {
+      const diffEntry = diffList[modName];
+      if (diffEntry !== undefined) {
+        return diffEntry ? "WillEnable" : "WillDisable";
+      }
+      return currentPresetModSet.has(modName) ? "Enabled" : "Disabled";
+    },
+    [currentPresetModSet, diffList]
+  );
 
   const [toggleMultiSelectMenu, shouldMultiSelectMenuMount, shouldMultiSelectMenuTransition] = useMountTransition(200);
   const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
@@ -243,7 +255,9 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
-            modInfos.map((modInfo) => <ModCard key={modInfo.name} modInfo={modInfo} />)
+            modInfos.map((modInfo) => (
+              <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
+            ))
           )}
         </div>
 
