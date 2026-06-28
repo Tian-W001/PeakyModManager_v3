@@ -1,8 +1,9 @@
-import { app, ipcMain } from "electron";
+import { app, ipcMain, net } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import axios from "axios";
+import mime from "mime-types";
 import log from "electron-log/main";
+import { fetchRemoteCoverImage } from "../domain/modImport";
 import { getMainWindow } from "../services/windowService";
 import {
   downloadMod,
@@ -104,13 +105,24 @@ const handleExplorerImport = async (url: string) => {
     if (payload.coverImageLink) {
       try {
         log.info(`Downloading cover image from: ${payload.coverImageLink}`);
-        const coverDest = path.join(modDest, "cover.jpg");
-        const res = await axios.get(payload.coverImageLink, { responseType: "arraybuffer" });
-        if (res.status === 200) {
-          await fs.writeFile(coverDest, res.data);
+        const remoteImage = await fetchRemoteCoverImage(payload.coverImageLink, {
+          fetchUrl: async (url: string, timeoutMs: number) => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+              return await net.fetch(url, { signal: controller.signal });
+            } finally {
+              clearTimeout(timeoutId);
+            }
+          },
+          extensionFromMime: (mimeType: string) => mime.extension(mimeType),
+          logError: (msg: string) => log.error(msg),
+        });
+        if (remoteImage) {
+          await fs.writeFile(path.join(modDest, "cover.jpg"), remoteImage.buffer);
           getMainWindow()?.webContents.send("download-cover-success", { modName: payload.modName });
         } else {
-          throw new Error(`Failed to download cover image: ${res.statusText}`);
+          throw new Error("Failed to validate or download cover image");
         }
       } catch (error) {
         getMainWindow()?.webContents.send("download-cover-error", { modName: payload.modName, error: error });

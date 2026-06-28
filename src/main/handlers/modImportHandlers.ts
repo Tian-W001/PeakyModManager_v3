@@ -44,7 +44,15 @@ const coverDeps: ModCoverDeps = {
   pathRelative: (from: string, to: string) => path.relative(from, to),
   pathExtname: (p: string) => path.extname(p),
   pathIsAbsolute: (p: string) => path.isAbsolute(p),
-  fetchUrl: async (url: string) => net.fetch(url),
+  fetchUrl: async (url: string, timeoutMs: number) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await net.fetch(url, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  },
   extensionFromMime: (mimeType: string) => mime.extension(mimeType),
   writeFile: async (p: string, data: Buffer) => fs.writeFile(p, data),
   copyFile: async (src: string, dest: string) => fs.copy(src, dest),

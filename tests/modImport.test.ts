@@ -382,6 +382,28 @@ describe("importModCover", () => {
     expect(result).toBeNull();
   });
 
+  it("should return null when URL is not http or https", async () => {
+    const deps = makeCoverDeps();
+
+    const result = await importModCover("MyMod", "ftp://example.com/cover.png", deps);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when remote image is too large", async () => {
+    const deps = makeCoverDeps({
+      fetchUrl: async () => ({
+        ok: true,
+        headers: { get: (key: string) => (key === "content-length" ? `${11 * 1024 * 1024}` : "image/png") },
+        arrayBuffer: async () => new ArrayBuffer(4),
+      }),
+    });
+
+    const result = await importModCover("MyMod", "https://example.com/large.png", deps);
+
+    expect(result).toBeNull();
+  });
+
   it("should copy local cover file into mod folder", async () => {
     const copies: { src: string; dest: string }[] = [];
     const deps = makeCoverDeps({
