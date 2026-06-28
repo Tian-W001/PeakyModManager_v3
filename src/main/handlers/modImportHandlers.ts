@@ -23,7 +23,12 @@ const importDeps: ModImportDeps = {
   isZippedFile,
   unzipFile,
   sendToRenderer: (channel: string, data: unknown) => getMainWindow()?.webContents.send(channel, data),
-  onIpcOnce: (channel: string, handler: (...args: unknown[]) => void) => ipcMain.once(channel, handler as never),
+  onIpc: (channel: string, handler: (...args: unknown[]) => void) => {
+    const listener = (_event: Electron.IpcMainEvent, ...args: unknown[]) => handler(...args);
+    ipcMain.on(channel, listener);
+    return () => ipcMain.removeListener(channel, listener);
+  },
+  overwriteTimeoutMs: 60_000,
   parsePathName: (p: string) => path.parse(path.basename(p)).name,
   pathJoin: (...segments: string[]) => path.join(...segments),
   log: (msg: string) => console.log(msg),

@@ -15,7 +15,8 @@ export interface ModImportDeps {
   isZippedFile: (filename: string) => boolean;
   unzipFile: (src: string, dest: string) => Promise<void>;
   sendToRenderer: (channel: string, data: unknown) => void;
-  onIpcOnce: (channel: string, handler: (...args: unknown[]) => void) => void;
+  onIpc: (channel: string, handler: (...args: unknown[]) => void) => () => void;
+  overwriteTimeoutMs?: number;
   parsePathName: (p: string) => string;
   pathJoin: (...segments: string[]) => string;
   log: (msg: string) => void;
@@ -38,11 +39,37 @@ const unzipMod = async (zipPath: string, destPath: string, deps: ModImportDeps) 
 
 const askOverwriteMod = async (modName: string, deps: ModImportDeps): Promise<boolean> => {
   return new Promise<boolean>((resolve) => {
-    const responseChannel = `overwrite-response-${modName}`;
-    deps.onIpcOnce(responseChannel, (userConfirmed: unknown) => {
-      resolve(userConfirmed as boolean);
+    const timeoutMs = deps.overwriteTimeoutMs ?? 60_000;
+    const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const responseChannel = `overwrite-response-${requestId}`;
+    let settled = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let removeListener = () => {};
+
+    const finish = (userConfirmed: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      removeListener();
+      resolve(userConfirmed);
+    };
+
+    timeoutId = setTimeout(() => {
+      deps.log(`Overwrite request timed out for mod: ${modName}`);
+      finish(false);
+    }, timeoutMs);
+    removeListener = deps.onIpc(responseChannel, (userConfirmed: unknown) => {
+      finish(userConfirmed === true);
     });
-    deps.sendToRenderer("overwrite-ask", { modName, responseChannel });
+    if (settled) {
+      removeListener();
+    }
+    deps.sendToRenderer("overwrite-ask", {
+      modName,
+      responseChannel,
+      requestId,
+      timeoutMs,
+    });
   });
 };
 

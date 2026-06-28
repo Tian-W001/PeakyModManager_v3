@@ -26,7 +26,7 @@ const makeImportDeps = (overrides: Partial<ModImportDeps> = {}): ModImportDeps =
   isZippedFile: () => false,
   unzipFile: async () => {},
   sendToRenderer: () => {},
-  onIpcOnce: () => {},
+  onIpc: () => () => {},
   parsePathName: (p: string) => {
     const parts = p.replace(/\\/g, "/").split("/");
     const last = parts[parts.length - 1];
@@ -179,39 +179,69 @@ describe("importMod", () => {
   });
 
   it("should handle overwrite when user confirms", async () => {
-    let onIpcOnceCalled = false;
+    let onIpcCalled = false;
+    let cleanupCalled = false;
     const deps = makeImportDeps({
       stat: async () => ({ isFile: () => false, isDirectory: () => true }),
       pathExists: async (p: string) => p !== "/source/MyMod",
       readdir: async () => [],
-      onIpcOnce: (_channel: string, handler: (...args: unknown[]) => void) => {
-        onIpcOnceCalled = true;
+      onIpc: (_channel: string, handler: (...args: unknown[]) => void) => {
+        onIpcCalled = true;
         handler(true);
+        return () => {
+          cleanupCalled = true;
+        };
       },
     });
 
     const result = await importMod("/source/MyMod", deps);
 
-    expect(onIpcOnceCalled).toBe(true);
+    expect(onIpcCalled).toBe(true);
+    expect(cleanupCalled).toBe(true);
     expect(result).not.toBeNull();
     expect(result!.name).toBe("MyMod");
   });
 
   it("should handle overwrite when user declines", async () => {
-    let onIpcOnceCalled = false;
+    let onIpcCalled = false;
+    let cleanupCalled = false;
     const deps = makeImportDeps({
       stat: async () => ({ isFile: () => false, isDirectory: () => true }),
       pathExists: async (p: string) => p !== "/source/MyMod",
       readdir: async () => [],
-      onIpcOnce: (_channel: string, handler: (...args: unknown[]) => void) => {
-        onIpcOnceCalled = true;
+      onIpc: (_channel: string, handler: (...args: unknown[]) => void) => {
+        onIpcCalled = true;
         handler(false);
+        return () => {
+          cleanupCalled = true;
+        };
       },
     });
 
     const result = await importMod("/source/MyMod", deps);
 
-    expect(onIpcOnceCalled).toBe(true);
+    expect(onIpcCalled).toBe(true);
+    expect(cleanupCalled).toBe(true);
+    expect(result).toBeNull();
+  });
+
+  it("should cancel overwrite when confirmation times out", async () => {
+    let cleanupCalled = false;
+    const deps = makeImportDeps({
+      stat: async () => ({ isFile: () => false, isDirectory: () => true }),
+      pathExists: async (p: string) => p !== "/source/MyMod",
+      readdir: async () => [],
+      overwriteTimeoutMs: 1,
+      onIpc: () => {
+        return () => {
+          cleanupCalled = true;
+        };
+      },
+    });
+
+    const result = await importMod("/source/MyMod", deps);
+
+    expect(cleanupCalled).toBe(true);
     expect(result).toBeNull();
   });
 });
