@@ -62,7 +62,7 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
             <p className="text-2xl font-bold text-white italic">{t("presets.managePresets")}</p>
           </div>
           <Exit
-            className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
+            className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill,transform] hover:scale-110"
             onClick={onClose}
           />
         </div>

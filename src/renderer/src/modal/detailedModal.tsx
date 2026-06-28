@@ -230,14 +230,14 @@ const DetailedModal = ({
               className="group hover:border-zzzYellow relative size-full overflow-hidden rounded-2xl border-3 border-black bg-black shadow-[1px_1px_1px_#fff2] hover:border-2"
             >
               <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-300 group-hover:blur-sm"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-[filter] duration-300 group-hover:blur-sm"
                 style={{
                   backgroundImage: localModInfo.coverImage
                     ? `url("mod-image://local/${modInfo.name}/${localModInfo.coverImage}")`
                     : `url("${defaultCover}")`,
                 }}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 opacity-0 transition-all duration-300 group-hover:opacity-100">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 {localModInfo.coverImage ? (
                   <>
                     <ZzzButton onClick={handleRemoveCover} className="w-40">
@@ -282,7 +282,7 @@ const DetailedModal = ({
                 </div>
               </div>
               <Exit
-                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
+                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill,transform] hover:scale-110"
                 onClick={onClose}
               />
             </div>
@@ -298,7 +298,7 @@ const DetailedModal = ({
                 <div className="group flex flex-row items-center justify-start">
                   <button
                     onClick={() => handleLocateSelectedCharacter(localModInfo.character as Character)}
-                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-all duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
+                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[margin,width,opacity] duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
                   >
                     <img src={Agent} alt="Agent" className="h-full w-full object-contain p-1" />
                   </button>

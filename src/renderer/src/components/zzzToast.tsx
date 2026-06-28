@@ -16,13 +16,13 @@ const ZzzToast: React.FC<ZzzToastProps> = ({ message, progress }) => {
         <div className="relative mt-6 h-2 w-[80%]">
           <div className="size-full overflow-hidden rounded-full bg-black shadow-[1px_1px_1px_#fff3]">
             <div
-              className="bg-zzzYellow h-full rounded-full transition-all duration-300 ease-out"
+              className="bg-zzzYellow h-full rounded-full transition-[width] duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
             <img
               src={BangbooLoading}
               alt="Loading..."
-              className="absolute bottom-0 h-8 -translate-x-1/2 translate-y-[13%] object-contain transition-all duration-300 ease-out"
+              className="absolute bottom-0 h-8 -translate-x-1/2 translate-y-[13%] object-contain transition-[left] duration-300 ease-out"
               style={{ left: `${progress}%` }}
             />
           </div>

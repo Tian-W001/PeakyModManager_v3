@@ -289,7 +289,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           <ZzzButton onClick={() => toggleMultiSelectMenu()} className="shadow-xl">
             <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
               <span className="truncate">{t("common.multiSelect")}</span>
-              <FaCaretUp className={`transition-all ${shouldMultiSelectMenuMount && "rotate-180"}`} />
+              <FaCaretUp className={`transition-transform ${shouldMultiSelectMenuMount && "rotate-180"}`} />
             </div>
           </ZzzButton>
         </div>
@@ -325,7 +325,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             <ZzzButton onClick={() => togglePresetsMenu()} className="w-auto max-w-70">
               <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
                 <span className="truncate">{currentPresetName}</span>
-                <FaCaretUp className={`transition-all ${shouldPresetsMenuMount && "rotate-180"}`} />
+                <FaCaretUp className={`transition-transform ${shouldPresetsMenuMount && "rotate-180"}`} />
               </div>
             </ZzzButton>
           </div>
