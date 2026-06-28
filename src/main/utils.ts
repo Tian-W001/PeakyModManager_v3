@@ -48,3 +48,13 @@ export const unzipFile = async (zippedPath: string, destPath: string): Promise<v
 export const escapeRegExp = (string: string): string => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
+
+export const isPathInside = (basePath: string, targetPath: string): boolean => {
+  const relativePath = path.relative(path.resolve(basePath), path.resolve(targetPath));
+  return relativePath === "" || (!relativePath.startsWith("..") && !path.isAbsolute(relativePath));
+};
+
+export const resolveInside = (basePath: string, ...segments: string[]): string | null => {
+  const targetPath = path.resolve(basePath, ...segments);
+  return isPathInside(basePath, targetPath) ? targetPath : null;
+};

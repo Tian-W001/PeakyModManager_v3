@@ -407,8 +407,11 @@ describe("importModCover", () => {
   it("should copy local cover file into mod folder", async () => {
     const copies: { src: string; dest: string }[] = [];
     const deps = makeCoverDeps({
-      pathIsAbsolute: () => true,
-      pathRelative: () => "../outside/pic.png",
+      pathIsAbsolute: (p: string) => p.startsWith("/"),
+      pathRelative: (from: string, to: string) => {
+        if (from === "/library" && to === "/library/MyMod") return "MyMod";
+        return "../outside/pic.png";
+      },
       copyFile: async (src: string, dest: string) => {
         copies.push({ src, dest });
       },
@@ -420,6 +423,17 @@ describe("importModCover", () => {
     expect(copies).toHaveLength(1);
     expect(copies[0].src).toBe("/external/pic.jpg");
     expect(copies[0].dest).toBe("/library/MyMod/preview.jpg");
+  });
+
+  it("should return null when mod name escapes the library path", async () => {
+    const deps = makeCoverDeps({
+      pathJoin: (...args: string[]) => args.join("/").replace("/library/../", "/"),
+      pathRelative: (_from: string, to: string) => (to.startsWith("/library") ? "MyMod" : "../outside"),
+    });
+
+    const result = await importModCover("../outside", "/external/pic.jpg", deps);
+
+    expect(result).toBeNull();
   });
 
   it("should return relative path for already-internal image", async () => {

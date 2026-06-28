@@ -4,6 +4,7 @@ import log from "electron-log";
 import mime from "mime-types";
 import fs from "fs-extra";
 import { getLibraryPath } from "../services/storeService";
+import { resolveInside } from "../utils";
 
 export const modImageProtocolScheme: Electron.CustomScheme = {
   scheme: "mod-image",
@@ -21,8 +22,11 @@ export const registerModImageProtocol = () => {
         return new Response(null, { status: 404 });
       }
       const url = new URL(request.url);
-      const pathname = decodeURIComponent(url.pathname);
-      const modImagePath = path.join(libraryPath, pathname);
+      const pathname = decodeURIComponent(url.pathname).replace(/^[/\\]+/, "");
+      const modImagePath = resolveInside(libraryPath, pathname);
+      if (!modImagePath) {
+        return new Response(null, { status: 404 });
+      }
 
       // Check if path is a directory or doesn't exist
       try {

@@ -208,6 +208,8 @@ export const importModCover = async (
   if (!libraryPath || !(await deps.pathExists(libraryPath))) return null;
 
   const modPath = deps.pathJoin(libraryPath, modName);
+  const modPathRelative = deps.pathRelative(libraryPath, modPath);
+  if (modPathRelative.startsWith("..") || deps.pathIsAbsolute(modPathRelative)) return null;
 
   if (/^https?:\/\//i.test(imageSource)) {
     const remoteImage = await fetchRemoteCoverImage(imageSource, deps);
