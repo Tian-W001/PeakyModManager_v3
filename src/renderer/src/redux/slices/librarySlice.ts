@@ -46,6 +46,21 @@ export const loadLibrary = createAsyncThunk("library/load", async () => {
   return mods;
 });
 
+export const editModInfo = createAsyncThunk<
+  { modName: string; newModInfo: ModInfo },
+  { modName: string; newModInfo: Partial<ModInfo> },
+  { state: RootState; rejectValue: string }
+>("library/editModInfo", async ({ modName, newModInfo }, { getState, rejectWithValue }) => {
+  const currentModInfo = getState().library.modInfos.find((mod) => mod.name === modName);
+  if (!currentModInfo) {
+    return rejectWithValue(`Mod not found: ${modName}`);
+  }
+
+  const mergedModInfo = { ...currentModInfo, ...newModInfo } as ModInfo;
+  await window.electron.ipcRenderer.invoke("edit-mod-info", modName, mergedModInfo);
+  return { modName, newModInfo: mergedModInfo };
+});
+
 const librarySlice = createSlice({
   name: "library",
   initialState,
@@ -56,14 +71,6 @@ const librarySlice = createSlice({
     },
     removeModInfo: (state, action: PayloadAction<string>) => {
       state.modInfos = state.modInfos.filter((mod) => mod.name !== action.payload);
-    },
-    editModInfo: (state, action: PayloadAction<{ modName: string; newModInfo: Partial<ModInfo> }>) => {
-      const { modName, newModInfo } = action.payload;
-      const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
-      if (modIndex !== -1) {
-        Object.assign(state.modInfos[modIndex], newModInfo);
-      }
-      window.electron.ipcRenderer.invoke("edit-mod-info", modName, { ...state.modInfos[modIndex] });
     },
   },
   extraReducers: (builder) => {
@@ -79,12 +86,19 @@ const librarySlice = createSlice({
       })
       .addCase(setD3dxUserPath.fulfilled, (state, action) => {
         state.d3dxUserPath = action.payload;
+      })
+      .addCase(editModInfo.fulfilled, (state, action) => {
+        const { modName, newModInfo } = action.payload;
+        const modIndex = state.modInfos.findIndex((mod) => mod.name === modName);
+        if (modIndex !== -1) {
+          state.modInfos[modIndex] = newModInfo;
+        }
       });
   },
 });
 
 export default persistReducer(libraryPersistConfig, librarySlice.reducer);
-export const { editModInfo, addModInfo, removeModInfo } = librarySlice.actions;
+export const { addModInfo, removeModInfo } = librarySlice.actions;
 
 export const selectLibraryPath = (state: RootState) => state.library.libraryPath;
 export const selectTargetPath = (state: RootState) => state.library.targetPath;

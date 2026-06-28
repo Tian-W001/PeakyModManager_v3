@@ -55,6 +55,7 @@ describe("librarySlice - reducers", () => {
   let store: ReturnType<typeof createLibraryStore>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     store = createLibraryStore();
   });
 
@@ -81,17 +82,21 @@ describe("librarySlice - reducers", () => {
     expect(selectModInfos(store.getState())).toHaveLength(1);
   });
 
-  it("editModInfo: should merge partial fields", () => {
+  it("editModInfo: should merge partial fields", async () => {
     store.dispatch(addModInfo(makeMod({ name: "A", description: "old" })));
-    store.dispatch(editModInfo({ modName: "A", newModInfo: { description: "new" } }));
+    await store.dispatch(editModInfo({ modName: "A", newModInfo: { description: "new" } }));
     const mod = selectModByName("A")(store.getState());
     expect(mod?.description).toBe("new");
     expect(mod?.name).toBe("A");
+    expect(window.electron.ipcRenderer.invoke).toHaveBeenCalledWith("edit-mod-info", "A", {
+      ...makeMod({ name: "A", description: "new" }),
+    });
   });
 
-  it("editModInfo: should be no-op for nonexistent mod", () => {
-    store.dispatch(editModInfo({ modName: "X", newModInfo: { description: "nope" } }));
+  it("editModInfo: should be no-op for nonexistent mod", async () => {
+    await store.dispatch(editModInfo({ modName: "X", newModInfo: { description: "nope" } }));
     expect(selectModInfos(store.getState())).toHaveLength(0);
+    expect(window.electron.ipcRenderer.invoke).not.toHaveBeenCalled();
   });
 });
 
