@@ -647,5 +647,27 @@
       "en": "Norma Hollowell",
       "zh": "诺姆·霍洛维尔"
     }
+  },
+  {
+    "id": "Remielle",
+    "nicknames": {
+      "en": "Remielle",
+      "zh": "蕾米埃尔"
+    },
+    "fullnames": {
+      "en": "Remielle Dan",
+      "zh": "蕾米埃尔·丹"
+    }
+  },
+  {
+    "id": "Sigrid",
+    "nicknames": {
+      "en": "Sigrid",
+      "zh": "希格莉德"
+    },
+    "fullnames": {
+      "en": "Sigrid de L'Azur",
+      "zh": "希格莉德·德拉叙尔"
+    }
   }
 ]
