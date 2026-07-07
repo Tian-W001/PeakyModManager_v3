@@ -26,7 +26,7 @@ const makeImportDeps = (overrides: Partial<ModImportDeps> = {}): ModImportDeps =
   isZippedFile: () => false,
   unzipFile: async () => {},
   sendToRenderer: () => {},
-  onIpcOnce: () => {},
+  onIpc: () => () => {},
   parsePathName: (p: string) => {
     const parts = p.replace(/\\/g, "/").split("/");
     const last = parts[parts.length - 1];
@@ -179,39 +179,69 @@ describe("importMod", () => {
   });
 
   it("should handle overwrite when user confirms", async () => {
-    let onIpcOnceCalled = false;
+    let onIpcCalled = false;
+    let cleanupCalled = false;
     const deps = makeImportDeps({
       stat: async () => ({ isFile: () => false, isDirectory: () => true }),
       pathExists: async (p: string) => p !== "/source/MyMod",
       readdir: async () => [],
-      onIpcOnce: (_channel: string, handler: (...args: unknown[]) => void) => {
-        onIpcOnceCalled = true;
+      onIpc: (_channel: string, handler: (...args: unknown[]) => void) => {
+        onIpcCalled = true;
         handler(true);
+        return () => {
+          cleanupCalled = true;
+        };
       },
     });
 
     const result = await importMod("/source/MyMod", deps);
 
-    expect(onIpcOnceCalled).toBe(true);
+    expect(onIpcCalled).toBe(true);
+    expect(cleanupCalled).toBe(true);
     expect(result).not.toBeNull();
     expect(result!.name).toBe("MyMod");
   });
 
   it("should handle overwrite when user declines", async () => {
-    let onIpcOnceCalled = false;
+    let onIpcCalled = false;
+    let cleanupCalled = false;
     const deps = makeImportDeps({
       stat: async () => ({ isFile: () => false, isDirectory: () => true }),
       pathExists: async (p: string) => p !== "/source/MyMod",
       readdir: async () => [],
-      onIpcOnce: (_channel: string, handler: (...args: unknown[]) => void) => {
-        onIpcOnceCalled = true;
+      onIpc: (_channel: string, handler: (...args: unknown[]) => void) => {
+        onIpcCalled = true;
         handler(false);
+        return () => {
+          cleanupCalled = true;
+        };
       },
     });
 
     const result = await importMod("/source/MyMod", deps);
 
-    expect(onIpcOnceCalled).toBe(true);
+    expect(onIpcCalled).toBe(true);
+    expect(cleanupCalled).toBe(true);
+    expect(result).toBeNull();
+  });
+
+  it("should cancel overwrite when confirmation times out", async () => {
+    let cleanupCalled = false;
+    const deps = makeImportDeps({
+      stat: async () => ({ isFile: () => false, isDirectory: () => true }),
+      pathExists: async (p: string) => p !== "/source/MyMod",
+      readdir: async () => [],
+      overwriteTimeoutMs: 1,
+      onIpc: () => {
+        return () => {
+          cleanupCalled = true;
+        };
+      },
+    });
+
+    const result = await importMod("/source/MyMod", deps);
+
+    expect(cleanupCalled).toBe(true);
     expect(result).toBeNull();
   });
 });
@@ -352,11 +382,36 @@ describe("importModCover", () => {
     expect(result).toBeNull();
   });
 
+  it("should return null when URL is not http or https", async () => {
+    const deps = makeCoverDeps();
+
+    const result = await importModCover("MyMod", "ftp://example.com/cover.png", deps);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when remote image is too large", async () => {
+    const deps = makeCoverDeps({
+      fetchUrl: async () => ({
+        ok: true,
+        headers: { get: (key: string) => (key === "content-length" ? `${11 * 1024 * 1024}` : "image/png") },
+        arrayBuffer: async () => new ArrayBuffer(4),
+      }),
+    });
+
+    const result = await importModCover("MyMod", "https://example.com/large.png", deps);
+
+    expect(result).toBeNull();
+  });
+
   it("should copy local cover file into mod folder", async () => {
     const copies: { src: string; dest: string }[] = [];
     const deps = makeCoverDeps({
-      pathIsAbsolute: () => true,
-      pathRelative: () => "../outside/pic.png",
+      pathIsAbsolute: (p: string) => p.startsWith("/"),
+      pathRelative: (from: string, to: string) => {
+        if (from === "/library" && to === "/library/MyMod") return "MyMod";
+        return "../outside/pic.png";
+      },
       copyFile: async (src: string, dest: string) => {
         copies.push({ src, dest });
       },
@@ -368,6 +423,17 @@ describe("importModCover", () => {
     expect(copies).toHaveLength(1);
     expect(copies[0].src).toBe("/external/pic.jpg");
     expect(copies[0].dest).toBe("/library/MyMod/preview.jpg");
+  });
+
+  it("should return null when mod name escapes the library path", async () => {
+    const deps = makeCoverDeps({
+      pathJoin: (...args: string[]) => args.join("/").replace("/library/../", "/"),
+      pathRelative: (_from: string, to: string) => (to.startsWith("/library") ? "MyMod" : "../outside"),
+    });
+
+    const result = await importModCover("../outside", "/external/pic.jpg", deps);
+
+    expect(result).toBeNull();
   });
 
   it("should return relative path for already-internal image", async () => {

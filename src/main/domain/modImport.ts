@@ -15,7 +15,8 @@ export interface ModImportDeps {
   isZippedFile: (filename: string) => boolean;
   unzipFile: (src: string, dest: string) => Promise<void>;
   sendToRenderer: (channel: string, data: unknown) => void;
-  onIpcOnce: (channel: string, handler: (...args: unknown[]) => void) => void;
+  onIpc: (channel: string, handler: (...args: unknown[]) => void) => () => void;
+  overwriteTimeoutMs?: number;
   parsePathName: (p: string) => string;
   pathJoin: (...segments: string[]) => string;
   log: (msg: string) => void;
@@ -38,11 +39,36 @@ const unzipMod = async (zipPath: string, destPath: string, deps: ModImportDeps) 
 
 const askOverwriteMod = async (modName: string, deps: ModImportDeps): Promise<boolean> => {
   return new Promise<boolean>((resolve) => {
-    const responseChannel = `overwrite-response-${modName}`;
-    deps.onIpcOnce(responseChannel, (userConfirmed: unknown) => {
-      resolve(userConfirmed as boolean);
+    const timeoutMs = deps.overwriteTimeoutMs ?? 60_000;
+    const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const responseChannel = `overwrite-response-${requestId}`;
+    let settled = false;
+    let removeListener = () => {};
+
+    const finish = (userConfirmed: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      removeListener();
+      resolve(userConfirmed);
+    };
+
+    const timeoutId = setTimeout(() => {
+      deps.log(`Overwrite request timed out for mod: ${modName}`);
+      finish(false);
+    }, timeoutMs);
+    removeListener = deps.onIpc(responseChannel, (userConfirmed: unknown) => {
+      finish(userConfirmed === true);
     });
-    deps.sendToRenderer("overwrite-ask", { modName, responseChannel });
+    if (settled) {
+      removeListener();
+    }
+    deps.sendToRenderer("overwrite-ask", {
+      modName,
+      responseChannel,
+      requestId,
+      timeoutMs,
+    });
   });
 };
 
@@ -122,13 +148,56 @@ export interface ModCoverDeps {
   pathExtname: (p: string) => string;
   pathIsAbsolute: (p: string) => boolean;
   fetchUrl: (
-    url: string
+    url: string,
+    timeoutMs: number
   ) => Promise<{ ok: boolean; headers: { get: (k: string) => string | null }; arrayBuffer(): Promise<ArrayBuffer> }>;
   extensionFromMime: (mimeType: string) => string | false;
   writeFile: (p: string, data: Buffer) => Promise<void>;
   copyFile: (src: string, dest: string) => Promise<void>;
   logError: (msg: string) => void;
 }
+
+export const MAX_COVER_IMAGE_BYTES = 10 * 1024 * 1024;
+export const COVER_FETCH_TIMEOUT_MS = 15_000;
+
+export const fetchRemoteCoverImage = async (
+  imageSource: string,
+  deps: Pick<ModCoverDeps, "fetchUrl" | "extensionFromMime" | "logError">
+): Promise<{ buffer: Buffer; extension: string } | null> => {
+  if (!/^https?:\/\//i.test(imageSource)) {
+    deps.logError(`Rejected non-http cover URL: ${imageSource}`);
+    return null;
+  }
+
+  let response;
+  try {
+    response = await deps.fetchUrl(imageSource, COVER_FETCH_TIMEOUT_MS);
+  } catch (error) {
+    deps.logError(`Failed to fetch cover URL: ${error}`);
+    return null;
+  }
+
+  if (!response.ok) return null;
+
+  const contentLength = Number(response.headers.get("content-length") ?? "0");
+  if (contentLength > MAX_COVER_IMAGE_BYTES) {
+    deps.logError(`Rejected cover URL over ${MAX_COVER_IMAGE_BYTES} bytes: ${imageSource}`);
+    return null;
+  }
+
+  const mimeType = (response.headers.get("content-type") ?? "").split(";")[0].trim();
+  if (!mimeType.startsWith("image/")) return null;
+  const extension = deps.extensionFromMime(mimeType);
+  if (!extension) return null;
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (buffer.byteLength > MAX_COVER_IMAGE_BYTES) {
+    deps.logError(`Rejected downloaded cover over ${MAX_COVER_IMAGE_BYTES} bytes: ${imageSource}`);
+    return null;
+  }
+
+  return { buffer, extension };
+};
 
 export const importModCover = async (
   modName: string,
@@ -139,32 +208,24 @@ export const importModCover = async (
   if (!libraryPath || !(await deps.pathExists(libraryPath))) return null;
 
   const modPath = deps.pathJoin(libraryPath, modName);
+  const modPathRelative = deps.pathRelative(libraryPath, modPath);
+  if (modPathRelative.startsWith("..") || deps.pathIsAbsolute(modPathRelative)) return null;
 
   if (/^https?:\/\//i.test(imageSource)) {
-    let response;
+    const remoteImage = await fetchRemoteCoverImage(imageSource, deps);
+    if (!remoteImage) return null;
+
+    const newCoverName = `preview.${remoteImage.extension}`;
     try {
-      response = await deps.fetchUrl(imageSource);
-    } catch (error) {
-      deps.logError(`Failed to fetch cover URL: ${error}`);
-      return null;
-    }
-
-    if (!response.ok) return null;
-
-    const mimeType = (response.headers.get("content-type") ?? "").split(";")[0].trim();
-    if (!mimeType.startsWith("image/")) return null;
-    const ext = deps.extensionFromMime(mimeType);
-    if (!ext) return null;
-
-    const newCoverName = `preview.${ext}`;
-    try {
-      const buffer = await response.arrayBuffer();
-      await deps.writeFile(deps.pathJoin(modPath, newCoverName), Buffer.from(buffer));
+      await deps.writeFile(deps.pathJoin(modPath, newCoverName), remoteImage.buffer);
       return newCoverName;
     } catch (error) {
       deps.logError(`Failed to save cover from URL: ${error}`);
       return null;
     }
+  } else if (/^[a-z][a-z\d+\-.]*:\/\//i.test(imageSource)) {
+    deps.logError(`Rejected unsupported cover URL: ${imageSource}`);
+    return null;
   } else {
     const relativePath = deps.pathRelative(modPath, imageSource);
     if (!relativePath.startsWith("..") && !deps.pathIsAbsolute(relativePath)) {

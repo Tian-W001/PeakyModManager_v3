@@ -23,7 +23,12 @@ const importDeps: ModImportDeps = {
   isZippedFile,
   unzipFile,
   sendToRenderer: (channel: string, data: unknown) => getMainWindow()?.webContents.send(channel, data),
-  onIpcOnce: (channel: string, handler: (...args: unknown[]) => void) => ipcMain.once(channel, handler as never),
+  onIpc: (channel: string, handler: (...args: unknown[]) => void) => {
+    const listener = (_event: Electron.IpcMainEvent, ...args: unknown[]) => handler(...args);
+    ipcMain.on(channel, listener);
+    return () => ipcMain.removeListener(channel, listener);
+  },
+  overwriteTimeoutMs: 60_000,
   parsePathName: (p: string) => path.parse(path.basename(p)).name,
   pathJoin: (...segments: string[]) => path.join(...segments),
   log: (msg: string) => console.log(msg),
@@ -39,7 +44,15 @@ const coverDeps: ModCoverDeps = {
   pathRelative: (from: string, to: string) => path.relative(from, to),
   pathExtname: (p: string) => path.extname(p),
   pathIsAbsolute: (p: string) => path.isAbsolute(p),
-  fetchUrl: async (url: string) => net.fetch(url),
+  fetchUrl: async (url: string, timeoutMs: number) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await net.fetch(url, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  },
   extensionFromMime: (mimeType: string) => mime.extension(mimeType),
   writeFile: async (p: string, data: Buffer) => fs.writeFile(p, data),
   copyFile: async (src: string, dest: string) => fs.copy(src, dest),

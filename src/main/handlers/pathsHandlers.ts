@@ -10,6 +10,7 @@ import {
   getD3dxUserPath,
   setD3dxUserPath,
 } from "../services/storeService";
+import { resolveInside } from "../utils";
 
 export const registerPathsHandlers = () => {
   ipcMain.handle("get-library-path", async () => getLibraryPath());
@@ -22,7 +23,8 @@ export const registerPathsHandlers = () => {
   ipcMain.handle("open-mod-folder", async (_event, modName?: string) => {
     const libraryPath = getLibraryPath();
     if (!libraryPath || !(await fs.pathExists(libraryPath))) return;
-    const fullPath = modName ? path.join(libraryPath, modName) : libraryPath;
+    const fullPath = modName ? resolveInside(libraryPath, modName) : libraryPath;
+    if (!fullPath) return;
     await shell.openPath(fullPath);
   });
 

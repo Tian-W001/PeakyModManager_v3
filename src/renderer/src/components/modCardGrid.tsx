@@ -2,7 +2,7 @@ import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
 import clsx from "clsx";
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   addToDiffList,
@@ -30,6 +30,7 @@ import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
 import ZzzToast from "./zzzToast";
+import { ModState } from "@shared/modState";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -38,6 +39,17 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const diffList = useAppSelector(selectDiffList);
   const currentPresetMods = useAppSelector(selectCurrentPresetMods);
+  const currentPresetModSet = useMemo(() => new Set(currentPresetMods), [currentPresetMods]);
+  const getModState = useCallback(
+    (modName: string): ModState => {
+      const diffEntry = diffList[modName];
+      if (diffEntry !== undefined) {
+        return diffEntry ? "WillEnable" : "WillDisable";
+      }
+      return currentPresetModSet.has(modName) ? "Enabled" : "Disabled";
+    },
+    [currentPresetModSet, diffList]
+  );
 
   const [toggleMultiSelectMenu, shouldMultiSelectMenuMount, shouldMultiSelectMenuTransition] = useMountTransition(200);
   const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
@@ -89,8 +101,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
       };
 
       const removeListener = window.electron.ipcRenderer.on("overwrite-ask", overwriteListener);
-      const newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo;
-      removeListener();
+      let newModInfo: ModInfo | null = null;
+      try {
+        newModInfo = (await window.electron.ipcRenderer.invoke("import-mod", filePath)) as ModInfo | null;
+      } finally {
+        removeListener();
+      }
 
       if (newModInfo) {
         if (overwriteConfirmed) {
@@ -112,11 +128,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   );
 
   useEffect(() => {
-    window.electron.ipcRenderer.on("import-mod", (_event, filePath) => {
+    const removeListener = window.electron.ipcRenderer.on("import-mod", (_event, filePath) => {
       importMod(filePath);
     });
     return () => {
-      window.electron.ipcRenderer.removeAllListeners("import-mod");
+      removeListener();
     };
   }, [importMod]);
 
@@ -239,7 +255,9 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
-            modInfos.map((modInfo) => <ModCard key={modInfo.name} modInfo={modInfo} />)
+            modInfos.map((modInfo) => (
+              <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
+            ))
           )}
         </div>
 
@@ -271,7 +289,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           <ZzzButton onClick={() => toggleMultiSelectMenu()} className="shadow-xl">
             <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
               <span className="truncate">{t("common.multiSelect")}</span>
-              <FaCaretUp className={`transition-all ${shouldMultiSelectMenuMount && "rotate-180"}`} />
+              <FaCaretUp className={`transition-transform ${shouldMultiSelectMenuMount && "rotate-180"}`} />
             </div>
           </ZzzButton>
         </div>
@@ -307,7 +325,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             <ZzzButton onClick={() => togglePresetsMenu()} className="w-auto max-w-70">
               <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
                 <span className="truncate">{currentPresetName}</span>
-                <FaCaretUp className={`transition-all ${shouldPresetsMenuMount && "rotate-180"}`} />
+                <FaCaretUp className={`transition-transform ${shouldPresetsMenuMount && "rotate-180"}`} />
               </div>
             </ZzzButton>
           </div>

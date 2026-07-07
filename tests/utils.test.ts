@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { escapeRegExp, isZippedFile } from "../src/main/utils";
+import path from "path";
+import { escapeRegExp, isPathInside, isZippedFile, resolveInside } from "../src/main/utils";
 
 describe("escapeRegExp", () => {
   it("should escape special regex characters", () => {
@@ -41,5 +42,23 @@ describe("isZippedFile", () => {
     expect(isZippedFile("image.png")).toBe(false);
     expect(isZippedFile("folder")).toBe(false);
     expect(isZippedFile("noextension")).toBe(false);
+  });
+});
+
+describe("path guards", () => {
+  it("should allow paths inside the base directory", () => {
+    const base = path.resolve("/library");
+    const target = path.resolve("/library/MyMod/preview.png");
+
+    expect(isPathInside(base, target)).toBe(true);
+    expect(resolveInside(base, "MyMod", "preview.png")).toBe(target);
+  });
+
+  it("should reject paths outside the base directory", () => {
+    const base = path.resolve("/library");
+    const target = path.resolve("/outside/preview.png");
+
+    expect(isPathInside(base, target)).toBe(false);
+    expect(resolveInside(base, "..", "outside", "preview.png")).toBeNull();
   });
 });

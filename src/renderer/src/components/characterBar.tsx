@@ -1,35 +1,73 @@
-import { useLayoutEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import clsx from "clsx";
-import { Character, characterNameList } from "../../../shared/character";
+import { Character } from "../../../shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
 import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
+import { characterBarImageList, getCharacterImagePath } from "@renderer/utils/characterImages";
 
-const getCharacterImagePath = (char: Character | "All") => {
-  return new URL(`../assets/character_images/${char}.png`, import.meta.url).href;
-};
+const CharacterBarItem = memo(
+  ({
+    char,
+    isSelected,
+    onSelect,
+  }: {
+    char: Character | "All";
+    isSelected: boolean;
+    onSelect: (character: Character | "All") => void;
+  }) => (
+    <div
+      className="relative -ml-1.25 aspect-8/3 h-full shrink-0 snap-start -scroll-m-1 overflow-hidden" // images are 160:60
+      onClick={() => onSelect(char)}
+      data-character={char}
+    >
+      <img
+        src={getCharacterImagePath(char)}
+        onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
+        alt={char}
+        loading="lazy"
+        decoding="async"
+        className="h-full skew-x-[25.3deg]"
+      />
+      {isSelected && (
+        <img
+          src={charActiveMask}
+          alt="active mask"
+          loading="lazy"
+          decoding="async"
+          className="absolute top-0 z-10 h-full skew-x-[25.3deg]"
+        />
+      )}
+    </div>
+  )
+);
+CharacterBarItem.displayName = "CharacterBarItem";
 
-const CharacterBar = ({ className }: { className?: string }) => {
+const CharacterBar = ({ className, isVisible }: { className?: string; isVisible: boolean }) => {
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const selectedCharBlockRef = useRef<HTMLDivElement>(null);
-  const characterBarImageList: (Character | "All")[] = [...characterNameList, "All"].toReversed() as (
-    | Character
-    | "All"
-  )[];
+  const wasVisibleRef = useRef(false);
 
-  useLayoutEffect(() => {
-    const target = selectedCharBlockRef.current;
+  useEffect(() => {
+    const becameVisible = isVisible && !wasVisibleRef.current;
+    wasVisibleRef.current = isVisible;
+    if (!becameVisible) return;
+
     const container = scrollContainerRef.current;
-    if (!target || !container) return;
-    const scrollToPosition = target.offsetLeft - container.clientWidth / 2 + target.clientWidth / 2;
-    container.scrollTo({
-      left: scrollToPosition,
-      behavior: "smooth",
+    if (!container) return;
+    const frameId = requestAnimationFrame(() => {
+      const target = container.querySelector<HTMLElement>(`[data-character="${selectedCharacter}"]`);
+      if (!target) return;
+      const scrollToPosition = target.offsetLeft - container.clientWidth / 2 + target.clientWidth / 2;
+      container.scrollTo({
+        left: scrollToPosition,
+        behavior: "auto",
+      });
     });
-  }, []);
+    return () => cancelAnimationFrame(frameId);
+  }, [isVisible, selectedCharacter]);
 
   const handleScroll = (event: React.WheelEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -84,28 +122,12 @@ const CharacterBar = ({ className }: { className?: string }) => {
           onWheel={handleScroll}
         >
           {characterBarImageList.map((char) => (
-            <div
+            <CharacterBarItem
               key={char}
-              ref={char === selectedCharacter ? selectedCharBlockRef : null}
-              className="relative -ml-1.25 aspect-8/3 h-full shrink-0 snap-start -scroll-m-1 overflow-hidden" // images are 160:60
-              onClick={() => handleSelectCharacter(char)}
-            >
-              <img
-                src={getCharacterImagePath(char)}
-                onError={(e) => (e.currentTarget.src = getCharacterImagePath("Unknown"))}
-                alt={char}
-                loading="lazy"
-                className="h-full skew-x-[25.3deg]"
-              />
-              {selectedCharacter === char && (
-                <img
-                  src={charActiveMask}
-                  alt="active mask"
-                  loading="lazy"
-                  className="absolute top-0 z-10 h-full skew-x-[25.3deg]"
-                />
-              )}
-            </div>
+              char={char}
+              isSelected={selectedCharacter === char}
+              onSelect={handleSelectCharacter}
+            />
           ))}
         </div>
         <TiChevronRight

@@ -238,7 +238,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
               <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
             </div>
             <Exit
-              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-all hover:scale-110"
+              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
               onClick={onClose}
             />
           </div>
@@ -329,7 +329,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
                       return (
                         <div
                           key={path}
-                          className={`hover:border-zzzYellow relative aspect-video w-48 shrink-0 cursor-pointer overflow-hidden rounded-2xl border-3 transition-all`}
+                          className={`hover:border-zzzYellow relative aspect-video w-48 shrink-0 cursor-pointer overflow-hidden rounded-2xl border-3 transition-colors`}
                           onDoubleClick={() => handleSaveWallpaper(filename)}
                         >
                           <img src={url} alt={filename} className="size-full object-cover" />
