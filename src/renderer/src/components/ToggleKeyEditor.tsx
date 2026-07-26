@@ -3,7 +3,7 @@ import clsx from "clsx";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useKeyBindingCapture } from "@renderer/hooks/useKeyBindingCapture";
-import { isNumericToggleState, withoutNoModifiersPrefix } from "@renderer/utils/threeDMigotoKeyBinding";
+import { isNumericToggleState } from "@renderer/utils/threeDMigotoKeyBinding";
 import ZzzToast from "@renderer/components/zzzToast";
 import {
   ChangeKeyBindingResult,
@@ -215,7 +215,7 @@ const ToggleKeyEditor = ({ modName }: { modName: string }) => {
                     ? t("modDetails.toggleListening")
                     : savingBinding
                       ? t("common.refreshing")
-                      : (toggle.binding && withoutNoModifiersPrefix(toggle.binding)) || t("modDetails.toggleUnbound")}
+                      : toggle.binding || t("modDetails.toggleUnbound")}
                 </button>
                 <input
                   value={toggle.state}

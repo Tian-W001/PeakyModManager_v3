@@ -20,7 +20,6 @@ const VIRTUAL_KEY_BY_CODE: Readonly<Record<string, string>> = Object.freeze({
   Delete: "VK_DELETE",
   End: "VK_END",
   Enter: "VK_RETURN",
-  Equal: "VK_OEM_PLUS",
   Escape: "VK_ESCAPE",
   Home: "VK_HOME",
   Insert: "VK_INSERT",
@@ -35,18 +34,22 @@ const VIRTUAL_KEY_BY_CODE: Readonly<Record<string, string>> = Object.freeze({
   Pause: "VK_PAUSE",
   PrintScreen: "VK_SNAPSHOT",
   ScrollLock: "VK_SCROLL",
-  Semicolon: "VK_OEM_1",
-  Comma: "VK_OEM_COMMA",
-  Minus: "VK_OEM_MINUS",
-  Period: "VK_OEM_PERIOD",
-  Slash: "VK_OEM_2",
-  Backquote: "VK_OEM_3",
-  BracketLeft: "VK_OEM_4",
-  Backslash: "VK_OEM_5",
-  BracketRight: "VK_OEM_6",
-  Quote: "VK_OEM_7",
   Space: "VK_SPACE",
   Tab: "VK_TAB",
+});
+
+const PRINTABLE_KEY_BY_CODE: Readonly<Record<string, string>> = Object.freeze({
+  Backquote: "`",
+  Backslash: "\\",
+  BracketLeft: "[",
+  BracketRight: "]",
+  Comma: ",",
+  Equal: "=",
+  Minus: "-",
+  Period: ".",
+  Quote: "'",
+  Semicolon: ";",
+  Slash: "/",
 });
 
 const MODIFIER_CODES = new Set([
@@ -66,6 +69,7 @@ const keyNameFromCode = (event: KeyboardChordEvent): string | undefined => {
   if (/^Digit[0-9]$/.test(event.code)) return event.code.slice(5);
   if (/^F(?:[1-9]|1[0-9]|2[0-4])$/.test(event.code)) return `VK_${event.code}`;
   if (/^Numpad[0-9]$/.test(event.code)) return `VK_NUMPAD${event.code.slice(6)}`;
+  if (PRINTABLE_KEY_BY_CODE[event.code]) return PRINTABLE_KEY_BY_CODE[event.code];
   if (VIRTUAL_KEY_BY_CODE[event.code]) return VIRTUAL_KEY_BY_CODE[event.code];
   if (/^[A-Za-z0-9]$/.test(event.key)) return event.key.toUpperCase();
   return undefined;
@@ -81,10 +85,6 @@ export const toThreeDMigotoKeyBinding = (event: KeyboardChordEvent): string | un
   if (event.altKey) modifiers.push("alt");
   if (event.metaKey) modifiers.push("win");
   return modifiers.length === 0 ? keyName : [...modifiers, keyName].join(" ");
-};
-
-export const withoutNoModifiersPrefix = (binding: string): string => {
-  return binding.replace(/^no_modifiers\s+/i, "");
 };
 
 export const isNumericToggleState = (value: string): boolean => {

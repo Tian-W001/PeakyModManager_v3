@@ -3,7 +3,6 @@ import {
   isNumericToggleState,
   KeyboardChordEvent,
   toThreeDMigotoKeyBinding,
-  withoutNoModifiersPrefix,
 } from "../src/renderer/src/utils/threeDMigotoKeyBinding";
 
 const keyboardEvent = (overrides: Partial<KeyboardChordEvent>): KeyboardChordEvent => ({
@@ -32,10 +31,10 @@ describe("3DMigoto keyboard binding conversion", () => {
     ).toBeUndefined();
   });
 
-  it("hides a legacy no_modifiers prefix when displaying a binding", () => {
-    expect(withoutNoModifiersPrefix("no_modifiers 1")).toBe("1");
-    expect(withoutNoModifiersPrefix("NO_MODIFIERS VK_UP")).toBe("VK_UP");
-    expect(withoutNoModifiersPrefix("ctrl 2")).toBe("ctrl 2");
+  it("uses literal characters for printable punctuation keys", () => {
+    expect(toThreeDMigotoKeyBinding(keyboardEvent({ code: "Semicolon", key: ";" }))).toBe(";");
+    expect(toThreeDMigotoKeyBinding(keyboardEvent({ code: "Equal", key: "=" }))).toBe("=");
+    expect(toThreeDMigotoKeyBinding(keyboardEvent({ code: "BracketLeft", key: "[", ctrlKey: true }))).toBe("ctrl [");
   });
 
   it("soft-validates finite numeric state text", () => {
