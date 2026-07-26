@@ -35,8 +35,13 @@ export interface ChangeToggleStateRequest {
   modName: string;
   iniPath: string;
   variableName: string;
-  value: number;
+  value: string;
 }
+
+export const isFiniteNumericToggleState = (value: string): boolean => {
+  const trimmed = value.trim();
+  return trimmed.length > 0 && Number.isFinite(Number(trimmed));
+};
 
 export interface ToggleStateSnapshot {
   variableName: string;
@@ -56,6 +61,31 @@ export type ConfigMutationResult<T> =
 
 export type ChangeKeyBindingResult = ConfigMutationResult<KeyBindingSnapshot>;
 export type ChangeToggleStateResult = ConfigMutationResult<ToggleStateSnapshot>;
+
+export interface ModToggleControl {
+  id: string;
+  iniPath: string;
+  variableName: string;
+  state: string;
+  keyBindingId?: string;
+  binding?: string;
+}
+
+export interface ModToggleControlWarning {
+  iniPath: string;
+  message: string;
+}
+
+export type GetModToggleControlsResult =
+  | {
+      ok: true;
+      toggles: ModToggleControl[];
+      warnings: ModToggleControlWarning[];
+    }
+  | (ConfigOperationFailure & {
+      toggles: ModToggleControl[];
+      warnings: ModToggleControlWarning[];
+    });
 
 export interface SyncedToggleChange {
   iniPath: string;

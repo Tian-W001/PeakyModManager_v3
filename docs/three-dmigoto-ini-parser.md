@@ -132,6 +132,11 @@ console.log(body.resources[0].target, body.resources[0].source);
 
 const hairState = modContext.getPersistentVariable("hair");
 console.log(hairState?.rawValue); // global persist $hair 的默认值
+
+for (const constant of modContext.getAllPersistConstants()) {
+  const binding = modContext.getKeyBindingOf(constant);
+  console.log(constant.name, constant.rawValue, binding?.key);
+}
 ```
 
 查询层的命名规则：
@@ -143,6 +148,9 @@ console.log(hairState?.rawValue); // global persist $hair 的默认值
 - `resources`/`resourceBindings` 是同一个有序资源绑定列表，每项保留 `pre/post`、`ref/copy`、
   `unless_null` 和外层条件分支。
 - `getKeyBinding()` 与 `getTextureOverride()` 提供不区分大小写的查询。
+- `getAllPersistConstants()` 按文档顺序返回全部 `global persist` 声明。
+- `getKeyBindingOf()` 从 persistent constant 的变量赋值反查首个 `[Key*]` section；多个 constant
+  可以返回同一个 key binding。
 - 原始节点分别保存在 `.section`、`.line` 和 `modContext.document`，需要安全编辑时不必重新定位文本。
 - `persistentVariables` 索引 `global persist` 声明，并区分 Mod 默认值与 `d3dx_user.ini` 中的运行时持久值。
 
@@ -172,7 +180,7 @@ const changedKeys = replaceThreeDMigotoSectionPropertyValues(document, keySectio
 
 1. 解析 `[Include]` 并构建跨文件、命名空间感知的符号图。
 2. 从 XXMI 的命令注册表扩展各 key/value 的专用语义与类型检查。
-3. 增加节点级修改器和局部打印器，保持未编辑区域的字节级稳定。
+3. 为更多节点类型增加局部修改器，继续保持未编辑区域的字节级稳定。
 4. 为 `ShaderRegex.*` 建立独立的原始块/正则子语言节点。
 5. 以真实 ZZMI 包建立固定语料与版本差异测试，避免 SlotFix 升级造成回归。
 

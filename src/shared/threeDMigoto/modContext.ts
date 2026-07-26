@@ -76,10 +76,13 @@ export interface ThreeDMigotoModContext {
   diagnostics: readonly IniDiagnostic[];
   keyBindings: Readonly<Record<string, KeyBindingContext>>;
   toggleKeys: Readonly<Record<string, KeyBindingContext>>;
+  keyBindingDeclarations: readonly KeyBindingContext[];
   persistentVariables: Readonly<Record<string, PersistentVariableContext>>;
   persistentVariableDeclarations: readonly PersistentVariableContext[];
   textureOverrides: Readonly<Record<string, TextureOverrideContext>>;
+  getAllPersistConstants: () => readonly PersistentVariableContext[];
   getKeyBinding: (name: string) => KeyBindingContext | undefined;
+  getKeyBindingOf: (constant: string | PersistentVariableContext) => KeyBindingContext | undefined;
   getPersistentVariable: (name: string) => PersistentVariableContext | undefined;
   getTextureOverride: (name: string) => TextureOverrideContext | undefined;
 }
@@ -297,9 +300,11 @@ export const createThreeDMigotoModContext = (document: IniDocument): ThreeDMigot
   const diagnostics = [...document.diagnostics];
   const keyBindings: Record<string, KeyBindingContext> = Object.create(null);
   const toggleKeys: Record<string, KeyBindingContext> = Object.create(null);
+  const keyBindingDeclarations: KeyBindingContext[] = [];
   const persistentVariables: Record<string, PersistentVariableContext> = Object.create(null);
   const textureOverrides: Record<string, TextureOverrideContext> = Object.create(null);
   const keyLookup = new Map<string, KeyBindingContext>();
+  const variableBindingLookup = new Map<string, KeyBindingContext>();
   const variableLookup = new Map<string, PersistentVariableContext>();
   const textureLookup = new Map<string, TextureOverrideContext>();
   const persistentVariableDeclarations = freezeArray(buildPersistentVariables(document));
@@ -312,12 +317,18 @@ export const createThreeDMigotoModContext = (document: IniDocument): ThreeDMigot
   for (const section of document.sections) {
     if (section.family === "key") {
       const binding = buildKeyBinding(section, diagnostics);
+      keyBindingDeclarations.push(binding);
       const lookupNames = [binding.id, binding.sectionName];
       if (!(binding.id in keyBindings)) keyBindings[binding.id] = binding;
       if (isToggleLike(binding) && !(binding.id in toggleKeys)) toggleKeys[binding.id] = binding;
       for (const name of lookupNames) {
         const normalized = name.toLowerCase();
         if (!keyLookup.has(normalized)) keyLookup.set(normalized, binding);
+      }
+      for (const variable of binding.variables) {
+        if (!variableBindingLookup.has(variable.normalizedTarget)) {
+          variableBindingLookup.set(variable.normalizedTarget, binding);
+        }
       }
       continue;
     }
@@ -335,12 +346,21 @@ export const createThreeDMigotoModContext = (document: IniDocument): ThreeDMigot
     diagnostics: freezeArray(diagnostics),
     keyBindings: Object.freeze(keyBindings),
     toggleKeys: Object.freeze(toggleKeys),
+    keyBindingDeclarations: freezeArray(keyBindingDeclarations),
     persistentVariables: Object.freeze(persistentVariables),
     persistentVariableDeclarations,
     textureOverrides: Object.freeze(textureOverrides),
+    getAllPersistConstants: () => persistentVariableDeclarations,
     getKeyBinding: (name: string) => keyLookup.get(name.toLowerCase()),
-    getPersistentVariable: (name: string) =>
-      variableLookup.get((name.startsWith("$") ? name : `$${name}`).toLowerCase()),
+    getKeyBindingOf: (constant: string | PersistentVariableContext) => {
+      const name = (typeof constant === "string" ? constant : constant.name).trim();
+      const normalized = (name.startsWith("$") ? name : `$${name}`).toLowerCase();
+      return variableBindingLookup.get(normalized);
+    },
+    getPersistentVariable: (name: string) => {
+      const trimmed = name.trim();
+      return variableLookup.get((trimmed.startsWith("$") ? trimmed : `$${trimmed}`).toLowerCase());
+    },
     getTextureOverride: (name: string) => textureLookup.get(name.toLowerCase()),
   });
 };

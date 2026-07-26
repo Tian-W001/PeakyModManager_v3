@@ -4,6 +4,7 @@ import {
   changeKeyBinding,
   changeToggleState,
   findAllTogglesInD3dxUser,
+  getModToggleControls,
   IniSyncDeps,
   syncToggles,
 } from "../src/main/domain/iniSync";
@@ -47,6 +48,10 @@ const makeFileSystem = (
       writes.push({ path: filePath, content });
       files.set(filePath, content);
     },
+    listIniFiles: async (rootPath: string) =>
+      [...files.keys()]
+        .filter((filePath) => filePath.startsWith(`${rootPath}/`) && path.posix.extname(filePath) === ".ini")
+        .map((filePath) => path.posix.relative(rootPath, filePath)),
     resolveInside,
     isPathInside,
     realpath: async (filePath: string) => filePath,
@@ -167,6 +172,29 @@ describe("changeKeyBinding", () => {
     expect(fileSystem.writes).toEqual([]);
   });
 
+  it("can edit a binding when an unrelated persistent state has parser diagnostics", async () => {
+    const fileSystem = makeFileSystem({
+      "/library/TestMod/Part.ini":
+        "[Constants]\n" + "global persist $hair = not numeric\n" + "[KeyHair]\n" + "key = H\n" + "$hair = 0, 1\n",
+    });
+
+    const result = await changeKeyBinding(
+      {
+        modName: "TestMod",
+        iniPath: "Part.ini",
+        keyBindingId: "KeyHair",
+        keys: ["ctrl 2"],
+      },
+      fileSystem.deps
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      changed: true,
+      after: { keys: ["ctrl 2"] },
+    });
+  });
+
   it("rejects paths outside the selected Mod", async () => {
     const fileSystem = makeFileSystem();
     const result = await changeKeyBinding(
@@ -183,6 +211,51 @@ describe("changeKeyBinding", () => {
   });
 });
 
+describe("getModToggleControls", () => {
+  it("lists persistent constants and resolves their first assigning key binding", async () => {
+    const fileSystem = makeFileSystem({
+      "/library/TestMod/Part.ini":
+        "[Constants]\n" +
+        "global persist $hair = 0\n" +
+        "global persist $face = invalid\n" +
+        "[KeyAppearance]\n" +
+        "key = H\n" +
+        "key = J\n" +
+        "$hair = 0, 1\n" +
+        "$face = 0, 1\n",
+      "/library/TestMod/Nested/Other.ini": "[Constants]\nglobal persist $shoes = 2\n",
+    });
+
+    const result = await getModToggleControls("TestMod", fileSystem.deps);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error(result.message);
+    expect(result.toggles).toEqual([
+      expect.objectContaining({
+        iniPath: "Nested/Other.ini",
+        variableName: "$shoes",
+        state: "2",
+        keyBindingId: undefined,
+        binding: undefined,
+      }),
+      expect.objectContaining({
+        iniPath: "Part.ini",
+        variableName: "$hair",
+        state: "0",
+        keyBindingId: "KeyAppearance",
+        binding: "H",
+      }),
+      expect.objectContaining({
+        iniPath: "Part.ini",
+        variableName: "$face",
+        state: "invalid",
+        keyBindingId: "KeyAppearance",
+        binding: "H",
+      }),
+    ]);
+  });
+});
+
 describe("changeToggleState", () => {
   it("changes only the Mod INI default persistent state", async () => {
     const fileSystem = makeFileSystem({
@@ -195,7 +268,7 @@ describe("changeToggleState", () => {
         modName: "TestMod",
         iniPath: "Part.ini",
         variableName: "hair",
-        value: -1.5,
+        value: "-1.5",
       },
       fileSystem.deps
     );
@@ -210,7 +283,7 @@ describe("changeToggleState", () => {
     expect(fileSystem.files.get("/d3dx_user.ini")).toBe("$/mods/TestMod/Part.ini/hair = 5\n");
   });
 
-  it("rejects non-finite values and ambiguous declarations", async () => {
+  it("rejects non-numeric state text and ambiguous declarations", async () => {
     const invalidFileSystem = makeFileSystem({
       "/library/TestMod/Part.ini": "[Constants]\nglobal persist $hair = 0\n",
     });
@@ -220,7 +293,19 @@ describe("changeToggleState", () => {
           modName: "TestMod",
           iniPath: "Part.ini",
           variableName: "hair",
-          value: Number.NaN,
+          value: "not numeric",
+        },
+        invalidFileSystem.deps
+      )
+    ).resolves.toMatchObject({ ok: false, code: "invalid-request" });
+
+    await expect(
+      changeToggleState(
+        {
+          modName: "TestMod",
+          iniPath: "Part.ini",
+          variableName: "hair",
+          value: "1\nrun = CommandListInjected",
         },
         invalidFileSystem.deps
       )
@@ -235,7 +320,7 @@ describe("changeToggleState", () => {
           modName: "TestMod",
           iniPath: "Part.ini",
           variableName: "$hair",
-          value: 2,
+          value: "2",
         },
         ambiguousFileSystem.deps
       )
@@ -260,7 +345,7 @@ describe("changeToggleState", () => {
         modName: "TestMod",
         iniPath: "Part.ini",
         variableName: "hair",
-        value: 1,
+        value: "1",
       },
       fileSystem.deps
     );

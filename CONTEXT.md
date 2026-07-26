@@ -1,6 +1,6 @@
 # Mod Configuration
 
-This context describes the 3DMigoto configuration concepts that PeakyModManager reads and may eventually edit.
+This context describes the 3DMigoto configuration concepts that PeakyModManager reads and edits.
 
 ## Language
 
@@ -28,6 +28,15 @@ _Avoid_: Toggle key
 **Variable assignment**:
 A value or value sequence written by a key binding or command to a named variable such as `$hair`.
 _Avoid_: Constant
+
+**Persistent constant**:
+A variable declared with `global persist $name` whose default state belongs to the Mod source while its runtime
+state may be persisted separately.
+_Avoid_: Toggle, current state
+
+**Toggle control**:
+An editable view of one persistent constant, its default state, and the key binding that assigns that constant.
+_Avoid_: Key section, toggle key
 
 **Default persistent state**:
 The initial value declared by `global persist $name` in a Mod's source INI.

@@ -8,7 +8,10 @@ import {
   ConfigOperationFailure,
   createThreeDMigotoPropertyValueEdit,
   ExpressionNode,
+  GetModToggleControlsResult,
+  isFiniteNumericToggleState,
   KeyBindingSnapshot,
+  ModToggleControl,
   parseThreeDMigotoExpression,
   parseThreeDMigotoIni,
   replaceThreeDMigotoPropertyValue,
@@ -26,6 +29,7 @@ export interface IniSyncDeps {
   pathExists: (path: string) => Promise<boolean>;
   readFile: (path: string, encoding: string) => Promise<string>;
   replaceFile: (path: string, content: string) => Promise<void>;
+  listIniFiles: (rootPath: string) => Promise<string[]>;
   resolveInside: (basePath: string, ...segments: string[]) => string | null;
   isPathInside: (basePath: string, targetPath: string) => boolean;
   realpath: (path: string) => Promise<string>;
@@ -267,6 +271,74 @@ const safelyReplaceSource = async (
   }
 };
 
+export const getModToggleControls = async (modName: string, deps: IniSyncDeps): Promise<GetModToggleControlsResult> => {
+  if (typeof modName !== "string") {
+    return {
+      ...failure("invalid-request", "Mod name must be a string"),
+      toggles: [],
+      warnings: [],
+    };
+  }
+
+  const root = await resolveModRoot(modName, deps);
+  if (!root.ok) return { ...root, toggles: [], warnings: [] };
+
+  let iniPaths: string[];
+  try {
+    iniPaths = await deps.listIniFiles(root.modPath);
+  } catch (error) {
+    return {
+      ...failure("internal-error", `Failed to scan Mod INI files: ${String(error)}`),
+      toggles: [],
+      warnings: [],
+    };
+  }
+
+  const toggles: ModToggleControl[] = [];
+  const warnings: GetModToggleControlsResult["warnings"] = [];
+  const orderedPaths = [...iniPaths].sort((left, right) =>
+    left.localeCompare(right, undefined, { sensitivity: "base" })
+  );
+
+  for (const iniPath of orderedPaths) {
+    const target = await resolveIniTarget(root, iniPath, deps);
+    if (!target.ok) {
+      warnings.push({ iniPath, message: target.message });
+      continue;
+    }
+
+    let source: string;
+    try {
+      source = await deps.readFile(target.fullPath, "utf-8");
+    } catch (error) {
+      warnings.push({ iniPath: target.iniPath, message: `Failed to read INI file: ${String(error)}` });
+      continue;
+    }
+
+    const context = threeDMigotoParser.parse(source);
+    if (context.diagnostics.some((diagnostic) => diagnostic.severity === "error")) {
+      warnings.push({
+        iniPath: target.iniPath,
+        message: `INI file "${target.iniPath}" contains parser diagnostics`,
+      });
+    }
+
+    for (const constant of context.getAllPersistConstants()) {
+      const keyBinding = context.getKeyBindingOf(constant);
+      toggles.push({
+        id: `${target.iniPath}:${constant.line.line}:${constant.normalizedName}`,
+        iniPath: target.iniPath,
+        variableName: constant.name,
+        state: constant.rawValue,
+        keyBindingId: keyBinding?.sectionName,
+        binding: keyBinding?.keys[0],
+      });
+    }
+  }
+
+  return { ok: true, toggles, warnings };
+};
+
 export const changeKeyBinding = async (
   request: ChangeKeyBindingRequest,
   deps: IniSyncDeps
@@ -293,9 +365,6 @@ export const changeKeyBinding = async (
   return withFileLock(target.fullPath, async () => {
     const source = await deps.readFile(target.fullPath, "utf-8");
     const context = threeDMigotoParser.parse(source);
-    if (context.diagnostics.some((diagnostic) => diagnostic.severity === "error")) {
-      return failure("parse-error", `INI file "${target.iniPath}" contains blocking parse errors`);
-    }
 
     const keyBindingId = request.keyBindingId.trim();
     const sections = keyBindingSections(source, keyBindingId);
@@ -338,7 +407,6 @@ export const changeKeyBinding = async (
     const verified = threeDMigotoParser.parse(nextSource);
     const verifiedBinding = verified.getKeyBinding(keyBindingId);
     if (
-      verified.diagnostics.some((diagnostic) => diagnostic.severity === "error") ||
       !verifiedBinding ||
       JSON.stringify([...verifiedBinding.keys]) !== JSON.stringify(after.keys) ||
       JSON.stringify([...verifiedBinding.backKeys]) !== JSON.stringify(after.backKeys)
@@ -368,10 +436,12 @@ export const changeToggleState = async (
     typeof request.modName !== "string" ||
     typeof request.iniPath !== "string" ||
     typeof request.variableName !== "string" ||
-    !Number.isFinite(request.value) ||
+    typeof request.value !== "string" ||
+    /[\r\n\0]/.test(request.value) ||
+    !isFiniteNumericToggleState(request.value) ||
     !request.variableName.trim()
   ) {
-    return failure("invalid-request", "Toggle state must be a finite number and variable name must not be empty");
+    return failure("invalid-request", "Toggle state must be a finite numeric value");
   }
 
   const root = await resolveModRoot(request.modName, deps);
@@ -382,9 +452,6 @@ export const changeToggleState = async (
   return withFileLock(target.fullPath, async () => {
     const source = await deps.readFile(target.fullPath, "utf-8");
     const context = threeDMigotoParser.parse(source);
-    if (context.diagnostics.some((diagnostic) => diagnostic.severity === "error")) {
-      return failure("parse-error", `INI file "${target.iniPath}" contains blocking parse errors`);
-    }
 
     const variableName = normalizeVariableName(request.variableName);
     const declarations = context.persistentVariableDeclarations.filter(
@@ -398,10 +465,10 @@ export const changeToggleState = async (
     }
 
     const declaration = declarations[0];
-    const nextValue = String(request.value);
+    const nextValue = request.value.trim();
     const before = { variableName: declaration.name, value: declaration.rawValue };
     const after = { variableName: declaration.name, value: nextValue };
-    if (numericExpressionValue(declaration.expression) === request.value) {
+    if (declaration.rawValue === nextValue) {
       return {
         ok: true,
         changed: false,
@@ -414,12 +481,10 @@ export const changeToggleState = async (
 
     const nextSource = replaceThreeDMigotoPropertyValue(context.document, declaration.line, nextValue);
     const verified = threeDMigotoParser.parse(nextSource);
-    const verifiedVariable = verified.getPersistentVariable(variableName);
-    if (
-      verified.diagnostics.some((diagnostic) => diagnostic.severity === "error") ||
-      !verifiedVariable ||
-      numericExpressionValue(verifiedVariable.expression) !== request.value
-    ) {
+    const verifiedVariables = verified.persistentVariableDeclarations.filter(
+      (variable) => variable.normalizedName === variableName.toLowerCase()
+    );
+    if (verifiedVariables.length !== 1 || verifiedVariables[0].rawValue !== nextValue) {
       return failure("parse-error", "Edited toggle state did not pass parser verification");
     }
 

@@ -202,6 +202,9 @@ describe("3DMigoto parser", () => {
       target: "$hair",
       values: ["0", "1", "2"],
     });
+    expect(modContext.getAllPersistConstants().map((constant) => constant.name)).toEqual(["$hair", "$face"]);
+    expect(modContext.getKeyBindingOf("$hair")).toBe(hair);
+    expect(modContext.getKeyBindingOf(modContext.getPersistentVariable("face")!)).toBe(face);
     expect(hair.condition?.kind).toBe("binary");
     expect(face.key).toBe("VK_F2");
     expect(shoes.variables[0].target).toBe("$shoes");

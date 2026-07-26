@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import { randomUUID } from "crypto";
-import { changeKeyBinding, changeToggleState, syncToggles } from "../domain/iniSync";
+import { changeKeyBinding, changeToggleState, getModToggleControls, syncToggles } from "../domain/iniSync";
 import { getLibraryPath, getD3dxUserPath } from "../services/storeService";
 import { escapeRegExp, isPathInside, resolveInside } from "../utils";
 import { IniSyncDeps } from "../domain/iniSync";
@@ -18,12 +18,31 @@ const replaceFile = async (filePath: string, content: string): Promise<void> => 
   }
 };
 
+const listIniFiles = async (rootPath: string): Promise<string[]> => {
+  const iniPaths: string[] = [];
+  const visit = async (directoryPath: string): Promise<void> => {
+    const entries = await fs.readdir(directoryPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const entryPath = path.join(directoryPath, entry.name);
+      if (entry.isDirectory()) {
+        await visit(entryPath);
+      } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === ".ini") {
+        iniPaths.push(path.relative(rootPath, entryPath).replace(/\\/g, "/"));
+      }
+    }
+  };
+
+  await visit(rootPath);
+  return iniPaths;
+};
+
 const deps: IniSyncDeps = {
   getD3dxUserPath,
   getLibraryPath,
   pathExists: (p: string) => fs.pathExists(p),
   readFile: (p: string, encoding: string) => fs.readFile(p, encoding as BufferEncoding),
   replaceFile,
+  listIniFiles,
   resolveInside,
   isPathInside,
   realpath: (p: string) => fs.realpath(p),
@@ -32,6 +51,21 @@ const deps: IniSyncDeps = {
 };
 
 export const registerIniSyncHandlers = () => {
+  ipcMain.handle("get-mod-toggle-controls", async (_event, modName: string) => {
+    try {
+      return await getModToggleControls(modName, deps);
+    } catch (error) {
+      console.error(`Error reading 3DMigoto toggles for mod ${modName}:`, error);
+      return {
+        ok: false,
+        code: "internal-error",
+        message: String(error),
+        toggles: [],
+        warnings: [],
+      };
+    }
+  });
+
   ipcMain.handle("sync-toggles", async (_event, modName: string) => {
     try {
       return await syncToggles(modName, deps);
