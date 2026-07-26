@@ -129,6 +129,9 @@ console.log(modContext.toggleKeys.shoes.variables[0].target); // "$shoes"
 const body = modContext.textureOverrides.TextureOverrideSunnaBodyA;
 console.log(body.hash);
 console.log(body.resources[0].target, body.resources[0].source);
+
+const hairState = modContext.getPersistentVariable("hair");
+console.log(hairState?.rawValue); // global persist $hair 的默认值
 ```
 
 查询层的命名规则：
@@ -141,6 +144,19 @@ console.log(body.resources[0].target, body.resources[0].source);
   `unless_null` 和外层条件分支。
 - `getKeyBinding()` 与 `getTextureOverride()` 提供不区分大小写的查询。
 - 原始节点分别保存在 `.section`、`.line` 和 `modContext.document`，需要安全编辑时不必重新定位文本。
+- `persistentVariables` 索引 `global persist` 声明，并区分 Mod 默认值与 `d3dx_user.ini` 中的运行时持久值。
+
+无损编辑器按节点范围生成最小文本修改：
+
+```ts
+import { replaceThreeDMigotoPropertyValue, replaceThreeDMigotoSectionPropertyValues } from "@shared/threeDMigoto";
+
+const changedState = replaceThreeDMigotoPropertyValue(document, variable.line, "-1");
+const changedKeys = replaceThreeDMigotoSectionPropertyValues(document, keySection, "key", ["H", "VK_F2"]);
+```
+
+属性值编辑保留键名、缩进、`=` 周围空白、行尾空白和原换行符。重复属性编辑支持增加、减少和删除
+`key`/`back` 行，调用方应在写盘前重新解析结果。
 
 重要的数据不变量：
 

@@ -6,6 +6,8 @@ import {
   parseThreeDMigotoExpression,
   parseThreeDMigotoIni,
   printThreeDMigotoIni,
+  replaceThreeDMigotoPropertyValue,
+  replaceThreeDMigotoSectionPropertyValues,
   threeDMigotoParser,
 } from "../src/shared/threeDMigoto";
 
@@ -224,5 +226,48 @@ describe("3DMigoto parser", () => {
     });
     expect(textureOverride.resources[0].guards[0].condition?.kind).toBe("binary");
     expect(modContext.getTextureOverride("textureoverridesunnabodya")).toBe(textureOverride);
+  });
+
+  it("indexes persistent variables and edits values and repeated key properties losslessly", () => {
+    const source =
+      "\uFEFF[Constants]\r\n" +
+      "  Global Persist $Hair  =  1.0  \r\n" +
+      "\r\n" +
+      "[KeyHair]\r\n" +
+      "  key  = H  \r\n" +
+      "  key = J\r\n" +
+      "  back = K\r\n" +
+      "; keep this comment\r\n" +
+      "$Hair = 0, 1\r\n";
+    const context = threeDMigotoParser.parse(source);
+    const variable = context.getPersistentVariable("hair");
+
+    expect(variable).toMatchObject({
+      id: "Hair",
+      name: "$Hair",
+      rawValue: "1.0",
+    });
+    expect(context.persistentVariables.Hair).toBe(variable);
+
+    const stateChanged = replaceThreeDMigotoPropertyValue(context.document, variable!.line, "-1.5");
+    expect(stateChanged).toContain("  Global Persist $Hair  =  -1.5  \r\n");
+
+    const stateContext = threeDMigotoParser.parse(stateChanged);
+    const keySection = stateContext.document.sections.find((section) => section.name === "KeyHair")!;
+    const keysChanged = replaceThreeDMigotoSectionPropertyValues(stateContext.document, keySection, "key", [
+      "VK_F1",
+      "VK_F2",
+      "VK_F3",
+    ]);
+    const keysContext = threeDMigotoParser.parse(keysChanged);
+    const updatedSection = keysContext.document.sections.find((section) => section.name === "KeyHair")!;
+    const backRemoved = replaceThreeDMigotoSectionPropertyValues(keysContext.document, updatedSection, "back", []);
+    const updated = threeDMigotoParser.parse(backRemoved);
+
+    expect(updated.getKeyBinding("hair")?.keys).toEqual(["VK_F1", "VK_F2", "VK_F3"]);
+    expect(updated.getKeyBinding("hair")?.backKeys).toEqual([]);
+    expect(backRemoved).toContain("; keep this comment\r\n");
+    expect(backRemoved).toContain("  key  = VK_F3  \r\n");
+    expect(updated.diagnostics).toEqual([]);
   });
 });

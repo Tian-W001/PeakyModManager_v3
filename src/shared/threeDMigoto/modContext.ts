@@ -35,6 +35,16 @@ export interface KeyBindingContext {
   section: IniSectionNode;
 }
 
+export interface PersistentVariableContext {
+  id: string;
+  name: string;
+  normalizedName: string;
+  rawValue: string;
+  expression?: ExpressionNode;
+  line: PropertyLineNode;
+  section: IniSectionNode;
+}
+
 export interface ResourceBindingGuard {
   keyword: CommandIfBranch["keyword"];
   condition?: ExpressionNode;
@@ -66,8 +76,11 @@ export interface ThreeDMigotoModContext {
   diagnostics: readonly IniDiagnostic[];
   keyBindings: Readonly<Record<string, KeyBindingContext>>;
   toggleKeys: Readonly<Record<string, KeyBindingContext>>;
+  persistentVariables: Readonly<Record<string, PersistentVariableContext>>;
+  persistentVariableDeclarations: readonly PersistentVariableContext[];
   textureOverrides: Readonly<Record<string, TextureOverrideContext>>;
   getKeyBinding: (name: string) => KeyBindingContext | undefined;
+  getPersistentVariable: (name: string) => PersistentVariableContext | undefined;
   getTextureOverride: (name: string) => TextureOverrideContext | undefined;
 }
 
@@ -188,6 +201,38 @@ const buildKeyBinding = (section: IniSectionNode, diagnostics: IniDiagnostic[]):
   });
 };
 
+const buildPersistentVariables = (document: IniDocument): PersistentVariableContext[] => {
+  const variables: PersistentVariableContext[] = [];
+
+  for (const section of document.sections) {
+    for (const line of section.body) {
+      if (line.kind !== "property") continue;
+      const match = line.key.match(/^global[ \t]+persist[ \t]+(\$[^ \t]+)$/i);
+      if (!match) continue;
+
+      const parsed = parseThreeDMigotoExpression(line.value, {
+        offset: line.range.start.offset + valueOffset(line),
+        line: line.line,
+        column: valueOffset(line) + 1,
+      });
+      const name = match[1];
+      variables.push(
+        Object.freeze({
+          id: name.slice(1),
+          name,
+          normalizedName: name.toLowerCase(),
+          rawValue: line.value,
+          expression: parsed.expression,
+          line,
+          section,
+        })
+      );
+    }
+  }
+
+  return variables;
+};
+
 const collectResourceBindings = (
   statements: readonly CommandStatement[],
   guards: readonly ResourceBindingGuard[] = []
@@ -252,9 +297,17 @@ export const createThreeDMigotoModContext = (document: IniDocument): ThreeDMigot
   const diagnostics = [...document.diagnostics];
   const keyBindings: Record<string, KeyBindingContext> = Object.create(null);
   const toggleKeys: Record<string, KeyBindingContext> = Object.create(null);
+  const persistentVariables: Record<string, PersistentVariableContext> = Object.create(null);
   const textureOverrides: Record<string, TextureOverrideContext> = Object.create(null);
   const keyLookup = new Map<string, KeyBindingContext>();
+  const variableLookup = new Map<string, PersistentVariableContext>();
   const textureLookup = new Map<string, TextureOverrideContext>();
+  const persistentVariableDeclarations = freezeArray(buildPersistentVariables(document));
+
+  for (const variable of persistentVariableDeclarations) {
+    if (!(variable.id in persistentVariables)) persistentVariables[variable.id] = variable;
+    if (!variableLookup.has(variable.normalizedName)) variableLookup.set(variable.normalizedName, variable);
+  }
 
   for (const section of document.sections) {
     if (section.family === "key") {
@@ -282,8 +335,12 @@ export const createThreeDMigotoModContext = (document: IniDocument): ThreeDMigot
     diagnostics: freezeArray(diagnostics),
     keyBindings: Object.freeze(keyBindings),
     toggleKeys: Object.freeze(toggleKeys),
+    persistentVariables: Object.freeze(persistentVariables),
+    persistentVariableDeclarations,
     textureOverrides: Object.freeze(textureOverrides),
     getKeyBinding: (name: string) => keyLookup.get(name.toLowerCase()),
+    getPersistentVariable: (name: string) =>
+      variableLookup.get((name.startsWith("$") ? name : `$${name}`).toLowerCase()),
     getTextureOverride: (name: string) => textureLookup.get(name.toLowerCase()),
   });
 };

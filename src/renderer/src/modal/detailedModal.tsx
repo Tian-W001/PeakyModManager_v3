@@ -18,6 +18,7 @@ import Agent from "@renderer/assets/icons/Agent.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
+import { SyncTogglesResult } from "@shared/threeDMigoto";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
@@ -180,11 +181,8 @@ const DetailedModal = ({
       toast.custom(() => <ZzzToast message={t("modDetails.syncToggleNoD3dxPath")} />, { duration: 4000 });
       return;
     }
-    const changedToggles: { toggleName: string; newValue: string }[] | null = await window.electron.ipcRenderer.invoke(
-      "sync-toggles",
-      modInfo.name
-    );
-    if (changedToggles === null) {
+    const result = (await window.electron.ipcRenderer.invoke("sync-toggles", modInfo.name)) as SyncTogglesResult;
+    if (!result?.ok) {
       showAlert(
         t("modDetails.syncToggleFailTitle"),
         undefined,
@@ -192,11 +190,12 @@ const DetailedModal = ({
           {t("common.confirm")}
         </ZzzButton>
       );
-    } else if (changedToggles.length > 0) {
+    } else if (result.changes.length > 0) {
+      const changedToggles = result.changes;
       const toggleCount = changedToggles.length;
       showAlert(
         t("modDetails.syncToggleSuccessTitle", { count: toggleCount }),
-        changedToggles.map(({ toggleName, newValue }) => `${toggleName}=${newValue}`).join("\n"),
+        changedToggles.map(({ variableName, newValue }) => `${variableName}=${newValue}`).join("\n"),
         <ZzzButton type="Ok" onClick={hideAlert}>
           {t("common.confirm")}
         </ZzzButton>

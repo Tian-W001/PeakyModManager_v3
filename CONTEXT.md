@@ -29,6 +29,14 @@ _Avoid_: Toggle key
 A value or value sequence written by a key binding or command to a named variable such as `$hair`.
 _Avoid_: Constant
 
+**Default persistent state**:
+The initial value declared by `global persist $name` in a Mod's source INI.
+_Avoid_: Current toggle state
+
+**Runtime persistent state**:
+The last value saved by 3DMigoto in `d3dx_user.ini`, which may override the Mod's default after loading.
+_Avoid_: Toggle default
+
 **Texture override**:
 A `[TextureOverride*]` section combining match metadata with an ordered command list that may bind resources.
 _Avoid_: Texture, resource list
