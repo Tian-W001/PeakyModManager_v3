@@ -18,6 +18,8 @@ import Agent from "@renderer/assets/icons/Agent.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
+import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
+import { SyncTogglesResult } from "@shared/threeDMigoto";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
@@ -180,11 +182,8 @@ const DetailedModal = ({
       toast.custom(() => <ZzzToast message={t("modDetails.syncToggleNoD3dxPath")} />, { duration: 4000 });
       return;
     }
-    const changedToggles: { toggleName: string; newValue: string }[] | null = await window.electron.ipcRenderer.invoke(
-      "sync-toggles",
-      modInfo.name
-    );
-    if (changedToggles === null) {
+    const result = (await window.electron.ipcRenderer.invoke("sync-toggles", modInfo.name)) as SyncTogglesResult;
+    if (!result?.ok) {
       showAlert(
         t("modDetails.syncToggleFailTitle"),
         undefined,
@@ -192,11 +191,12 @@ const DetailedModal = ({
           {t("common.confirm")}
         </ZzzButton>
       );
-    } else if (changedToggles.length > 0) {
+    } else if (result.changes.length > 0) {
+      const changedToggles = result.changes;
       const toggleCount = changedToggles.length;
       showAlert(
         t("modDetails.syncToggleSuccessTitle", { count: toggleCount }),
-        changedToggles.map(({ toggleName, newValue }) => `${toggleName}=${newValue}`).join("\n"),
+        changedToggles.map(({ variableName, newValue }) => `${variableName}=${newValue}`).join("\n"),
         <ZzzButton type="Ok" onClick={hideAlert}>
           {t("common.confirm")}
         </ZzzButton>
@@ -347,10 +347,11 @@ const DetailedModal = ({
                   <img src={Locate} alt="Locate" className="h-full" />
                 </a>
               </div>
+              <ToggleKeyEditor modName={modInfo.name} />
               <textarea
                 value={localModInfo.description}
                 placeholder={t("modDetails.description")}
-                className="no-scrollbar field-sizing-content min-h-20 w-full resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2]"
+                className="no-scrollbar field-sizing-content min-h-20 w-full flex-1 resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2] transition-[flex-grow,min-height] duration-300 ease-out peer-focus-within/toggles:min-h-10 peer-focus-within/toggles:grow-0 peer-hover/toggles:min-h-10 peer-hover/toggles:grow-0"
                 onChange={(e) => handleModInfoChange("description", e.target.value)}
               />
             </div>
