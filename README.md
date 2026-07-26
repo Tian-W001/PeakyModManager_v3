@@ -12,6 +12,8 @@ A lightweight mod manager for **Zenless Zone Zero**.
   Clean, **Zenless Zone Zero–style** UI design.
 - **Backup & Restore**
   Safely back up and restore preset configurations.
+- **3DMigoto Toggle Editing**
+  Inspect and edit persistent toggle states and key bindings directly in supported Mod INI files.
 
 ## Getting Started
 
@@ -25,6 +27,9 @@ Before using PeakyModManager, you need to configure the required paths:
 3. **Target Path**
    Select the game's mod folder where mods will be installed.
    - For **ZZMI users**, this should be `ZZMI/ZZMI/Mods`.
+4. **d3dx_user.ini Path** (optional)
+   Select ZZMI's `d3dx_user.ini` if you want to use **Sync Toggles**. This is not required for editing a Mod's
+   own Toggle states or key bindings.
 
 ---
 
@@ -83,6 +88,23 @@ Before using PeakyModManager, you need to configure the required paths:
 
 ---
 
+### Editing 3DMigoto Toggles
+
+When a Mod contains `global persist` constants, its edit modal includes a **Toggles** row:
+
+- The left column shows the persistent constant, such as `$hair`.
+- Click the current key binding, then press a key combination to replace it. Press `Esc` to cancel listening.
+- Edit the numeric state in the right column. State and binding changes are saved immediately to the Mod's INI.
+- Empty states return to their previously saved value, and non-numeric states are not written.
+
+These edits only change files inside the Mod. They never modify `d3dx_user.ini`.
+
+**Sync Toggles** is a separate, one-way operation. It reads runtime persistent values recorded in the configured
+`d3dx_user.ini` and writes matching values back to the Mod's INI files. A constant that is not present in
+`d3dx_user.ini` produces no sync change.
+
+---
+
 ## Using Presets
 
 1. Presets allow you to store and switch between different mod combinations.
@@ -112,6 +134,21 @@ Located in **Settings**:
 ## Auto Updates
 
 - When you launch the app, wait a few seconds until a system notification pops up, indicating that a new version has been downloaded and will be installed after you quit the app.
+
+## 3DMigoto / ZZMI INI Tools
+
+The shared TypeScript parser preserves the original INI layout while exposing semantic queries for persistent
+constants, key bindings, texture overrides, command lists, expressions, and current ZZMI SlotFix syntax.
+
+Inspect one or more INI files from the command line:
+
+```bash
+npx tsx scripts/inspectThreeDMigoto.ts <file.ini> [more.ini...]
+npx tsx scripts/inspectThreeDMigoto.ts --json <file.ini>
+```
+
+See [3DMigoto / ZZMI INI Parser Design](docs/three-dmigoto-ini-parser.md) for the supported syntax, TypeScript API,
+and current limitations.
 
 ## Previews
 
