@@ -22,7 +22,7 @@ import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
-  return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
+  return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
 };
 
 const DetailedModal = ({

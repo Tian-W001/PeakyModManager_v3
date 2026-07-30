@@ -15,9 +15,9 @@ import { memo } from "react";
 
 const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
-    return new URL(`../assets/avatars/character_avatars/${character || "Unknown"}.png`, import.meta.url).href;
+    return new URL(`../assets/avatars/character_avatars/${character || "Unknown"}.webp`, import.meta.url).href;
   } else {
-    return new URL(`../assets/avatars/modType_avatars/${modType}.jpg`, import.meta.url).href;
+    return new URL(`../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
   }
 };
 
