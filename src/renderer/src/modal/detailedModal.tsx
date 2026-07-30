@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
-  return new URL(`../assets/avatars/character_avatars/${char}.png`, import.meta.url).href;
+  return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
 };
 
 const DetailedModal = ({
