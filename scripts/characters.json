@@ -669,5 +669,16 @@
       "en": "Sigrid de L'Azur",
       "zh": "希格莉德·德拉叙尔"
     }
+  },
+  {
+    "id": "Claret",
+    "nicknames": {
+      "en": "Claret",
+      "zh": "克拉蕾"
+    },
+    "fullnames": {
+      "en": "Claret Flint",
+      "zh": "克拉蕾·弗林特"
+    }
   }
 ]
