@@ -160,7 +160,9 @@
       "Velina": "Velina Airgid",
       "Norma": "Norma Hollowell",
       "Remielle": "Remielle Dan",
-      "Sigrid": "Sigrid de L'Azur"
+      "Sigrid": "Sigrid de L'Azur",
+      "Claret": "Claret Flint",
+      "Roxy": "Roxy Ifrita Pryce"
     },
     "nicknames": {
       "Unknown": "Unknown",
@@ -223,7 +225,9 @@
       "Velina": "Velina",
       "Norma": "Norma",
       "Remielle": "Remielle",
-      "Sigrid": "Sigrid"
+      "Sigrid": "Sigrid",
+      "Claret": "Claret",
+      "Roxy": "Roxy"
     }
   }
 }

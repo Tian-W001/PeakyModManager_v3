@@ -680,5 +680,16 @@
       "en": "Claret Flint",
       "zh": "克拉蕾·弗林特"
     }
+  },
+  {
+    "id": "Roxy",
+    "nicknames": {
+      "en": "Roxy",
+      "zh": "洛克茜"
+    },
+    "fullnames": {
+      "en": "Roxy Ifrita Pryce",
+      "zh": "洛克茜·伊芙莉塔·普莱斯"
+    }
   }
 ]
