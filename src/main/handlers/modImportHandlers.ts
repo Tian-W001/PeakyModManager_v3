@@ -6,7 +6,7 @@ import { importMod, importModCover } from "../domain/modImport";
 import { processModInfo } from "../domain/modLibrary";
 import { getLibraryPath } from "../services/storeService";
 import { getMainWindow } from "../services/windowService";
-import { isZippedFile, unzipFile } from "../utils";
+import { isPathInside, isZippedFile, unzipFile } from "../utils";
 import { ModImportDeps, ModCoverDeps } from "../domain/modImport";
 
 const importDeps: ModImportDeps = {
@@ -60,7 +60,28 @@ const coverDeps: ModCoverDeps = {
 };
 
 export const registerImportHandlers = () => {
-  ipcMain.handle("import-mod", async (_event, sourcePath: string) => importMod(sourcePath, importDeps));
+  ipcMain.handle("import-mod", async (_event, sourcePath: string) => {
+    const modName = importDeps.parsePathName(sourcePath);
+    const tempModDir = importDeps.getTempModDir(modName);
+    const libraryPath = getLibraryPath();
+    // Extension downloads arrive as already extracted folders, so importMod
+    // does not own their cleanup. Wait until the import has finished using them.
+    const isTemporarySource =
+      !!modName &&
+      path.relative(tempModDir, path.resolve(sourcePath)) === "" &&
+      (!libraryPath || (!isPathInside(libraryPath, sourcePath) && !isPathInside(sourcePath, libraryPath)));
+    try {
+      return await importMod(sourcePath, importDeps);
+    } finally {
+      if (isTemporarySource) {
+        try {
+          await fs.remove(tempModDir);
+        } catch (error) {
+          console.error(`Failed to clean up temporary mod directory ${tempModDir}:`, error);
+        }
+      }
+    }
+  });
   ipcMain.handle("import-mod-cover", async (_event, modName: string, imageSource: string) =>
     importModCover(modName, imageSource, coverDeps)
   );
