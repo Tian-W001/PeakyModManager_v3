@@ -8,15 +8,16 @@ import { createModInfoFile, validateModInfo, autofillModInfo } from "../domain/m
 export const registerModInfoHandlers = () => {
   ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {
     const libraryPath = getLibraryPath();
-    if (!libraryPath || !(await fs.pathExists(libraryPath))) return false;
+    if (!libraryPath || !(await fs.pathExists(libraryPath))) return null;
 
     const modInfoPath = path.join(libraryPath, modName, "modinfo.json");
     try {
-      await fs.writeJson(modInfoPath, newModInfo, { spaces: 2 });
-      return true;
+      const { fixedModInfo } = validateModInfo({ ...newModInfo }, modName);
+      await fs.writeJson(modInfoPath, fixedModInfo, { spaces: 2 });
+      return fixedModInfo;
     } catch (err) {
       console.error("Error editing modinfo.json:", err);
-      return false;
+      return null;
     }
   });
 

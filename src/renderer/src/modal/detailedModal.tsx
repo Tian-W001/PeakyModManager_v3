@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
-import { modTypeList } from "@shared/modType";
+import { ModType, modTypeList } from "@shared/modType";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { Character, characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
-import { setSelectedCharacter, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
+import { setSelectedCharacter, setSelectedMenuItem, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
 import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
+import { getOutfitIds, hasMultipleOutfits, normalizeOutfitId } from "@shared/outfit";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
@@ -43,24 +44,42 @@ const DetailedModal = ({
   const handleLocateSelectedCharacter = (character: Character) => {
     dispatch(setSelectedMenuItem("Character"));
     dispatch(setSelectedCharacter(character));
+    dispatch(setSelectedOutfitId(normalizeOutfitId(character, localModInfo.outfitId)));
     onClose();
   };
 
   const handleModInfoChange = (field: keyof ModInfo, value: string) => {
-    setLocalModInfo((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setLocalModInfo((prev) => {
+      if (field === "modType") {
+        const modType = value as ModType;
+        if (modType === "Character") {
+          return { ...prev, modType, character: prev.character ?? "Unknown", outfitId: prev.outfitId ?? 0 };
+        }
+        const { character: _character, outfitId: _outfitId, ...base } = prev;
+        return { ...base, modType };
+      }
+      if (field === "character" && prev.modType === "Character") {
+        return { ...prev, character: value as Character, outfitId: prev.character === value ? prev.outfitId : 0 };
+      }
+      if (field === "outfitId" && prev.modType === "Character") {
+        return { ...prev, outfitId: normalizeOutfitId(prev.character, Number(value)) };
+      }
+      return { ...prev, [field]: value };
+    });
   };
 
-  const saveModInfoChanges = () => {
-    dispatch(
-      editModInfo({
-        modName: modInfo.name,
-        newModInfo: localModInfo,
-      })
-    );
-    onClose();
+  const saveModInfoChanges = async () => {
+    try {
+      await dispatch(
+        editModInfo({
+          modName: modInfo.name,
+          newModInfo: localModInfo,
+        })
+      ).unwrap();
+      onClose();
+    } catch {
+      toast.custom(() => <ZzzToast message={t("modDetails.saveFailed")} />);
+    }
   };
 
   const handleOpenModFolder = () => {
@@ -169,6 +188,10 @@ const DetailedModal = ({
       if (matchedCharacter) {
         updates.modType = "Character";
         updates.character = matchedCharacter;
+        updates.outfitId =
+          localModInfo.modType === "Character" && localModInfo.character === matchedCharacter
+            ? localModInfo.outfitId
+            : 0;
       }
 
       if (Object.keys(updates).length > 0) {
@@ -326,6 +349,18 @@ const DetailedModal = ({
                     />
                   </div>
                 </div>
+              )}
+              {localModInfo.modType === "Character" && hasMultipleOutfits(localModInfo.character) && (
+                <ZzzSelect
+                  label={t("outfits.label")}
+                  value={String(normalizeOutfitId(localModInfo.character, localModInfo.outfitId))}
+                  options={getOutfitIds(localModInfo.character).map((id) => ({
+                    value: String(id),
+                    label: t(`characters.outfits.${localModInfo.character}.${id}`),
+                  }))}
+                  onChange={(value) => handleModInfoChange("outfitId", value)}
+                  className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+                />
               )}
               <div
                 className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"

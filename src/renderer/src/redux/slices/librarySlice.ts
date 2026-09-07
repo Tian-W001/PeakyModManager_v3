@@ -57,8 +57,15 @@ export const editModInfo = createAsyncThunk<
   }
 
   const mergedModInfo = { ...currentModInfo, ...newModInfo } as ModInfo;
-  await window.electron.ipcRenderer.invoke("edit-mod-info", modName, mergedModInfo);
-  return { modName, newModInfo: mergedModInfo };
+  const savedModInfo: ModInfo | null = await window.electron.ipcRenderer.invoke(
+    "edit-mod-info",
+    modName,
+    mergedModInfo
+  );
+  if (!savedModInfo) {
+    return rejectWithValue(`Failed to save mod: ${modName}`);
+  }
+  return { modName, newModInfo: savedModInfo };
 });
 
 const librarySlice = createSlice({

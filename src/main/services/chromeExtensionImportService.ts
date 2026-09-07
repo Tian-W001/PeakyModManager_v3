@@ -128,6 +128,7 @@ export const generateModInfo = (payload: ExplorerImportPayload, modDest: string)
       ...baseInfo,
       modType: "Character" as const,
       character: payload.characterName,
+      outfitId: 0,
     };
   }
 

@@ -56,6 +56,7 @@ describe("librarySlice - reducers", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(window.electron.ipcRenderer.invoke).mockImplementation(async (_channel, _name, modInfo) => modInfo);
     store = createLibraryStore();
   });
 
@@ -97,6 +98,23 @@ describe("librarySlice - reducers", () => {
     await store.dispatch(editModInfo({ modName: "X", newModInfo: { description: "nope" } }));
     expect(selectModInfos(store.getState())).toHaveLength(0);
     expect(window.electron.ipcRenderer.invoke).not.toHaveBeenCalled();
+  });
+
+  it("editModInfo: stores the normalized outfit returned by the main process", async () => {
+    store.dispatch(addModInfo(makeMod({ name: "A", modType: "Character", character: "Belle", outfitId: 1 })));
+    const saved = makeMod({ name: "A", modType: "Character", character: "Anby", outfitId: 0 });
+    vi.mocked(window.electron.ipcRenderer.invoke).mockResolvedValueOnce(saved);
+    await store.dispatch(editModInfo({ modName: "A", newModInfo: { character: "Anby", outfitId: 1 } }));
+    expect(selectModByName("A")(store.getState())).toEqual(saved);
+  });
+
+  it("editModInfo: leaves the library unchanged when saving fails", async () => {
+    const original = makeMod({ name: "A", modType: "Character", character: "Belle", outfitId: 0 });
+    store.dispatch(addModInfo(original));
+    vi.mocked(window.electron.ipcRenderer.invoke).mockResolvedValueOnce(null);
+    const result = await store.dispatch(editModInfo({ modName: "A", newModInfo: { outfitId: 1 } }));
+    expect(editModInfo.rejected.match(result)).toBe(true);
+    expect(selectModByName("A")(store.getState())).toEqual(original);
   });
 });
 

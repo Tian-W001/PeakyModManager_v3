@@ -2,6 +2,31 @@ import { describe, it, expect, vi } from "vitest";
 import { validateModInfo, createModInfoFile } from "../src/main/domain/modInfo";
 
 describe("validateModInfo", () => {
+  it.each([undefined, null, "1", -1, 0.5, NaN, Infinity, 999])(
+    "normalizes invalid outfit %s to default",
+    (outfitId) => {
+      const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
+      expect(result.fixedModInfo.outfitId).toBe(0);
+      expect(validateModInfo({ ...result.fixedModInfo }, "OutfitMod").valid).toBe(true);
+    }
+  );
+
+  it.each([0, 1, 2, 3])("preserves valid outfit index %s", (outfitId) => {
+    const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
+    expect(result.fixedModInfo.outfitId).toBe(outfitId);
+  });
+
+  it("defaults an outfit that does not belong to the selected character", () => {
+    const result = validateModInfo({ modType: "Character", character: "Anby", outfitId: 1 }, "OutfitMod");
+    expect(result.fixedModInfo.outfitId).toBe(0);
+  });
+
+  it("removes outfit metadata from non-character mods", () => {
+    const result = validateModInfo({ modType: "UI", character: "Belle", outfitId: 1 }, "UiMod");
+    expect(result.fixedModInfo).not.toHaveProperty("outfitId");
+    expect(result.fixedModInfo).not.toHaveProperty("character");
+  });
+
   it("should return valid=true when modInfo matches defaults already", () => {
     const modInfo = {
       name: "TestMod",
