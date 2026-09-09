@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
-import { getOutfitIds, hasMultipleOutfits, normalizeOutfitId } from "@shared/outfit";
+import { getOutfitCount, getOutfitIds, normalizeOutfitId } from "@shared/outfit";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
@@ -350,13 +350,13 @@ const DetailedModal = ({
                   </div>
                 </div>
               )}
-              {localModInfo.modType === "Character" && hasMultipleOutfits(localModInfo.character) && (
+              {localModInfo.modType === "Character" && getOutfitCount(localModInfo.character) > 1 && (
                 <ZzzSelect
                   label={t("outfits.label")}
                   value={String(normalizeOutfitId(localModInfo.character, localModInfo.outfitId))}
                   options={getOutfitIds(localModInfo.character).map((id) => ({
                     value: String(id),
-                    label: t(`characters.outfits.${localModInfo.character}.${id}`),
+                    label: t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`),
                   }))}
                   onChange={(value) => handleModInfoChange("outfitId", value)}
                   className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"

@@ -77,16 +77,18 @@ describe("selectModTypeFilteredModCards", () => {
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(2);
   });
 
-  it("filters by outfit, including legacy mods under default outfit 0", () => {
+  it("filters Other separately from catalog outfits, including legacy mods under 0", () => {
     store.dispatch(addModInfo(makeMod({ name: "Legacy", modType: "Character", character: "Belle" })));
-    store.dispatch(addModInfo(makeMod({ name: "Default", modType: "Character", character: "Belle", outfitId: 0 })));
+    store.dispatch(
+      addModInfo(makeMod({ name: "Uncategorized", modType: "Character", character: "Belle", outfitId: 0 }))
+    );
     store.dispatch(addModInfo(makeMod({ name: "Alternate", modType: "Character", character: "Belle", outfitId: 1 })));
     store.dispatch(addModInfo(makeMod({ name: "Other", modType: "Character", character: "Wise", outfitId: 1 })));
     store.dispatch(setSelectedMenuItem("Character"));
     store.dispatch(setSelectedCharacter("Belle"));
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(3);
     store.dispatch(setSelectedOutfitId(0));
-    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Default", "Legacy"]);
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Uncategorized", "Legacy"]);
     store.dispatch(setSelectedOutfitId(1));
     expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Alternate"]);
     store.dispatch(setSelectedOutfitId("All"));

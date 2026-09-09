@@ -19,7 +19,7 @@ interface CharacterData {
   id: string;
   nicknames: { en: string; zh: string };
   fullnames: { en: string; zh: string };
-  // Index 0 is the default outfit. Append new outfits; existing indices are saved in modinfo.json.
+  // Outfit IDs are index + 1; ID 0 is None-Outfit. Append new outfits to keep existing IDs stable.
   outfits?: { en: string; zh: string }[];
 }
 
@@ -60,7 +60,7 @@ async function main() {
       console.error(`Error: ${characterTsPath} not found.`);
     }
 
-    // Outfit IDs are array indices. Characters without a list still have outfit 0.
+    // Count actual outfits only, excluding None-Outfit (ID 0). An omitted list implies one default outfit.
     const outfitCounts = characters.map((c) => `  ${JSON.stringify(c.id)}: ${Math.max(1, c.outfits?.length ?? 0)},`);
     await fs.writeFile(
       characterOutfitsPath,
@@ -102,7 +102,9 @@ async function main() {
         content.characters.nicknames[c.id] = c.nicknames[lang];
         content.characters.fullnames[c.id] = c.fullnames[lang];
         const outfits = c.outfits?.length ? c.outfits : [{ en: "Default Outfit", zh: "默认时装" }];
-        content.characters.outfits[c.id] = Object.fromEntries(outfits.map((outfit, id) => [id, outfit[lang]]));
+        content.characters.outfits[c.id] = Object.fromEntries(
+          outfits.map((outfit, index) => [index + 1, outfit[lang]])
+        );
       });
 
       await fs.writeJson(filePath, content, { spaces: 2 });

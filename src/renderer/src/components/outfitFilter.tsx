@@ -17,7 +17,10 @@ const OutfitFilter = ({ character }: { character: Character }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const options = [
     { id: "All" as const, name: t("outfits.all") },
-    ...getOutfitIds(character).map((id) => ({ id, name: t(`characters.outfits.${character}.${id}`) })),
+    ...getOutfitIds(character).map((id) => ({
+      id,
+      name: t(id === 0 ? "outfits.none" : `characters.outfits.${character}.${id}`),
+    })),
   ];
   const selectedName = options.find((option) => option.id === selectedOutfitId)?.name ?? t("outfits.all");
 
@@ -45,7 +48,7 @@ const OutfitFilter = ({ character }: { character: Character }) => {
           role="group"
           aria-label={t("outfits.label")}
           className={clsx(
-            "mb-2 flex max-h-60 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 shadow-xl transition-[opacity_translate] duration-200 ease-in-out",
+            "no-scrollbar mb-2 flex max-h-60 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 shadow-xl transition-[opacity_translate] duration-200 ease-in-out",
             shouldTransitionMenu
               ? "pointer-events-auto translate-y-0 opacity-100"
               : "pointer-events-none translate-y-[50%] opacity-0"
@@ -57,7 +60,7 @@ const OutfitFilter = ({ character }: { character: Character }) => {
               type="button"
               aria-pressed={option.id === selectedOutfitId}
               className={clsx(
-                "hover:bg-zzzYellow min-h-10 shrink-0 cursor-pointer rounded-xl p-2 text-left break-words hover:text-black",
+                "hover:bg-zzzYellow min-h-10 shrink-0 cursor-pointer rounded-xl p-2 text-left wrap-break-word hover:text-black",
                 option.id === selectedOutfitId ? "text-zzzYellow" : "text-white"
               )}
               onClick={() => {

@@ -11,6 +11,7 @@ export interface libraryState {
   targetPath: string | null;
   d3dxUserPath: string | null;
   modInfos: ModInfo[];
+  lastRefreshedVersion: string | null;
 }
 
 const initialState: libraryState = {
@@ -18,12 +19,13 @@ const initialState: libraryState = {
   targetPath: null,
   d3dxUserPath: null,
   modInfos: [],
+  lastRefreshedVersion: null,
 };
 
 const libraryPersistConfig = {
   key: "library",
   storage,
-  whitelist: ["libraryPath", "targetPath", "modInfos", "d3dxUserPath"],
+  whitelist: ["libraryPath", "targetPath", "modInfos", "d3dxUserPath", "lastRefreshedVersion"],
 };
 
 export const setLibraryPath = createAsyncThunk("library/setLibraryPath", async (newPath: string) => {
@@ -44,6 +46,23 @@ export const setD3dxUserPath = createAsyncThunk("library/setD3dxUserPath", async
 export const loadLibrary = createAsyncThunk("library/load", async () => {
   const mods: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library");
   return mods;
+});
+
+export const refreshLibraryAfterUpdate = createAsyncThunk<
+  { modInfos: ModInfo[]; version: string; libraryPath: string } | null,
+  void,
+  { state: RootState }
+>("library/refreshAfterUpdate", async (_arg, { getState }) => {
+  const { libraryPath, lastRefreshedVersion } = getState().library;
+  if (!libraryPath) return null;
+
+  const version: unknown = await window.electron.ipcRenderer.invoke("get-app-version");
+  if (typeof version !== "string" || !version.trim()) throw new Error("App version is unavailable");
+  if (version === lastRefreshedVersion) return null;
+
+  // Strict loading must distinguish a successfully loaded empty library from a failed scan.
+  const modInfos: ModInfo[] = await window.electron.ipcRenderer.invoke("load-library", true);
+  return { modInfos, version, libraryPath };
 });
 
 export const editModInfo = createAsyncThunk<
@@ -85,7 +104,13 @@ const librarySlice = createSlice({
       .addCase(loadLibrary.fulfilled, (state, action) => {
         state.modInfos = action.payload;
       })
+      .addCase(refreshLibraryAfterUpdate.fulfilled, (state, action) => {
+        if (!action.payload || action.payload.libraryPath !== state.libraryPath) return;
+        state.modInfos = action.payload.modInfos;
+        state.lastRefreshedVersion = action.payload.version;
+      })
       .addCase(setLibraryPath.fulfilled, (state, action) => {
+        if (state.libraryPath !== action.payload) state.lastRefreshedVersion = null;
         state.libraryPath = action.payload;
       })
       .addCase(setTargetPath.fulfilled, (state, action) => {

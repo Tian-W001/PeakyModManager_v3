@@ -20,8 +20,9 @@
     "applyModsError": "{{count}} mod(s) failed to apply"
   },
   "outfits": {
+    "none": "None-Outfit",
     "label": "Outfit",
-    "all": "All Outfits"
+    "all": "All"
   },
   "import": {
     "importFailed": "Import failed",
@@ -243,219 +244,219 @@
     },
     "outfits": {
       "Unknown": {
-        "0": "Default Outfit"
+        "1": "Default Outfit"
       },
       "Belle": {
-        "0": "Vibrant Store Manager",
-        "1": "Delicate Sunlight",
-        "2": "Summer Skies",
-        "3": "Brilliance of Stars"
+        "1": "Vibrant Store Manager",
+        "2": "Delicate Sunlight",
+        "3": "Summer Skies",
+        "4": "Brilliance of Stars"
       },
       "Wise": {
-        "0": "Ridu Stroll",
-        "1": "Soaring Crane",
-        "2": "Peaceful Waves",
-        "3": "Oath of Skies"
+        "1": "Ridu Stroll",
+        "2": "Soaring Crane",
+        "3": "Peaceful Waves",
+        "4": "Oath of Skies"
       },
       "Anby": {
-        "0": "Street Streak"
+        "1": "Street Streak"
       },
       "Billy": {
-        "0": "Shining Starlight Costume"
+        "1": "Shining Starlight Costume"
       },
       "Nicole": {
-        "0": "Lil Sassy",
-        "1": "Cunning Cutie"
+        "1": "Lil Sassy",
+        "2": "Cunning Cutie"
       },
       "Nekomata": {
-        "0": "Cat's Gratitude"
+        "1": "Cat's Gratitude"
       },
       "Koleda": {
-        "0": "Heart & Hammer"
+        "1": "Heart & Hammer"
       },
       "Ben": {
-        "0": "Fluffy Beastking"
+        "1": "Fluffy Beastking"
       },
       "Grace": {
-        "0": "The Iron Witch"
+        "1": "The Iron Witch"
       },
       "Anton": {
-        "0": "Earthshaking Axle"
+        "1": "Earthshaking Axle"
       },
       "Lycaon": {
-        "0": "Moonlight Prowl"
+        "1": "Moonlight Prowl"
       },
       "Rina": {
-        "0": "Head Maid's Perfection"
+        "1": "Head Maid's Perfection"
       },
       "Corin": {
-        "0": "Matcha Profiterole"
+        "1": "Matcha Profiterole"
       },
       "Soldier11": {
-        "0": "Elite Soldier"
+        "1": "Elite Soldier"
       },
       "Soukaku": {
-        "0": "Dance of Azure Ice"
+        "1": "Dance of Azure Ice"
       },
       "Lucy": {
-        "0": "Ironfist Gentlewoman",
-        "1": "Princess on Holiday"
+        "1": "Ironfist Gentlewoman",
+        "2": "Princess on Holiday"
       },
       "Piper": {
-        "0": "Lazy Speed"
+        "1": "Lazy Speed"
       },
       "Ellen": {
-        "0": "Ellen Scissorhands",
-        "1": "On Campus"
+        "1": "Ellen Scissorhands",
+        "2": "On Campus"
       },
       "ZhuYuan": {
-        "0": "Suppressor of Evil"
+        "1": "Suppressor of Evil"
       },
       "Qingyi": {
-        "0": "Clarity, Peace, and Joy"
+        "1": "Clarity, Peace, and Joy"
       },
       "Jane": {
-        "0": "Hidden Nightfade",
-        "1": "Nocturne of Light"
+        "1": "Hidden Nightfade",
+        "2": "Nocturne of Light"
       },
       "Seith": {
-        "0": "Incorruptible Heart"
+        "1": "Incorruptible Heart"
       },
       "Caesar": {
-        "0": "Inferno Joyride"
+        "1": "Inferno Joyride"
       },
       "Burnice": {
-        "0": "Wildfire Rave"
+        "1": "Wildfire Rave"
       },
       "Yanagi": {
-        "0": "Flowing Moonshade"
+        "1": "Flowing Moonshade"
       },
       "Lighter": {
-        "0": "Everburn Embers"
+        "1": "Everburn Embers"
       },
       "Harumasa": {
-        "0": "Full-Fledged Strings"
+        "1": "Full-Fledged Strings"
       },
       "Miyabi": {
-        "0": "Frostgleam Dew",
-        "1": "Dignified Blossom"
+        "1": "Frostgleam Dew",
+        "2": "Dignified Blossom"
       },
       "Astra": {
-        "0": "Scarlet Rock",
-        "1": "Chandelier"
+        "1": "Scarlet Rock",
+        "2": "Chandelier"
       },
       "Evelyn": {
-        "0": "A Moth to Light"
+        "1": "A Moth to Light"
       },
       "Pulchra": {
-        "0": "Rest for a Weary Tail"
+        "1": "Rest for a Weary Tail"
       },
       "Anby0": {
-        "0": "Silver Soldier"
+        "1": "Silver Soldier"
       },
       "Trigger": {
-        "0": "Gaze Into the Light"
+        "1": "Gaze Into the Light"
       },
       "Hugo": {
-        "0": "Crownless Rebellion"
+        "1": "Crownless Rebellion"
       },
       "Vivian": {
-        "0": "Fluttering Violet",
-        "1": "Iris of the Shore"
+        "1": "Fluttering Violet",
+        "2": "Iris of the Shore"
       },
       "Yixuan": {
-        "0": "Summit of Clouds",
-        "1": "Trails of Ink"
+        "1": "Summit of Clouds",
+        "2": "Trails of Ink"
       },
       "PanYinhu": {
-        "0": "Hundred Flavors",
-        "1": "Culinary Jewel"
+        "1": "Hundred Flavors",
+        "2": "Culinary Jewel"
       },
       "JuFufu": {
-        "0": "Summit's Cute Tiger"
+        "1": "Summit's Cute Tiger"
       },
       "Yuzuha": {
-        "0": "Tanuki Under the Shade",
-        "1": "Tanuki in Broad Daylight"
+        "1": "Tanuki Under the Shade",
+        "2": "Tanuki in Broad Daylight"
       },
       "Alice": {
-        "0": "Celestian Etiquette",
-        "1": "Sea of Thyme"
+        "1": "Celestian Etiquette",
+        "2": "Sea of Thyme"
       },
       "Seed": {
-        "0": "Flower in Bloom"
+        "1": "Flower in Bloom"
       },
       "Orphie": {
-        "0": "Two Banks of the River"
+        "1": "Two Banks of the River"
       },
       "Lucia": {
-        "0": "Whispering Dreams"
+        "1": "Whispering Dreams"
       },
       "Manato": {
-        "0": "Loyal Wild Soul",
-        "1": "White Heart Silhouette"
+        "1": "Loyal Wild Soul",
+        "2": "White Heart Silhouette"
       },
       "Yidhari": {
-        "0": "Stream of Consciousness"
+        "1": "Stream of Consciousness"
       },
       "Dialyn": {
-        "0": "Ringing Judgment"
+        "1": "Ringing Judgment"
       },
       "Banyue": {
-        "0": "Blazestone Heart"
+        "1": "Blazestone Heart"
       },
       "Zhao": {
-        "0": "Cuddly Executor"
+        "1": "Cuddly Executor"
       },
       "YeShunguang": {
-        "0": "Clouddrift Illumination",
-        "1": "Touch of Dawnlight"
+        "1": "Clouddrift Illumination",
+        "2": "Touch of Dawnlight"
       },
       "Sunna": {
-        "0": "Dreams on Loop",
-        "1": "Afternoon Tea Break"
+        "1": "Dreams on Loop",
+        "2": "Afternoon Tea Break"
       },
       "Aria": {
-        "0": "Energetic Idol",
-        "1": "Discordant Note"
+        "1": "Energetic Idol",
+        "2": "Discordant Note"
       },
       "Nangong": {
-        "0": "Dreamy Dancer",
-        "1": "Rhapsody's Muse"
+        "1": "Dreamy Dancer",
+        "2": "Rhapsody's Muse"
       },
       "Cissia": {
-        "0": "Snake & Mouse Game"
+        "1": "Snake & Mouse Game"
       },
       "Promeia": {
-        "0": "Shrouded in Frost"
+        "1": "Shrouded in Frost"
       },
       "StarlightBilly": {
-        "0": "Starlight Armaments"
+        "1": "Starlight Armaments"
       },
       "Pyrois": {
-        "0": "Dawn's Guardian"
+        "1": "Dawn's Guardian"
       },
       "Velina": {
-        "0": "Elegant Silver Cascade",
-        "1": "Shade of Leisure"
+        "1": "Elegant Silver Cascade",
+        "2": "Shade of Leisure"
       },
       "Norma": {
-        "0": "Immunity to Fools"
+        "1": "Immunity to Fools"
       },
       "Remielle": {
-        "0": "Feathered Murmurs",
-        "1": "Moonlight Whispers",
-        "2": "Seashade Pas Seul"
+        "1": "Feathered Murmurs",
+        "2": "Moonlight Whispers",
+        "3": "Seashade Pas Seul"
       },
       "Sigrid": {
-        "0": "Legend of the Sky Island",
-        "1": "Majestic Wavechaser"
+        "1": "Legend of the Sky Island",
+        "2": "Majestic Wavechaser"
       },
       "Claret": {
-        "0": "Default Outfit"
+        "1": "Default Outfit"
       },
       "Roxy": {
-        "0": "Default Outfit"
+        "1": "Default Outfit"
       }
     }
   }

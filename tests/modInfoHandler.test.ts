@@ -2,22 +2,19 @@ import { describe, it, expect, vi } from "vitest";
 import { validateModInfo, createModInfoFile } from "../src/main/domain/modInfo";
 
 describe("validateModInfo", () => {
-  it.each([undefined, null, "1", -1, 0.5, NaN, Infinity, 999])(
-    "normalizes invalid outfit %s to default",
-    (outfitId) => {
-      const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
-      expect(result.fixedModInfo.outfitId).toBe(0);
-      expect(validateModInfo({ ...result.fixedModInfo }, "OutfitMod").valid).toBe(true);
-    }
-  );
+  it.each([undefined, null, "1", -1, 0.5, NaN, Infinity, 999])("normalizes invalid outfit %s to Other", (outfitId) => {
+    const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
+    expect(result.fixedModInfo.outfitId).toBe(0);
+    expect(validateModInfo({ ...result.fixedModInfo }, "OutfitMod").valid).toBe(true);
+  });
 
-  it.each([0, 1, 2, 3])("preserves valid outfit index %s", (outfitId) => {
+  it.each([0, 1, 2, 3, 4])("preserves valid outfit ID %s", (outfitId) => {
     const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
     expect(result.fixedModInfo.outfitId).toBe(outfitId);
   });
 
   it("defaults an outfit that does not belong to the selected character", () => {
-    const result = validateModInfo({ modType: "Character", character: "Anby", outfitId: 1 }, "OutfitMod");
+    const result = validateModInfo({ modType: "Character", character: "Anby", outfitId: 2 }, "OutfitMod");
     expect(result.fixedModInfo.outfitId).toBe(0);
   });
 

@@ -23,6 +23,8 @@ import libraryReducer, {
   selectModByName,
   selectModByType,
   selectModByCharacter,
+  refreshLibraryAfterUpdate,
+  setLibraryPath,
 } from "../src/renderer/src/redux/slices/librarySlice";
 import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
 import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
@@ -50,6 +52,84 @@ function createLibraryStore() {
       }),
   });
 }
+
+describe("refresh library after an update", () => {
+  const setup = () => {
+    const store = createLibraryStore();
+    store.dispatch(setLibraryPath.fulfilled("/library", "setup", "/library"));
+    store.dispatch(addModInfo(makeMod({ name: "Cached", modType: "Character", character: "Belle" })));
+    return store;
+  };
+  const refreshed = makeMod({ name: "Cached", modType: "Character", character: "Belle", outfitId: 0 });
+
+  beforeEach(() => {
+    vi.mocked(window.electron.ipcRenderer.invoke).mockReset();
+    vi.mocked(window.electron.ipcRenderer.invoke).mockImplementation(async (channel) => {
+      if (channel === "get-app-version") return "2.0.0";
+      if (channel === "load-library") return [refreshed];
+      throw new Error(`Unexpected channel: ${channel}`);
+    });
+  });
+
+  it("refreshes old caches without a version marker and saves normalized mods", async () => {
+    const store = setup();
+    await store.dispatch(refreshLibraryAfterUpdate());
+    expect(store.getState().library.lastRefreshedVersion).toBe("2.0.0");
+    expect(store.getState().library.modInfos).toEqual([refreshed]);
+    expect(window.electron.ipcRenderer.invoke).toHaveBeenCalledWith("load-library", true);
+  });
+
+  it("skips the same version after persisted cache restoration, but refreshes a new version", async () => {
+    const store = setup();
+    await store.dispatch(refreshLibraryAfterUpdate());
+    const restarted = createLibraryStore();
+    restarted.dispatch({ type: "persist/REHYDRATE", key: "library", payload: store.getState().library });
+    vi.mocked(window.electron.ipcRenderer.invoke).mockClear();
+    await restarted.dispatch(refreshLibraryAfterUpdate());
+    expect(window.electron.ipcRenderer.invoke).not.toHaveBeenCalledWith("load-library", true);
+    vi.mocked(window.electron.ipcRenderer.invoke).mockResolvedValueOnce("2.1.0");
+    await restarted.dispatch(refreshLibraryAfterUpdate());
+    expect(restarted.getState().library.lastRefreshedVersion).toBe("2.1.0");
+    expect(window.electron.ipcRenderer.invoke).toHaveBeenCalledWith("load-library", true);
+  });
+
+  it("preserves cache and version on failure and retries later", async () => {
+    const store = setup();
+    const previous = store.getState().library;
+    vi.mocked(window.electron.ipcRenderer.invoke)
+      .mockResolvedValueOnce("2.0.0")
+      .mockRejectedValueOnce(new Error("Library offline"));
+    const result = await store.dispatch(refreshLibraryAfterUpdate());
+    expect(refreshLibraryAfterUpdate.rejected.match(result)).toBe(true);
+    expect(store.getState().library).toEqual(previous);
+    await store.dispatch(refreshLibraryAfterUpdate());
+    expect(store.getState().library.lastRefreshedVersion).toBe("2.0.0");
+  });
+
+  it("accepts a successfully loaded empty library", async () => {
+    const store = setup();
+    vi.mocked(window.electron.ipcRenderer.invoke).mockResolvedValueOnce("2.0.0").mockResolvedValueOnce([]);
+    await store.dispatch(refreshLibraryAfterUpdate());
+    expect(store.getState().library.modInfos).toEqual([]);
+    expect(store.getState().library.lastRefreshedVersion).toBe("2.0.0");
+  });
+
+  it("skips unconfigured libraries without recording completion", async () => {
+    const store = createLibraryStore();
+    await store.dispatch(refreshLibraryAfterUpdate());
+    expect(window.electron.ipcRenderer.invoke).not.toHaveBeenCalled();
+    expect(store.getState().library.lastRefreshedVersion).toBeNull();
+  });
+
+  it("does not apply a completed scan to a different library", async () => {
+    const store = setup();
+    const refresh = store.dispatch(refreshLibraryAfterUpdate());
+    store.dispatch(setLibraryPath.fulfilled("/another", "switch", "/another"));
+    await refresh;
+    expect(store.getState().library.lastRefreshedVersion).toBeNull();
+    expect(store.getState().library.modInfos[0].outfitId).toBeUndefined();
+  });
+});
 
 describe("librarySlice - reducers", () => {
   let store: ReturnType<typeof createLibraryStore>;
