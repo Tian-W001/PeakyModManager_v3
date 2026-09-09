@@ -21,6 +21,7 @@ import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
 import { getOutfitCount, getOutfitIds, normalizeOutfitId } from "@shared/outfit";
+import OutfitAvatar from "@renderer/components/outfitAvatar";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
@@ -356,7 +357,14 @@ const DetailedModal = ({
                   value={String(normalizeOutfitId(localModInfo.character, localModInfo.outfitId))}
                   options={getOutfitIds(localModInfo.character).map((id) => ({
                     value: String(id),
-                    label: t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`),
+                    label: (
+                      <div className="flex min-w-0 items-center justify-end gap-2">
+                        <span className="truncate">
+                          {t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`)}
+                        </span>
+                        <OutfitAvatar character={localModInfo.character} outfitId={id} />
+                      </div>
+                    ),
                   }))}
                   onChange={(value) => handleModInfoChange("outfitId", value)}
                   className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"

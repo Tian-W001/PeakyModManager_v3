@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedOutfitId, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import ZzzButton from "./zzzButton";
+import OutfitAvatar from "./outfitAvatar";
 
 const OutfitFilter = ({ character }: { character: Character }) => {
   const dispatch = useAppDispatch();
@@ -60,7 +61,7 @@ const OutfitFilter = ({ character }: { character: Character }) => {
               type="button"
               aria-pressed={option.id === selectedOutfitId}
               className={clsx(
-                "hover:bg-zzzYellow min-h-10 shrink-0 cursor-pointer rounded-xl p-2 text-left wrap-break-word hover:text-black",
+                "hover:bg-zzzYellow flex min-h-10 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-xl p-2 text-left wrap-break-word hover:text-black",
                 option.id === selectedOutfitId ? "text-zzzYellow" : "text-white"
               )}
               onClick={() => {
@@ -68,14 +69,16 @@ const OutfitFilter = ({ character }: { character: Character }) => {
                 toggleMenu(false);
               }}
             >
-              {option.name}
+              <span className="min-w-0">{option.name}</span>
+              <OutfitAvatar character={character} outfitId={option.id} />
             </button>
           ))}
         </div>
       )}
       <ZzzButton onClick={() => toggleMenu()} className="w-full shadow-xl">
         <div className="flex size-full items-center justify-between gap-2 overflow-hidden" title={selectedName}>
-          <span className="truncate">{selectedName}</span>
+          <span className="min-w-0 flex-1 truncate text-left">{selectedName}</span>
+          <OutfitAvatar character={character} outfitId={selectedOutfitId} />
           <FaCaretUp className={`shrink-0 transition-transform ${shouldMountMenu && "rotate-180"}`} />
         </div>
       </ZzzButton>
