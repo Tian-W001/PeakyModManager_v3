@@ -1,3 +1,4 @@
+import OutfitDropdown from "./outfitDropdown";
 import { memo, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Character } from "../../../shared/character";
@@ -49,7 +50,6 @@ const CharacterBar = ({ className, isVisible }: { className?: string; isVisible:
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const wasVisibleRef = useRef(false);
-
   useEffect(() => {
     const becameVisible = isVisible && !wasVisibleRef.current;
     wasVisibleRef.current = isVisible;
@@ -106,7 +106,7 @@ const CharacterBar = ({ className, isVisible }: { className?: string; isVisible:
   };
 
   return (
-    <div className={clsx("flex items-center", className)}>
+    <div className={clsx("flex items-center gap-2", className)}>
       <div
         className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
@@ -135,6 +135,7 @@ const CharacterBar = ({ className, isVisible }: { className?: string; isVisible:
           className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
         />
       </div>
+      <OutfitDropdown isVisible={isVisible} />
     </div>
   );
 };

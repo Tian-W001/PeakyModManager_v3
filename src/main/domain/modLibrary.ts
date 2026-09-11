@@ -34,9 +34,12 @@ export const processModInfo = async (modPath: string, deps: ModLibraryDeps): Pro
   }
 };
 
-export const loadLibrary = async (deps: ModLibraryDeps): Promise<ModInfo[]> => {
+export const loadLibrary = async (deps: ModLibraryDeps, failOnError = false): Promise<ModInfo[]> => {
   const libraryPath = deps.getLibraryPath();
-  if (!libraryPath || !(await deps.pathExists(libraryPath))) return [];
+  if (!libraryPath || !(await deps.pathExists(libraryPath))) {
+    if (failOnError) throw new Error("Mod library is unavailable");
+    return [];
+  }
 
   try {
     const entries = await deps.readdir(libraryPath);
@@ -50,6 +53,7 @@ export const loadLibrary = async (deps: ModLibraryDeps): Promise<ModInfo[]> => {
           return { modInfo, mtime: stats.mtime.getTime() };
         } catch (error) {
           deps.logError(`Error processing mod in folder ${folder}: ${error}`);
+          if (failOnError) throw error;
           return null;
         }
       })
@@ -61,6 +65,7 @@ export const loadLibrary = async (deps: ModLibraryDeps): Promise<ModInfo[]> => {
       .map((item) => item.modInfo);
   } catch (error) {
     deps.logError(`Error loading library: ${error}`);
+    if (failOnError) throw error;
     return [];
   }
 };

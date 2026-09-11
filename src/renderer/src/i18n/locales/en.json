@@ -19,6 +19,11 @@
     "selectNone": "Select None",
     "applyModsError": "{{count}} mod(s) failed to apply"
   },
+  "outfits": {
+    "none": "None-Outfit",
+    "label": "Outfit",
+    "all": "All"
+  },
   "import": {
     "importFailed": "Import failed",
     "downloading": "Downloading {{modName}}...",
@@ -56,6 +61,7 @@
     "appVersion": "App Version"
   },
   "modDetails": {
+    "saveFailed": "Failed to save mod details",
     "description": "Description",
     "modType": "Mod Type",
     "character": "Character",
@@ -235,6 +241,226 @@
       "Sigrid": "Sigrid",
       "Claret": "Claret",
       "Roxy": "Roxy"
+    },
+    "outfits": {
+      "Unknown": {
+        "1": "Default Outfit"
+      },
+      "Belle": {
+        "1": "Vibrant Store Manager",
+        "2": "Delicate Sunlight",
+        "3": "Summer Skies",
+        "4": "Brilliance of Stars"
+      },
+      "Wise": {
+        "1": "Ridu Stroll",
+        "2": "Soaring Crane",
+        "3": "Peaceful Waves",
+        "4": "Oath of Skies"
+      },
+      "Anby": {
+        "1": "Street Streak"
+      },
+      "Billy": {
+        "1": "Shining Starlight Costume"
+      },
+      "Nicole": {
+        "1": "Lil Sassy",
+        "2": "Cunning Cutie"
+      },
+      "Nekomata": {
+        "1": "Cat's Gratitude"
+      },
+      "Koleda": {
+        "1": "Heart & Hammer"
+      },
+      "Ben": {
+        "1": "Fluffy Beastking"
+      },
+      "Grace": {
+        "1": "The Iron Witch"
+      },
+      "Anton": {
+        "1": "Earthshaking Axle"
+      },
+      "Lycaon": {
+        "1": "Moonlight Prowl"
+      },
+      "Rina": {
+        "1": "Head Maid's Perfection"
+      },
+      "Corin": {
+        "1": "Matcha Profiterole"
+      },
+      "Soldier11": {
+        "1": "Elite Soldier"
+      },
+      "Soukaku": {
+        "1": "Dance of Azure Ice"
+      },
+      "Lucy": {
+        "1": "Ironfist Gentlewoman",
+        "2": "Princess on Holiday"
+      },
+      "Piper": {
+        "1": "Lazy Speed"
+      },
+      "Ellen": {
+        "1": "Ellen Scissorhands",
+        "2": "On Campus"
+      },
+      "ZhuYuan": {
+        "1": "Suppressor of Evil"
+      },
+      "Qingyi": {
+        "1": "Clarity, Peace, and Joy"
+      },
+      "Jane": {
+        "1": "Hidden Nightfade",
+        "2": "Nocturne of Light"
+      },
+      "Seith": {
+        "1": "Incorruptible Heart"
+      },
+      "Caesar": {
+        "1": "Inferno Joyride"
+      },
+      "Burnice": {
+        "1": "Wildfire Rave"
+      },
+      "Yanagi": {
+        "1": "Flowing Moonshade"
+      },
+      "Lighter": {
+        "1": "Everburn Embers"
+      },
+      "Harumasa": {
+        "1": "Full-Fledged Strings"
+      },
+      "Miyabi": {
+        "1": "Frostgleam Dew",
+        "2": "Dignified Blossom"
+      },
+      "Astra": {
+        "1": "Scarlet Rock",
+        "2": "Chandelier"
+      },
+      "Evelyn": {
+        "1": "A Moth to Light"
+      },
+      "Pulchra": {
+        "1": "Rest for a Weary Tail"
+      },
+      "Anby0": {
+        "1": "Silver Soldier"
+      },
+      "Trigger": {
+        "1": "Gaze Into the Light"
+      },
+      "Hugo": {
+        "1": "Crownless Rebellion"
+      },
+      "Vivian": {
+        "1": "Fluttering Violet",
+        "2": "Iris of the Shore"
+      },
+      "Yixuan": {
+        "1": "Summit of Clouds",
+        "2": "Trails of Ink"
+      },
+      "PanYinhu": {
+        "1": "Hundred Flavors",
+        "2": "Culinary Jewel"
+      },
+      "JuFufu": {
+        "1": "Summit's Cute Tiger"
+      },
+      "Yuzuha": {
+        "1": "Tanuki Under the Shade",
+        "2": "Tanuki in Broad Daylight"
+      },
+      "Alice": {
+        "1": "Celestian Etiquette",
+        "2": "Sea of Thyme"
+      },
+      "Seed": {
+        "1": "Flower in Bloom"
+      },
+      "Orphie": {
+        "1": "Two Banks of the River"
+      },
+      "Lucia": {
+        "1": "Whispering Dreams"
+      },
+      "Manato": {
+        "1": "Loyal Wild Soul",
+        "2": "White Heart Silhouette"
+      },
+      "Yidhari": {
+        "1": "Stream of Consciousness"
+      },
+      "Dialyn": {
+        "1": "Ringing Judgment"
+      },
+      "Banyue": {
+        "1": "Blazestone Heart"
+      },
+      "Zhao": {
+        "1": "Cuddly Executor"
+      },
+      "YeShunguang": {
+        "1": "Clouddrift Illumination",
+        "2": "Touch of Dawnlight"
+      },
+      "Sunna": {
+        "1": "Dreams on Loop",
+        "2": "Afternoon Tea Break",
+        "3": "Delusions in Business"
+      },
+      "Aria": {
+        "1": "Energetic Idol",
+        "2": "Discordant Note",
+        "3": "Cuteness Loading"
+      },
+      "Nangong": {
+        "1": "Dreamy Dancer",
+        "2": "Rhapsody's Muse",
+        "3": "Heartfelt Support"
+      },
+      "Cissia": {
+        "1": "Snake & Mouse Game"
+      },
+      "Promeia": {
+        "1": "Shrouded in Frost"
+      },
+      "StarlightBilly": {
+        "1": "Starlight Armaments"
+      },
+      "Pyrois": {
+        "1": "Dawn's Guardian"
+      },
+      "Velina": {
+        "1": "Elegant Silver Cascade",
+        "2": "Shade of Leisure"
+      },
+      "Norma": {
+        "1": "Immunity to Fools"
+      },
+      "Remielle": {
+        "1": "Feathered Murmurs",
+        "2": "Moonlight Whispers",
+        "3": "Seashade Pas Seul"
+      },
+      "Sigrid": {
+        "1": "Legend of the Sky Island",
+        "2": "Majestic Wavechaser"
+      },
+      "Claret": {
+        "1": "Default Outfit"
+      },
+      "Roxy": {
+        "1": "Default Outfit"
+      }
     }
   }
 }

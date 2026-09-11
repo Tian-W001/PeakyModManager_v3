@@ -19,7 +19,25 @@
     "fullnames": {
       "en": "Belle",
       "zh": "玲"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Vibrant Store Manager",
+        "zh": "元气店长"
+      },
+      {
+        "en": "Delicate Sunlight",
+        "zh": "曦色玲珑"
+      },
+      {
+        "en": "Summer Skies",
+        "zh": "夏日晴空"
+      },
+      {
+        "en": "Brilliance of Stars",
+        "zh": "极星澄明"
+      }
+    ]
   },
   {
     "id": "Wise",
@@ -30,7 +48,25 @@
     "fullnames": {
       "en": "Wise",
       "zh": "哲"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Ridu Stroll",
+        "zh": "丽都漫行"
+      },
+      {
+        "en": "Soaring Crane",
+        "zh": "鹤唳青霄"
+      },
+      {
+        "en": "Peaceful Waves",
+        "zh": "浪影闲庭"
+      },
+      {
+        "en": "Oath of Skies",
+        "zh": "苍穹执誓"
+      }
+    ]
   },
   {
     "id": "Anby",
@@ -41,7 +77,13 @@
     "fullnames": {
       "en": "Anby Demara",
       "zh": "安比·德玛拉"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Street Streak",
+        "zh": "街头迅影"
+      }
+    ]
   },
   {
     "id": "Billy",
@@ -52,7 +94,13 @@
     "fullnames": {
       "en": "Billy Kid",
       "zh": "比利·奇德"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Shining Starlight Costume",
+        "zh": "闪耀星徽套装"
+      }
+    ]
   },
   {
     "id": "Nicole",
@@ -63,7 +111,17 @@
     "fullnames": {
       "en": "Nicole Demara",
       "zh": "妮可·德玛拉"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Lil Sassy",
+        "zh": "一点点俏皮"
+      },
+      {
+        "en": "Cunning Cutie",
+        "zh": "狡黠甜心"
+      }
+    ]
   },
   {
     "id": "Nekomata",
@@ -74,7 +132,13 @@
     "fullnames": {
       "en": "Nekomiya Mana",
       "zh": "猫宫又奈"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Cat's Gratitude",
+        "zh": "猫的报恩"
+      }
+    ]
   },
   {
     "id": "Koleda",
@@ -85,7 +149,13 @@
     "fullnames": {
       "en": "Koleda Belobog",
       "zh": "柯蕾妲·贝洛伯格"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Heart & Hammer",
+        "zh": "赤子烈锤"
+      }
+    ]
   },
   {
     "id": "Ben",
@@ -96,7 +166,13 @@
     "fullnames": {
       "en": "Ben Bigger",
       "zh": "本·比格"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Fluffy Beastking",
+        "zh": "兽王毛茸茸"
+      }
+    ]
   },
   {
     "id": "Grace",
@@ -107,7 +183,13 @@
     "fullnames": {
       "en": "Grace Howard",
       "zh": "格莉丝·霍华德"
-    }
+    },
+    "outfits": [
+      {
+        "en": "The Iron Witch",
+        "zh": "钢铁的女巫"
+      }
+    ]
   },
   {
     "id": "Anton",
@@ -118,7 +200,13 @@
     "fullnames": {
       "en": "Anton Ivanov",
       "zh": "安东·伊万诺夫"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Earthshaking Axle",
+        "zh": "撼地炽轴"
+      }
+    ]
   },
   {
     "id": "Lycaon",
@@ -129,7 +217,13 @@
     "fullnames": {
       "en": "Von Lycaon",
       "zh": "冯·莱卡恩"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Moonlight Prowl",
+        "zh": "苍月夜巡"
+      }
+    ]
   },
   {
     "id": "Rina",
@@ -140,7 +234,13 @@
     "fullnames": {
       "en": "Alexandrina Sebastiane",
       "zh": "亚历山德丽娜·莎芭丝缇安"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Head Maid's Perfection",
+        "zh": "完美女仆长"
+      }
+    ]
   },
   {
     "id": "Corin",
@@ -151,7 +251,13 @@
     "fullnames": {
       "en": "Corin Wickes",
       "zh": "可琳·威克斯"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Matcha Profiterole",
+        "zh": "抹茶泡芙"
+      }
+    ]
   },
   {
     "id": "Soldier11",
@@ -162,7 +268,13 @@
     "fullnames": {
       "en": "Soldier 11",
       "zh": "「 11号 」"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Elite Soldier",
+        "zh": "精锐士兵"
+      }
+    ]
   },
   {
     "id": "Soukaku",
@@ -173,7 +285,13 @@
     "fullnames": {
       "en": "Soukaku",
       "zh": "苍角"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Dance of Azure Ice",
+        "zh": "青蓝冰舞"
+      }
+    ]
   },
   {
     "id": "Lucy",
@@ -184,7 +302,17 @@
     "fullnames": {
       "en": "Luciana de Montefio",
       "zh": "露西亚娜·德·蒙特夫"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Ironfist Gentlewoman",
+        "zh": "铁腕淑女"
+      },
+      {
+        "en": "Princess on Holiday",
+        "zh": "公主假日"
+      }
+    ]
   },
   {
     "id": "Piper",
@@ -195,7 +323,13 @@
     "fullnames": {
       "en": "Piper Wheel",
       "zh": "派派·韦尔"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Lazy Speed",
+        "zh": "快与慢"
+      }
+    ]
   },
   {
     "id": "Ellen",
@@ -206,7 +340,17 @@
     "fullnames": {
       "en": "Ellen Joe",
       "zh": "艾莲·乔"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Ellen Scissorhands",
+        "zh": "剪刀手艾鲨鲨"
+      },
+      {
+        "en": "On Campus",
+        "zh": "从周一到周五"
+      }
+    ]
   },
   {
     "id": "ZhuYuan",
@@ -217,7 +361,13 @@
     "fullnames": {
       "en": "Zhu Yuan",
       "zh": "朱鸢"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Suppressor of Evil",
+        "zh": "镇暴者"
+      }
+    ]
   },
   {
     "id": "Qingyi",
@@ -228,7 +378,13 @@
     "fullnames": {
       "en": "Qingyi",
       "zh": "青衣"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Clarity, Peace, and Joy",
+        "zh": "清平乐"
+      }
+    ]
   },
   {
     "id": "Jane",
@@ -239,7 +395,17 @@
     "fullnames": {
       "en": "Jane Doe",
       "zh": "简·杜"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Hidden Nightfade",
+        "zh": "夜隐阑珊"
+      },
+      {
+        "en": "Nocturne of Light",
+        "zh": "漪光夜曲"
+      }
+    ]
   },
   {
     "id": "Seith",
@@ -250,7 +416,13 @@
     "fullnames": {
       "en": "Seith Lowell",
       "zh": "塞斯·洛威尔"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Incorruptible Heart",
+        "zh": "不染澄心"
+      }
+    ]
   },
   {
     "id": "Caesar",
@@ -261,7 +433,13 @@
     "fullnames": {
       "en": "Caesar King",
       "zh": "凯撒·金"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Inferno Joyride",
+        "zh": "火浴焰行"
+      }
+    ]
   },
   {
     "id": "Burnice",
@@ -272,7 +450,13 @@
     "fullnames": {
       "en": "Burnice White",
       "zh": "柏妮思·怀特"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Wildfire Rave",
+        "zh": "纵燃欢宴"
+      }
+    ]
   },
   {
     "id": "Yanagi",
@@ -283,7 +467,13 @@
     "fullnames": {
       "en": "Tsukishiro Yanagi",
       "zh": "月城柳"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Flowing Moonshade",
+        "zh": "月影流华"
+      }
+    ]
   },
   {
     "id": "Lighter",
@@ -294,7 +484,13 @@
     "fullnames": {
       "en": "Lighter",
       "zh": "莱特"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Everburn Embers",
+        "zh": "不熄烬炎"
+      }
+    ]
   },
   {
     "id": "Harumasa",
@@ -305,7 +501,13 @@
     "fullnames": {
       "en": "Asaba Harumasa",
       "zh": "浅羽悠真"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Full-Fledged Strings",
+        "zh": "落弦飞羽"
+      }
+    ]
   },
   {
     "id": "Miyabi",
@@ -316,7 +518,17 @@
     "fullnames": {
       "en": "Hoshimi Miyabi",
       "zh": "星见雅"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Frostgleam Dew",
+        "zh": "烈露濯霜"
+      },
+      {
+        "en": "Dignified Blossom",
+        "zh": "银庭花信"
+      }
+    ]
   },
   {
     "id": "Astra",
@@ -327,7 +539,17 @@
     "fullnames": {
       "en": "Astra Yao",
       "zh": "耀佳音"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Scarlet Rock",
+        "zh": "绯红摇滚"
+      },
+      {
+        "en": "Chandelier",
+        "zh": "水晶灯下"
+      }
+    ]
   },
   {
     "id": "Evelyn",
@@ -338,7 +560,13 @@
     "fullnames": {
       "en": "Evelyn Chevalier",
       "zh": "伊芙琳·舒瓦利耶"
-    }
+    },
+    "outfits": [
+      {
+        "en": "A Moth to Light",
+        "zh": "飞蛾逐光"
+      }
+    ]
   },
   {
     "id": "Pulchra",
@@ -349,7 +577,13 @@
     "fullnames": {
       "en": "Pulchra Fellini",
       "zh": "波可娜·费雷尼"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Rest for a Weary Tail",
+        "zh": "倦尾栖痕"
+      }
+    ]
   },
   {
     "id": "Anby0",
@@ -360,7 +594,13 @@
     "fullnames": {
       "en": "Soldier 0 - Anby",
       "zh": "零号·安比"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Silver Soldier",
+        "zh": "银心锡兵"
+      }
+    ]
   },
   {
     "id": "Trigger",
@@ -371,7 +611,13 @@
     "fullnames": {
       "en": "Trigger",
       "zh": "「 扳机 」"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Gaze Into the Light",
+        "zh": "幽目启明"
+      }
+    ]
   },
   {
     "id": "Hugo",
@@ -382,7 +628,13 @@
     "fullnames": {
       "en": "Hugo Vlad",
       "zh": "雨果·维拉德"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Crownless Rebellion",
+        "zh": "无冕歧命"
+      }
+    ]
   },
   {
     "id": "Vivian",
@@ -393,7 +645,17 @@
     "fullnames": {
       "en": "Vivian Banshee",
       "zh": "薇薇安·班希"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Fluttering Violet",
+        "zh": "堇色蹁跹"
+      },
+      {
+        "en": "Iris of the Shore",
+        "zh": "鸢花池畔"
+      }
+    ]
   },
   {
     "id": "Yixuan",
@@ -404,7 +666,17 @@
     "fullnames": {
       "en": "Yixuan",
       "zh": "仪玄"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Summit of Clouds",
+        "zh": "观云同岿"
+      },
+      {
+        "en": "Trails of Ink",
+        "zh": "墨形影踪"
+      }
+    ]
   },
   {
     "id": "PanYinhu",
@@ -415,7 +687,17 @@
     "fullnames": {
       "en": "Pan Yinhu",
       "zh": "潘引壶"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Hundred Flavors",
+        "zh": "食引百味"
+      },
+      {
+        "en": "Culinary Jewel",
+        "zh": "馔玉烹金"
+      }
+    ]
   },
   {
     "id": "JuFufu",
@@ -426,7 +708,13 @@
     "fullnames": {
       "en": "Ju Fufu",
       "zh": "橘福福"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Summit's Cute Tiger",
+        "zh": "山中萌虎"
+      }
+    ]
   },
   {
     "id": "Yuzuha",
@@ -437,7 +725,17 @@
     "fullnames": {
       "en": "Ukinami Yuzuha",
       "zh": "浮波柚叶"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Tanuki Under the Shade",
+        "zh": "伞下梦貉"
+      },
+      {
+        "en": "Tanuki in Broad Daylight",
+        "zh": "晴空化狸"
+      }
+    ]
   },
   {
     "id": "Alice",
@@ -448,7 +746,17 @@
     "fullnames": {
       "en": "Alice Thymefield",
       "zh": "爱丽丝·泰姆菲尔德"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Celestian Etiquette",
+        "zh": "圣星裁仪"
+      },
+      {
+        "en": "Sea of Thyme",
+        "zh": "百里香之海"
+      }
+    ]
   },
   {
     "id": "Seed",
@@ -459,7 +767,13 @@
     "fullnames": {
       "en": "Seed",
       "zh": "「 席德 」"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Flower in Bloom",
+        "zh": "繁花"
+      }
+    ]
   },
   {
     "id": "Orphie",
@@ -470,7 +784,13 @@
     "fullnames": {
       "en": "Orphie Magnusson & Magus",
       "zh": "奥菲丝·马格努森 &「 鬼火 」"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Two Banks of the River",
+        "zh": "冥河两渡"
+      }
+    ]
   },
   {
     "id": "Lucia",
@@ -481,7 +801,13 @@
     "fullnames": {
       "en": "Lucia Elowen",
       "zh": "卢西娅·艾洛温"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Whispering Dreams",
+        "zh": "颂夜梦呓"
+      }
+    ]
   },
   {
     "id": "Manato",
@@ -492,7 +818,17 @@
     "fullnames": {
       "en": "Komano Manato",
       "zh": "狛野真斗"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Loyal Wild Soul",
+        "zh": "赤心荒魂"
+      },
+      {
+        "en": "White Heart Silhouette",
+        "zh": "白心旧影"
+      }
+    ]
   },
   {
     "id": "Yidhari",
@@ -503,7 +839,13 @@
     "fullnames": {
       "en": "Yidhari Murphy",
       "zh": "伊德海莉·墨菲"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Stream of Consciousness",
+        "zh": "遐思漫录"
+      }
+    ]
   },
   {
     "id": "Dialyn",
@@ -514,7 +856,13 @@
     "fullnames": {
       "en": "Dialyn",
       "zh": "琉音"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Ringing Judgment",
+        "zh": "铃语判词"
+      }
+    ]
   },
   {
     "id": "Banyue",
@@ -525,7 +873,13 @@
     "fullnames": {
       "en": "Banyue",
       "zh": "般岳"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Blazestone Heart",
+        "zh": "灼业石心"
+      }
+    ]
   },
   {
     "id": "Zhao",
@@ -536,7 +890,13 @@
     "fullnames": {
       "en": "Zhao",
       "zh": "照"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Cuddly Executor",
+        "zh": "绒耳寒枝"
+      }
+    ]
   },
   {
     "id": "YeShunguang",
@@ -547,7 +907,17 @@
     "fullnames": {
       "en": "Ye Shunguang",
       "zh": "叶瞬光"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Clouddrift Illumination",
+        "zh": "流云照影"
+      },
+      {
+        "en": "Touch of Dawnlight",
+        "zh": "暖霞拾光"
+      }
+    ]
   },
   {
     "id": "Sunna",
@@ -558,7 +928,21 @@
     "fullnames": {
       "en": "Sunna",
       "zh": "千夏"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Dreams on Loop",
+        "zh": "妄念环响"
+      },
+      {
+        "en": "Afternoon Tea Break",
+        "zh": "午后茶歇"
+      },
+      {
+        "en": "Delusions in Business",
+        "zh": "梦想营业中"
+      }
+    ]
   },
   {
     "id": "Aria",
@@ -569,7 +953,21 @@
     "fullnames": {
       "en": "Aria",
       "zh": "爱芮"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Energetic Idol",
+        "zh": "元气偶像"
+      },
+      {
+        "en": "Discordant Note",
+        "zh": "不协和音"
+      },
+      {
+        "en": "Cuteness Loading",
+        "zh": "萌力加载中"
+      }
+    ]
   },
   {
     "id": "Nangong",
@@ -580,7 +978,21 @@
     "fullnames": {
       "en": "Nangong Yu",
       "zh": "南宫羽"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Dreamy Dancer",
+        "zh": "绮梦领舞"
+      },
+      {
+        "en": "Rhapsody's Muse",
+        "zh": "狂想缪斯"
+      },
+      {
+        "en": "Heartfelt Support",
+        "zh": "心动应援中"
+      }
+    ]
   },
   {
     "id": "Cissia",
@@ -591,7 +1003,13 @@
     "fullnames": {
       "en": "Cissia",
       "zh": "希希芙"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Snake & Mouse Game",
+        "zh": "蛇鼠游戏"
+      }
+    ]
   },
   {
     "id": "Promeia",
@@ -602,7 +1020,13 @@
     "fullnames": {
       "en": "Promeia",
       "zh": "普罗米娅"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Shrouded in Frost",
+        "zh": "曳影迷霜"
+      }
+    ]
   },
   {
     "id": "StarlightBilly",
@@ -613,7 +1037,13 @@
     "fullnames": {
       "en": "Starlight - Billy",
       "zh": "星徽·比利"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Starlight Armaments",
+        "zh": "星徽武装"
+      }
+    ]
   },
   {
     "id": "Pyrois",
@@ -624,7 +1054,13 @@
     "fullnames": {
       "en": "Pyrois",
       "zh": "佩洛伊斯"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Dawn's Guardian",
+        "zh": "黎明铁卫"
+      }
+    ]
   },
   {
     "id": "Velina",
@@ -635,7 +1071,17 @@
     "fullnames": {
       "en": "Velina Airgid",
       "zh": "维琳娜·艾嘉德"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Elegant Silver Cascade",
+        "zh": "华扇流银"
+      },
+      {
+        "en": "Shade of Leisure",
+        "zh": "暇时闲影"
+      }
+    ]
   },
   {
     "id": "Norma",
@@ -646,7 +1092,13 @@
     "fullnames": {
       "en": "Norma Hollowell",
       "zh": "诺姆·霍洛维尔"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Immunity to Fools",
+        "zh": "蠢材绝缘体"
+      }
+    ]
   },
   {
     "id": "Remielle",
@@ -657,7 +1109,21 @@
     "fullnames": {
       "en": "Remielle Dan",
       "zh": "蕾米埃尔·丹"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Feathered Murmurs",
+        "zh": "空羽呢喃"
+      },
+      {
+        "en": "Moonlight Whispers",
+        "zh": "月夜密语"
+      },
+      {
+        "en": "Seashade Pas Seul",
+        "zh": "影池独舞"
+      }
+    ]
   },
   {
     "id": "Sigrid",
@@ -668,7 +1134,17 @@
     "fullnames": {
       "en": "Sigrid de L'Azur",
       "zh": "希格莉德·德拉叙尔"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Legend of the Sky Island",
+        "zh": "空岛传奇"
+      },
+      {
+        "en": "Majestic Wavechaser",
+        "zh": "惊鸿逐浪"
+      }
+    ]
   },
   {
     "id": "Claret",

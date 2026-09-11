@@ -106,6 +106,31 @@ describe("processModInfo", () => {
 });
 
 describe("loadLibrary", () => {
+  it("rejects an unavailable library in strict upgrade mode", async () => {
+    await expect(loadLibrary(makeDeps({ pathExists: async () => false }), true)).rejects.toThrow("unavailable");
+  });
+
+  it("rejects directory read failures in strict upgrade mode", async () => {
+    const deps = makeDeps({
+      readdir: async () => {
+        throw new Error("Access denied");
+      },
+    });
+    await expect(loadLibrary(deps, true)).rejects.toThrow("Access denied");
+  });
+
+  it("rejects partial scans in strict upgrade mode instead of marking the migration complete", async () => {
+    const deps = makeDeps({
+      readdir: async () => [{ name: "Broken", isDirectory: () => true }],
+      readFile: async () => "invalid JSON",
+    });
+    await expect(loadLibrary(deps, true)).rejects.toThrow();
+  });
+
+  it("allows an empty but readable library in strict upgrade mode", async () => {
+    await expect(loadLibrary(makeDeps(), true)).resolves.toEqual([]);
+  });
+
   it("should return empty array when library path is null", async () => {
     const deps = makeDeps({ getLibraryPath: () => null });
     const result = await loadLibrary(deps);

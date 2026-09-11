@@ -13,10 +13,12 @@ export type ModInfo =
   | (BaseModInfo & {
       modType: "Character";
       character: Character;
+      outfitId: number;
     })
   | (BaseModInfo & {
       modType: Exclude<ModType, "Character">;
       character?: undefined;
+      outfitId?: undefined;
     });
 
 export const defaultModInfo: ModInfo = {

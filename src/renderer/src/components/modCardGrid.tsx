@@ -5,7 +5,6 @@ import clsx from "clsx";
 import { useEffect, useCallback, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
-  addToDiffList,
   applyMods,
   clearDiffList,
   selectAllPresetNames,
@@ -20,6 +19,7 @@ import { addModInfo, editModInfo } from "@renderer/redux/slices/librarySlice";
 import {
   selectSelectedCharacter,
   selectSelectedMenuItem,
+  selectSelectedOutfitId,
   setSelectedCharacter,
   setSelectedMenuItem,
 } from "@renderer/redux/slices/uiSlice";
@@ -51,17 +51,17 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     [currentPresetModSet, diffList]
   );
 
-  const [toggleMultiSelectMenu, shouldMultiSelectMenuMount, shouldMultiSelectMenuTransition] = useMountTransition(200);
   const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
   const [togglePresetsModalOpen, shouldPresetsModalMount, shouldPresetsModalTransition] = useMountTransition(200);
 
   const ref = useRef<HTMLDivElement>(null);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
+  const selectedOutfitId = useAppSelector(selectSelectedOutfitId);
 
   useEffect(() => {
     ref.current?.scrollTo(0, 0);
-  }, [selectedMenuItem, selectedCharacter]);
+  }, [selectedMenuItem, selectedCharacter, selectedOutfitId]);
 
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
 
@@ -171,39 +171,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     e.stopPropagation();
   };
 
-  const handleMultiSelect = (value: "selectAll" | "selectNone") => {
-    dispatch(clearDiffList());
-    if (value === "selectAll") {
-      dispatch(
-        addToDiffList(
-          modInfos.reduce(
-            (acc: Record<string, boolean>, mod) => {
-              if (!currentPresetMods.includes(mod.name)) {
-                acc[mod.name] = true;
-              }
-              return acc;
-            },
-            {} as Record<string, boolean>
-          )
-        )
-      );
-    } else if (value === "selectNone") {
-      dispatch(
-        addToDiffList(
-          modInfos.reduce(
-            (acc: Record<string, boolean>, mod) => {
-              if (currentPresetMods.includes(mod.name)) {
-                acc[mod.name] = false;
-              }
-              return acc;
-            },
-            {} as Record<string, boolean>
-          )
-        )
-      );
-    }
-  };
-
   const handleSwitchPreset = async (name: string) => {
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
@@ -259,39 +226,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
               <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
             ))
           )}
-        </div>
-
-        {/* Multi-Select Dropdown */}
-        <div className="absolute bottom-4 left-8 flex flex-col items-start">
-          {shouldMultiSelectMenuMount && (
-            <div
-              className={clsx(
-                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
-                shouldMultiSelectMenuTransition
-                  ? "pointer-events-auto translate-y-0 opacity-100"
-                  : "pointer-events-none translate-y-[50%] opacity-0"
-              )}
-            >
-              {["selectAll", "selectNone"].map((option) => (
-                <div
-                  key={option}
-                  className="hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-start overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black"
-                  onClick={() => {
-                    handleMultiSelect(option as "selectAll" | "selectNone");
-                    toggleMultiSelectMenu();
-                  }}
-                >
-                  {t(`common.${option}`)}
-                </div>
-              ))}
-            </div>
-          )}
-          <ZzzButton onClick={() => toggleMultiSelectMenu()} className="shadow-xl">
-            <div className="flex size-full flex-row items-center justify-between gap-2 overflow-hidden">
-              <span className="truncate">{t("common.multiSelect")}</span>
-              <FaCaretUp className={`transition-transform ${shouldMultiSelectMenuMount && "rotate-180"}`} />
-            </div>
-          </ZzzButton>
         </div>
 
         {/* Preset Dropdown and Add Button */}
