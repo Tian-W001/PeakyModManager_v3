@@ -12,16 +12,16 @@ import BangbooLoading from "./assets/bangboo_loading.gif";
 
 // Share the startup promise across StrictMode mounts; cached state must rehydrate before this runs.
 let startupRefresh: Promise<void> | undefined;
-const refreshBeforeOpening = (): Promise<void> => {
+const startBackgroundRefresh = (): void => {
   startupRefresh ??= (async () => {
     const result = await store.dispatch(refreshLibraryAfterUpdate());
     if (refreshLibraryAfterUpdate.rejected.match(result)) {
       console.error("Automatic library refresh failed; keeping cached mods and retrying next launch:", result.error);
     }
-    // Persist the refreshed cache and version together before opening the library.
+    // Persist the refreshed cache and version together after the background scan.
     await persistor.flush();
   })().catch((error) => console.error("Could not persist the startup library refresh:", error));
-  return startupRefresh;
+  // Do not return the promise: PersistGate should open as soon as cached state is rehydrated.
 };
 
 createRoot(document.getElementById("root")!).render(
@@ -34,7 +34,7 @@ createRoot(document.getElementById("root")!).render(
           </div>
         }
         persistor={persistor}
-        onBeforeLift={refreshBeforeOpening}
+        onBeforeLift={startBackgroundRefresh}
       >
         <App />
       </PersistGate>
