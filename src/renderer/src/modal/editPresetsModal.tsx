@@ -95,9 +95,7 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
                 {name === currentPresetName && (
                   <img src={IconHook} alt="Current" className="absolute -top-1 -right-1 size-6" />
                 )}
-                <span className="truncate font-bold text-white" title={name}>
-                  {name}
-                </span>
+                <span className="truncate font-bold text-white">{name}</span>
                 {name !== "Default Preset" && (
                   <div className="absolute flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                     <ZzzButton type="Cancel" onClick={() => handleRemovePreset(name)} />

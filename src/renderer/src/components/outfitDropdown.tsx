@@ -23,7 +23,6 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
       icon: selectedCharacter === "All" ? undefined : getOutfitIcon(selectedCharacter, id),
     })),
   ];
-  const selectedOutfitName = outfitOptions.find((option) => option.id === selectedOutfitId)?.name ?? t("outfits.all");
 
   useEffect(() => {
     const closeOutside = (event: MouseEvent) => {
@@ -79,14 +78,7 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
               ))}
             </div>
           )}
-          <ZzzButton
-            type="Outfit"
-            aria-label={t("outfits.label")}
-            aria-expanded={shouldOutfitsMenuMount}
-            title={t("outfits.label") + ": " + selectedOutfitName}
-            onClick={() => toggleOutfitsMenu()}
-            className={clsx("h-80%")}
-          />
+          <ZzzButton type="Outfit" onClick={() => toggleOutfitsMenu()} className={clsx("h-80%")} />
         </div>
       )}
     </>
