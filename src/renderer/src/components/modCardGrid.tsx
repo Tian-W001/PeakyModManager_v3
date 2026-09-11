@@ -31,8 +31,6 @@ import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
 import ZzzToast from "./zzzToast";
 import { ModState } from "@shared/modState";
-import OutfitFilter from "./outfitFilter";
-import { getOutfitCount } from "@shared/outfit";
 
 const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
   const dispatch = useAppDispatch();
@@ -229,10 +227,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
             ))
           )}
         </div>
-
-        {selectedMenuItem === "Character" && selectedCharacter !== "All" && getOutfitCount(selectedCharacter) > 1 && (
-          <OutfitFilter key={selectedCharacter} character={selectedCharacter} />
-        )}
 
         {/* Preset Dropdown and Add Button */}
         <div className="absolute right-8 bottom-4 flex flex-col items-end">

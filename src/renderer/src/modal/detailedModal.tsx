@@ -21,7 +21,7 @@ import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
 import { getOutfitCount, getOutfitIds, normalizeOutfitId } from "@shared/outfit";
-import OutfitAvatar from "@renderer/components/outfitAvatar";
+import { getOutfitIcon } from "@renderer/utils/outfitImages";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
   return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
@@ -353,6 +353,7 @@ const DetailedModal = ({
               )}
               {localModInfo.modType === "Character" && getOutfitCount(localModInfo.character) > 1 && (
                 <ZzzSelect
+                  key={localModInfo.character}
                   label={t("outfits.label")}
                   value={String(normalizeOutfitId(localModInfo.character, localModInfo.outfitId))}
                   options={getOutfitIds(localModInfo.character).map((id) => ({
@@ -362,7 +363,14 @@ const DetailedModal = ({
                         <span className="truncate">
                           {t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`)}
                         </span>
-                        <OutfitAvatar character={localModInfo.character} outfitId={id} />
+                        {getOutfitIcon(localModInfo.character, id) && (
+                          <img
+                            src={getOutfitIcon(localModInfo.character, id)}
+                            alt=""
+                            className="h-6 rounded-full object-contain"
+                            draggable={false}
+                          />
+                        )}
                       </div>
                     ),
                   }))}
