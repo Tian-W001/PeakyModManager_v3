@@ -1155,7 +1155,13 @@
     "fullnames": {
       "en": "Claret Flint",
       "zh": "克拉蕾·弗林特"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Red Gold Blaze",
+        "zh": "灼金绯焰"
+      }
+    ]
   },
   {
     "id": "Roxy",
@@ -1166,6 +1172,46 @@
     "fullnames": {
       "en": "Roxy Ifrita Pryce",
       "zh": "洛克茜·伊芙莉塔·普莱斯"
-    }
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      }
+    ]
+  },
+  {
+    "id": "Phoenix",
+    "nicknames": {
+      "en": "Phoenix",
+      "zh": "菲欧妮"
+    },
+    "fullnames": {
+      "en": "Phoenix Reffaella",
+      "zh": "菲欧妮·蕾法爱菈"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      }
+    ]
+  },
+  {
+    "id": "Severian",
+    "nicknames": {
+      "en": "Severian",
+      "zh": "赛维里安"
+    },
+    "fullnames": {
+      "en": "Severian Lowell",
+      "zh": "赛维里安·洛威尔"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      }
+    ]
   }
 ]
