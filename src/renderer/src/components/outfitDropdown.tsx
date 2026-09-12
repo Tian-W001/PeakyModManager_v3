@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import useMountTransition from "@renderer/hooks/useMountTransition";
-import { getOutfitCount, getOutfitIds } from "@shared/outfit";
+import { getOutfitIds } from "@shared/outfit";
 import { getOutfitIcon } from "@renderer/utils/outfitImages";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, selectSelectedOutfitId, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
@@ -38,7 +38,7 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
 
   return (
     <>
-      {isVisible && selectedCharacter !== "All" && getOutfitCount(selectedCharacter) > 1 && (
+      {isVisible && selectedCharacter !== "All" && (
         <div ref={outfitMenuRef} className="">
           {shouldOutfitsMenuMount && (
             <div

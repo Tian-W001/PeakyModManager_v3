@@ -95,6 +95,19 @@ describe("selectModTypeFilteredModCards", () => {
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(3);
   });
 
+  it("filters default and none outfits for characters with only one catalog outfit", () => {
+    store.dispatch(addModInfo(makeMod({ name: "Legacy", modType: "Character", character: "Anby" })));
+    store.dispatch(addModInfo(makeMod({ name: "None", modType: "Character", character: "Anby", outfitId: 0 })));
+    store.dispatch(addModInfo(makeMod({ name: "Default", modType: "Character", character: "Anby", outfitId: 1 })));
+    store.dispatch(setSelectedMenuItem("Character"));
+    store.dispatch(setSelectedCharacter("Anby"));
+    expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(3);
+    store.dispatch(setSelectedOutfitId(1));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Default"]);
+    store.dispatch(setSelectedOutfitId(0));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["None", "Legacy"]);
+  });
+
   it("resets outfit filtering when switching characters or categories", () => {
     store.dispatch(setSelectedMenuItem("Character"));
     store.dispatch(setSelectedCharacter("Belle"));

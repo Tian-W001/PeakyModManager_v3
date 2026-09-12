@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
-import { getOutfitCount, getOutfitIds, normalizeOutfitId } from "@shared/outfit";
+import { getOutfitIds, normalizeOutfitId } from "@shared/outfit";
 import { getOutfitIcon } from "@renderer/utils/outfitImages";
 
 const getCharacterAvatarPath = (char: Character | "All") => {
@@ -351,7 +351,7 @@ const DetailedModal = ({
                   </div>
                 </div>
               )}
-              {localModInfo.modType === "Character" && getOutfitCount(localModInfo.character) > 1 && (
+              {localModInfo.modType === "Character" && (
                 <ZzzSelect
                   key={localModInfo.character}
                   label={t("outfits.label")}
