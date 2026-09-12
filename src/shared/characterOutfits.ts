@@ -65,4 +65,6 @@ export const characterOutfitCounts: Record<Character, number> = {
   Sigrid: 2,
   Claret: 1,
   Roxy: 1,
+  Phoenix: 1,
+  Severian: 1,
 };

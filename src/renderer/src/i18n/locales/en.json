@@ -175,7 +175,9 @@
       "Remielle": "Remielle Dan",
       "Sigrid": "Sigrid de L'Azur",
       "Claret": "Claret Flint",
-      "Roxy": "Roxy Ifrita Pryce"
+      "Roxy": "Roxy Ifrita Pryce",
+      "Phoenix": "Phoenix Reffaella",
+      "Severian": "Severian Lowell"
     },
     "nicknames": {
       "Unknown": "Unknown",
@@ -240,7 +242,9 @@
       "Remielle": "Remielle",
       "Sigrid": "Sigrid",
       "Claret": "Claret",
-      "Roxy": "Roxy"
+      "Roxy": "Roxy",
+      "Phoenix": "Phoenix",
+      "Severian": "Severian"
     },
     "outfits": {
       "Unknown": {
@@ -456,10 +460,16 @@
         "2": "Majestic Wavechaser"
       },
       "Claret": {
-        "1": "Default Outfit"
+        "1": "Red Gold Blaze"
       },
       "Roxy": {
-        "1": "Default Outfit"
+        "1": "Default outfit"
+      },
+      "Phoenix": {
+        "1": "Default outfit"
+      },
+      "Severian": {
+        "1": "Default outfit"
       }
     }
   }
