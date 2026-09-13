@@ -26,7 +26,15 @@ import unknownCharacterIcon from "@renderer/assets/avatars/character_avatars/Unk
 import unknownOutfitIcon from "@renderer/assets/outfit_icons/Unknown.webp";
 import styles from "./detailedModal.module.css";
 
-const SelectedLabelIcon = ({ icon, onClick }: { icon: ReactElement; onClick: () => void }) => {
+const SelectedLabelIcon = ({
+  icon,
+  onClick,
+  visible,
+}: {
+  icon: ReactElement;
+  onClick: () => void;
+  visible: boolean;
+}) => {
   const iconKey = icon.key;
   const [frames, setFrames] = useState({ key: iconKey, current: icon, previous: null as ReactElement | null });
   if (iconKey !== frames.key) {
@@ -41,7 +49,11 @@ const SelectedLabelIcon = ({ icon, onClick }: { icon: ReactElement; onClick: () 
     <button
       type="button"
       onClick={onClick}
-      className="relative mr-2 size-8 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black shadow-[1px_1px_1px_#fff2]"
+      disabled={!visible}
+      className={clsx(
+        "relative mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[width,margin,opacity] duration-200 disabled:pointer-events-none",
+        visible && "group-hover/selection:mr-2 group-hover/selection:w-8 group-hover/selection:opacity-100"
+      )}
     >
       <span key={frames.key} className="pointer-events-none relative block size-8">
         {frames.previous && <span className={clsx(styles.chamber, styles.outgoing)}>{frames.previous}</span>}
@@ -349,8 +361,9 @@ const DetailedModal = ({
                 className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
               />
               {localModInfo.modType === "Character" && (
-                <div className="flex items-center">
+                <div className="group/selection flex items-center">
                   <SelectedLabelIcon
+                    visible={localModInfo.character !== "Unknown"}
                     onClick={handleLocateSelectedCharacter}
                     icon={
                       <img
@@ -388,8 +401,9 @@ const DetailedModal = ({
                 </div>
               )}
               {localModInfo.modType === "Character" && (
-                <div className="flex items-center">
+                <div className="group/selection flex items-center">
                   <SelectedLabelIcon
+                    visible={localModInfo.outfitId !== 0}
                     onClick={handleLocateSelectedCharacter}
                     icon={
                       <img
