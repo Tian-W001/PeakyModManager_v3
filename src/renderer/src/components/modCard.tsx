@@ -12,10 +12,11 @@ import { ModType } from "@shared/modType";
 import { Character } from "@shared/character";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import { memo } from "react";
+import { getCharacterAvatar } from "@renderer/utils/characterAvatars";
 
 const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
-    return new URL(`../assets/avatars/character_avatars/${character || "Unknown"}.webp`, import.meta.url).href;
+    return getCharacterAvatar(character ?? "Unknown");
   } else {
     return new URL(`../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
   }

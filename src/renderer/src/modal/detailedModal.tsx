@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ReactElement } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
@@ -14,17 +14,60 @@ import Exit from "@renderer/components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 import Track from "@renderer/assets/icons/Track.png";
-import Agent from "@renderer/assets/icons/Agent.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
-import { getOutfitIds, normalizeOutfitId } from "@shared/outfit";
-import { getOutfitIcon } from "@renderer/utils/outfitImages";
+import { getOutfitIds } from "@shared/outfit";
+import { getCharacterAvatar } from "@renderer/utils/characterAvatars";
+import { getOutfitIcon } from "@renderer/utils/outfitAvatars";
+import unknownCharacterIcon from "@renderer/assets/avatars/character_avatars/Unknown.webp";
+import unknownOutfitIcon from "@renderer/assets/outfit_icons/Unknown.webp";
+import styles from "./detailedModal.module.css";
 
-const getCharacterAvatarPath = (char: Character | "All") => {
-  return new URL(`../assets/avatars/character_avatars/${char}.webp`, import.meta.url).href;
+const SelectedLabelIcon = ({
+  icon,
+  onClick,
+  visible,
+}: {
+  icon: ReactElement;
+  onClick: () => void;
+  visible: boolean;
+}) => {
+  const iconKey = icon.key;
+  const [frames, setFrames] = useState({ key: iconKey, current: icon, previous: null as ReactElement | null });
+  if (iconKey !== frames.key) {
+    setFrames({
+      key: iconKey,
+      current: icon,
+      previous: frames.current,
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!visible}
+      className={clsx(
+        "hover:bg-zzzYellow relative mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[width,margin,opacity,background-color] duration-200 disabled:pointer-events-none",
+        visible && "group-hover/selection:mr-2 group-hover/selection:w-8 group-hover/selection:opacity-100"
+      )}
+    >
+      <span key={frames.key} className="pointer-events-none relative block size-8">
+        {frames.previous && <span className={clsx(styles.chamber, styles.outgoing)}>{frames.previous}</span>}
+        <span
+          className={clsx(styles.chamber, frames.previous && styles.incoming)}
+          onAnimationEnd={() =>
+            setFrames((current) => (current.key === frames.key ? { ...current, previous: null } : current))
+          }
+        >
+          {frames.current}
+        </span>
+      </span>
+    </button>
+  );
 };
 
 const DetailedModal = ({
@@ -41,11 +84,10 @@ const DetailedModal = ({
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
-
-  const handleLocateSelectedCharacter = (character: Character) => {
+  const handleLocateSelectedCharacter = () => {
     dispatch(setSelectedMenuItem("Character"));
-    dispatch(setSelectedCharacter(character));
-    dispatch(setSelectedOutfitId(normalizeOutfitId(character, localModInfo.outfitId)));
+    dispatch(setSelectedCharacter(localModInfo.character as Character));
+    dispatch(setSelectedOutfitId(localModInfo.outfitId ?? 0));
     onClose();
   };
 
@@ -63,7 +105,7 @@ const DetailedModal = ({
         return { ...prev, character: value as Character, outfitId: prev.character === value ? prev.outfitId : 0 };
       }
       if (field === "outfitId" && prev.modType === "Character") {
-        return { ...prev, outfitId: normalizeOutfitId(prev.character, Number(value)) };
+        return { ...prev, outfitId: Number(value) };
       }
       return { ...prev, [field]: value };
     });
@@ -319,30 +361,37 @@ const DetailedModal = ({
                 className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
               />
               {localModInfo.modType === "Character" && (
-                <div className="group flex flex-row items-center justify-start">
-                  <button
-                    onClick={() => handleLocateSelectedCharacter(localModInfo.character as Character)}
-                    className="mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[margin_width_opacity] duration-200 group-hover:mr-2 group-hover:w-8 group-hover:opacity-100"
-                  >
-                    <img src={Agent} alt="Agent" className="h-full w-full object-contain p-1" />
-                  </button>
+                <div className="group/selection flex items-center">
+                  <SelectedLabelIcon
+                    visible={localModInfo.character !== "Unknown"}
+                    onClick={handleLocateSelectedCharacter}
+                    icon={
+                      <img
+                        key={localModInfo.character}
+                        src={getCharacterAvatar(localModInfo.character)}
+                        alt=""
+                        draggable={false}
+                        className="size-8 max-w-none rounded-full object-contain p-0.5"
+                      />
+                    }
+                  />
                   <div className="min-w-0 flex-1">
                     <ZzzSelect
                       label={t("modDetails.character")}
                       value={localModInfo.character}
                       options={characterNameList.toReversed().map((char) => ({
                         value: char,
-                        label: (
-                          <div className="flex h-full flex-row items-center justify-end gap-2">
-                            {t(`characters.fullnames.${char}`)}
-                            <img
-                              src={getCharacterAvatarPath(char)}
-                              alt={char}
-                              className="h-6 rounded-full"
-                              onError={(e) => (e.currentTarget.src = getCharacterAvatarPath("Unknown"))}
-                              loading="lazy"
-                            />
-                          </div>
+                        label: t(`characters.fullnames.${char}`),
+                        labelIcon: (
+                          <img
+                            src={getCharacterAvatar(char)}
+                            alt=""
+                            draggable={false}
+                            className="h-6 rounded-full object-contain"
+                            onError={(event) => {
+                              event.currentTarget.src = unknownCharacterIcon;
+                            }}
+                          />
                         ),
                       }))}
                       onChange={(val) => handleModInfoChange("character", val)}
@@ -352,31 +401,44 @@ const DetailedModal = ({
                 </div>
               )}
               {localModInfo.modType === "Character" && (
-                <ZzzSelect
-                  key={localModInfo.character}
-                  label={t("outfits.label")}
-                  value={String(normalizeOutfitId(localModInfo.character, localModInfo.outfitId))}
-                  options={getOutfitIds(localModInfo.character).map((id) => ({
-                    value: String(id),
-                    label: (
-                      <div className="flex min-w-0 items-center justify-end gap-2">
-                        <span className="truncate">
-                          {t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`)}
-                        </span>
-                        {getOutfitIcon(localModInfo.character, id) && (
+                <div className="group/selection flex items-center">
+                  <SelectedLabelIcon
+                    visible={localModInfo.outfitId !== 0}
+                    onClick={handleLocateSelectedCharacter}
+                    icon={
+                      <img
+                        key={`${localModInfo.character}-${localModInfo.outfitId}`}
+                        src={getOutfitIcon(localModInfo.character, localModInfo.outfitId) ?? unknownOutfitIcon}
+                        alt=""
+                        draggable={false}
+                        className="size-8 max-w-none rounded-full object-contain p-0.5"
+                      />
+                    }
+                  />
+                  <div className="min-w-0 flex-1">
+                    <ZzzSelect
+                      label={t("outfits.label")}
+                      value={String(localModInfo.outfitId)}
+                      options={getOutfitIds(localModInfo.character).map((id) => ({
+                        value: String(id),
+                        label: t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`),
+                        labelIcon: id !== 0 && (
                           <img
                             src={getOutfitIcon(localModInfo.character, id)}
                             alt=""
-                            className="h-6 rounded-full object-contain"
                             draggable={false}
+                            className="h-6 rounded-full object-contain"
+                            onError={(event) => {
+                              event.currentTarget.src = unknownOutfitIcon;
+                            }}
                           />
-                        )}
-                      </div>
-                    ),
-                  }))}
-                  onChange={(value) => handleModInfoChange("outfitId", value)}
-                  className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
-                />
+                        ),
+                      }))}
+                      onChange={(value) => handleModInfoChange("outfitId", value)}
+                      className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+                    />
+                  </div>
+                </div>
               )}
               <div
                 className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"

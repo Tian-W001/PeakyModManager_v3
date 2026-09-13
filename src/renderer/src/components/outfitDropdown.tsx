@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import clsx from "clsx";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import { getOutfitIds } from "@shared/outfit";
-import { getOutfitIcon } from "@renderer/utils/outfitImages";
+import { getOutfitIcon } from "@renderer/utils/outfitAvatars";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedCharacter, selectSelectedOutfitId, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
 import ZzzButton from "./zzzButton";
+import { ZzzSelectDropdown } from "./zzzSelect";
 
 const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
   const dispatch = useAppDispatch();
@@ -17,11 +17,13 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
   const outfitMenuRef = useRef<HTMLDivElement>(null);
   const outfitOptions = [
     { id: "All" as const, name: t("outfits.all"), icon: undefined },
-    ...(selectedCharacter === "All" ? [] : getOutfitIds(selectedCharacter)).map((id) => ({
-      id,
-      name: t(id === 0 ? "outfits.none" : `characters.outfits.${selectedCharacter}.${id}`),
-      icon: selectedCharacter === "All" ? undefined : getOutfitIcon(selectedCharacter, id),
-    })),
+    ...(selectedCharacter === "All"
+      ? []
+      : getOutfitIds(selectedCharacter).map((id) => ({
+          id,
+          name: t(id === 0 ? "outfits.none" : `characters.outfits.${selectedCharacter}.${id}`),
+          icon: getOutfitIcon(selectedCharacter, id),
+        }))),
   ];
 
   useEffect(() => {
@@ -41,44 +43,24 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
       {isVisible && selectedCharacter !== "All" && (
         <div ref={outfitMenuRef} className="">
           {shouldOutfitsMenuMount && (
-            <div
-              role="group"
-              aria-label={t("outfits.label")}
-              className={clsx(
-                "no-scrollbar absolute top-full right-0 z-20 mt-2 flex max-h-60 w-60 flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 shadow-xl transition-[opacity_translate] duration-200 ease-in-out",
-                shouldOutfitsMenuTransition
-                  ? "pointer-events-auto translate-y-0 opacity-100"
-                  : "pointer-events-none -translate-y-2 opacity-0"
-              )}
-            >
-              {outfitOptions.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  aria-pressed={option.id === selectedOutfitId}
-                  className={clsx(
-                    "hover:bg-zzzYellow flex min-h-10 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-xl p-2 text-left wrap-break-word hover:text-black",
-                    option.id === selectedOutfitId ? "text-zzzYellow" : "text-white"
-                  )}
-                  onClick={() => {
-                    dispatch(setSelectedOutfitId(option.id));
-                    toggleOutfitsMenu(false);
-                  }}
-                >
-                  <span className="min-w-0">{option.name}</span>
-                  {option.icon && (
-                    <img
-                      src={option.icon}
-                      alt=""
-                      className="h-8 shrink-0 rounded-sm object-contain"
-                      draggable={false}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
+            <ZzzSelectDropdown
+              value={String(selectedOutfitId)}
+              options={outfitOptions.map((option) => ({
+                value: String(option.id),
+                label: option.name,
+                labelIcon: option.icon ? (
+                  <img src={option.icon} alt="" className="h-8 shrink-0 rounded-sm object-fill" draggable={false} />
+                ) : undefined,
+              }))}
+              isTransitioning={shouldOutfitsMenuTransition}
+              className="w-60"
+              onChange={(value) => {
+                dispatch(setSelectedOutfitId(value === "All" ? "All" : Number(value)));
+                toggleOutfitsMenu(false);
+              }}
+            />
           )}
-          <ZzzButton type="Outfit" onClick={() => toggleOutfitsMenu()} className={clsx("h-80%")} />
+          <ZzzButton type="Outfit" onClick={() => toggleOutfitsMenu()} className="h-80%" />
         </div>
       )}
     </>

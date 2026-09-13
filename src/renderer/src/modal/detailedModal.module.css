@@ -1,0 +1,41 @@
+.chamber {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 150%;
+}
+
+.outgoing {
+  animation: chamber-out 320ms ease-in-out both;
+}
+
+.incoming {
+  animation: chamber-in 320ms ease-in-out both;
+}
+
+@keyframes chamber-out {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-90deg);
+  }
+}
+
+@keyframes chamber-in {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outgoing {
+    display: none;
+  }
+
+  .incoming {
+    animation: none;
+  }
+}

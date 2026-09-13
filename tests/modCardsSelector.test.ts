@@ -38,6 +38,19 @@ function createStore() {
 }
 
 describe("selectModTypeFilteredModCards", () => {
+  it("preserves and filters outfit IDs absent from the catalog", () => {
+    const store = createStore();
+    store.dispatch(addModInfo(makeMod({ name: "Future", modType: "Character", character: "Belle", outfitId: 999 })));
+    store.dispatch(addModInfo(makeMod({ name: "None", modType: "Character", character: "Belle", outfitId: 0 })));
+    store.dispatch(setSelectedMenuItem("Character"));
+    store.dispatch(setSelectedCharacter("Belle"));
+    store.dispatch(setSelectedOutfitId(999));
+    expect(store.getState().ui.selectedOutfitId).toBe(999);
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Future"]);
+    store.dispatch(setSelectedOutfitId(0));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["None"]);
+  });
+
   let store: ReturnType<typeof createStore>;
 
   beforeEach(() => {

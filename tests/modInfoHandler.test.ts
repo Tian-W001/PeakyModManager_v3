@@ -2,20 +2,20 @@ import { describe, it, expect, vi } from "vitest";
 import { validateModInfo, createModInfoFile } from "../src/main/domain/modInfo";
 
 describe("validateModInfo", () => {
-  it.each([undefined, null, "1", -1, 0.5, NaN, Infinity, 999])("normalizes invalid outfit %s to Other", (outfitId) => {
+  it.each([undefined, null])("defaults missing outfit %s to None", (outfitId) => {
     const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
     expect(result.fixedModInfo.outfitId).toBe(0);
     expect(validateModInfo({ ...result.fixedModInfo }, "OutfitMod").valid).toBe(true);
   });
 
-  it.each([0, 1, 2, 3, 4])("preserves valid outfit ID %s", (outfitId) => {
+  it.each([0, 1, 2, 3, 4, 999, -1, 0.5, "1"])("preserves supplied outfit ID %s", (outfitId) => {
     const result = validateModInfo({ modType: "Character", character: "Belle", outfitId }, "OutfitMod");
     expect(result.fixedModInfo.outfitId).toBe(outfitId);
   });
 
-  it("defaults an outfit that does not belong to the selected character", () => {
+  it("preserves an outfit absent from the selected character catalog", () => {
     const result = validateModInfo({ modType: "Character", character: "Anby", outfitId: 2 }, "OutfitMod");
-    expect(result.fixedModInfo.outfitId).toBe(0);
+    expect(result.fixedModInfo.outfitId).toBe(2);
   });
 
   it("removes outfit metadata from non-character mods", () => {

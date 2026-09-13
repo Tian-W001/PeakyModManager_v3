@@ -4,7 +4,6 @@ import { ModType } from "@shared/modType";
 import { RootState } from "../store";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { normalizeOutfitId } from "@shared/outfit";
 
 export interface uiState {
   selectedMenuItem: ModType | "All";
@@ -39,10 +38,7 @@ const uiSlice = createSlice({
       state.selectedOutfitId = "All";
     },
     setSelectedOutfitId: (state, action: PayloadAction<number | "All">) => {
-      state.selectedOutfitId =
-        action.payload === "All" || state.selectedCharacter === "All"
-          ? "All"
-          : normalizeOutfitId(state.selectedCharacter, action.payload);
+      state.selectedOutfitId = action.payload === "All" || state.selectedCharacter === "All" ? "All" : action.payload;
     },
     setCurrentWallpaper: (state, action: PayloadAction<string>) => {
       state.currentWallpaper = action.payload;
