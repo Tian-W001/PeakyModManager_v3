@@ -400,7 +400,7 @@ const DetailedModal = ({
                   </div>
                 </div>
               )}
-              {localModInfo.modType === "Character" && (
+              {localModInfo.modType === "Character" && localModInfo.character !== "Unknown" && (
                 <div className="group/selection flex items-center">
                   <SelectedLabelIcon
                     visible={localModInfo.outfitId !== 0}

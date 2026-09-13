@@ -40,7 +40,7 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
 
   return (
     <>
-      {isVisible && selectedCharacter !== "All" && (
+      {isVisible && selectedCharacter !== "All" && selectedCharacter !== "Unknown" && (
         <div ref={outfitMenuRef} className="">
           {shouldOutfitsMenuMount && (
             <ZzzSelectDropdown

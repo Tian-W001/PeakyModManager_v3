@@ -247,9 +247,7 @@
       "Severian": "Severian"
     },
     "outfits": {
-      "Unknown": {
-        "1": "Default Outfit"
-      },
+      "Unknown": {},
       "Belle": {
         "1": "Vibrant Store Manager",
         "2": "Delicate Sunlight",
