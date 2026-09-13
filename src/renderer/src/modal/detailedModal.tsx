@@ -51,8 +51,9 @@ const SelectedLabelIcon = ({
       onClick={onClick}
       disabled={!visible}
       className={clsx(
-        "hover:bg-zzzYellow relative mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[width,margin,opacity,background-color] duration-200 disabled:pointer-events-none",
-        visible && "group-hover/selection:mr-2 group-hover/selection:w-8 group-hover/selection:opacity-100"
+        "hover:bg-zzzYellow relative mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[width,margin,opacity,background-color] delay-[1s,1s,1s,0ms] duration-200 disabled:pointer-events-none",
+        visible &&
+          "group-hover/selection:mr-2 group-hover/selection:w-8 group-hover/selection:opacity-100 group-hover/selection:delay-0"
       )}
     >
       <span key={frames.key} className="pointer-events-none relative block size-8">
