@@ -172,6 +172,11 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   };
 
   const handleSwitchPreset = async (name: string) => {
+    if (name === currentPresetName) {
+      togglePresetsMenu(false);
+      return;
+    }
+
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
       //no need to call ipc here, as this preset will be switched right after
