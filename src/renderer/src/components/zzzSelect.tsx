@@ -97,7 +97,10 @@ const ZzzSelect = ({ label, value, options, onChange, className, showLabelIcon =
           options={options}
           isTransitioning={shouldDropdownTransition}
           className="left-0"
-          onChange={onChange}
+          onChange={(value) => {
+            onChange(value);
+            toggleOpen(false);
+          }}
         />
       )}
     </div>

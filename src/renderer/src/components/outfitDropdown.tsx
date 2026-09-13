@@ -56,6 +56,7 @@ const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
               className="w-60"
               onChange={(value) => {
                 dispatch(setSelectedOutfitId(value === "All" ? "All" : Number(value)));
+                toggleOutfitsMenu(false);
               }}
             />
           )}
