@@ -38,6 +38,12 @@ describe("edit-mod-info IPC", () => {
     expect(fs.writeJson).toHaveBeenCalledWith(expect.any(String), saved, { spaces: 2 });
   });
 
+  it("writes unknown outfit IDs without replacing them with None", async () => {
+    const saved = await save({ modType: "Character", character: "Belle", outfitId: 999 });
+    expect(saved).toMatchObject({ outfitId: 999 });
+    expect(fs.writeJson).toHaveBeenCalledWith(expect.any(String), saved, { spaces: 2 });
+  });
+
   it("returns null without writing when the library is unavailable", async () => {
     fileMocks.pathExists.mockResolvedValue(false);
     expect(await save({ modType: "Character", character: "Belle", outfitId: 1 })).toBeNull();
