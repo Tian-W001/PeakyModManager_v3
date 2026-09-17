@@ -38,7 +38,7 @@
 
 如果不确定如何设置，可以按以下步骤整理现有的 Mod 文件夹：
 
-1. 将目前存放 Mod 的文件夹重命名为 `ModResources`, 并确保里面只有文件夹,没有散落的文件。
+1. 将目前存放 Mod 的文件夹重命名为 `ModResources`，并确保其中只有子文件夹，没有散落的文件。
 2. 在同一目录下新建一个空的 `Mods` 文件夹。
 3. 将 `ModResources` 设置为**模组库路径（Library Path）**。
 4. 将新建的 `Mods` 文件夹设置为**目标路径（Target Path）**。
@@ -160,3 +160,15 @@
 ![Mod 详情](images/README/screenshot_detailmodal.png)
 ![预设管理](images/README/screenshot_presetsmodal.png)
 ![设置](images/README/screenshot_settings.png)
+
+## 已知问题
+
+- **导入后的临时文件残留（已在 1.3.1 修复）**
+
+  旧版本使用 [PMM-Mod-Importer](https://github.com/Tian-W001/PMM_Mod_Importer) 导入 Mod 时，可能会在以下目录中留下临时文件：
+
+  ```text
+  C:\Users\<用户名>\AppData\Roaming\peakymodmanager-v3\Mods
+  ```
+
+  如果使用过旧版本，可以检查此目录并删除残留的临时文件。

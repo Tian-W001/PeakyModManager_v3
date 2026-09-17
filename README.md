@@ -37,7 +37,7 @@ Before using PeakyModManager, you need to configure the required paths:
 
 If you are unsure how to set up the paths, you can organize your existing mod folder as follows:
 
-1. Rename the folder currently containing your mods to `ModResources`, and make sure it contains only sub folders and no files.
+1. Rename the folder currently containing your mods to `ModResources`, and make sure it contains only subfolders and no loose files.
 2. Create a new, empty `Mods` folder alongside it.
 3. Set **Library Path** to `ModResources`.
 4. Set **Target Path** to the new `Mods` folder.
@@ -160,3 +160,15 @@ Character resources will be added as the game receives updates. If a new charact
 ![Mod details](images/README/screenshot_detailmodal.png)
 ![Preset management](images/README/screenshot_presetsmodal.png)
 ![Settings](images/README/screenshot_settings.png)
+
+## Known Issues
+
+- **Leftover temporary files after importing (fixed in 1.3.1)**
+
+  Older versions could leave temporary files in the following directory when importing mods with [PMM-Mod-Importer](https://github.com/Tian-W001/PMM_Mod_Importer):
+
+  ```text
+  C:\Users\<username>\AppData\Roaming\peakymodmanager-v3\Mods
+  ```
+
+  If you used an older version, you can check this directory and delete any leftover temporary files.
