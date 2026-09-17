@@ -14,9 +14,6 @@
     "settings": "设置",
     "apply": "应用",
     "select": "选择",
-    "multiSelect": "批量操作",
-    "selectAll": "全选",
-    "selectNone": "全不选",
     "applyModsError": "{{count}} 个Mod应用失败"
   },
   "outfits": {

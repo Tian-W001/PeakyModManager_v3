@@ -14,9 +14,6 @@
     "settings": "Settings",
     "apply": "Apply",
     "select": "Select",
-    "multiSelect": "Multi-Select",
-    "selectAll": "Select All",
-    "selectNone": "Select None",
     "applyModsError": "{{count}} mod(s) failed to apply"
   },
   "outfits": {
