@@ -1,5 +1,7 @@
 # PeakyModManager v3
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 A lightweight mod manager for **Zenless Zone Zero**.
 
 ## Features
