@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-一款轻量级的《**绝区零**》Mod 管理器。
+一款轻量级的绝区零 Mod 管理器。
 
 ## 功能
 
@@ -14,8 +14,10 @@
   简洁的《**绝区零**》风格界面。
 - **备份与恢复**
   备份和恢复预设配置。
-- **3DMigoto Toggle 编辑**
+- **Toggle 编辑**
   直接查看和编辑受支持的 Mod INI 文件中的持久化开关状态与按键绑定。
+- **Windows 和 Linux 双平台支持**
+  项目使用 Electron 开发，支持 Windows 和 Linux，但不保证在 Linux 平台上正常运行。
 
 ## 快速开始
 
@@ -29,9 +31,17 @@
 3. **目标路径（Target Path）**
    选择游戏加载 Mod 的文件夹。
    - **ZZMI 用户**应选择 `ZZMI/ZZMI/Mods`。
+
 4. **d3dx_user.ini 路径**（可选）
    如果需要使用**同步 Toggle（Sync Toggles）**，请选择 ZZMI 的 `d3dx_user.ini` 文件。
    编辑 Mod 自身的 Toggle 状态或按键绑定不需要配置此路径。
+
+如果不确定如何设置，可以按以下步骤整理现有的 Mod 文件夹：
+
+1. 将目前存放 Mod 的文件夹重命名为 `ModResources`, 并确保里面只有文件夹,没有散落的文件。
+2. 在同一目录下新建一个空的 `Mods` 文件夹。
+3. 将 `ModResources` 设置为**模组库路径（Library Path）**。
+4. 将新建的 `Mods` 文件夹设置为**目标路径（Target Path）**。
 
 ---
 
@@ -44,7 +54,7 @@
 
 - **使用 [PMM-Mod-Importer](https://github.com/Tian-W001/PMM_Mod_Importer)**
 
-  使用此 Chrome 扩展导入 Mod，扩展会打开应用并开始下载 Mod。
+  使用此 Chrome 扩展导入 GameBanana 上的 Mod，扩展会打开应用并开始下载 Mod。
 
 - **手动导入须知**
 
@@ -74,10 +84,13 @@
    - 描述
    - Mod 类型
    - 角色（仅角色类型的 Mod）
+   - 服装（仅角色类型的 Mod）
    - 来源链接
-3. **删除**
+   - 封面图（支持拖放图片或图片 URL）
+3. 将鼠标悬停在角色或服装栏上，左侧会显示对应的头像或图标。点击后可跳转到对应的角色或服装视图。
+4. **删除**
    会从磁盘中删除 **Mod 的实际文件**。
-4. **自动填充**会执行以下操作：
+5. **自动填充**会执行以下操作：
    - 自动设置预览图：
      - 优先使用名为 `Preview` 的图片。
      - 若未找到，则使用其他可用图片。
@@ -86,7 +99,7 @@
    - 尝试根据 Mod 标题匹配角色名称：
      - 将 Mod 类型设为**角色（Character）**。
      - 设置为匹配到的角色。
-5. 点击**保存**应用修改。
+6. 点击**保存**应用修改。
 
 ---
 
@@ -103,6 +116,8 @@
 
 **同步 Toggle（Sync Toggles）**是独立的单向操作：它读取已配置的 `d3dx_user.ini` 中记录的运行时持久化值，
 并将匹配的值写回 Mod 的 INI 文件。如果某个常量不存在于 `d3dx_user.ini` 中，同步时不会修改该常量。
+
+不保证同步 Toggle 功能在所有 Mod 中都能正常生效。
 
 ---
 
@@ -125,30 +140,18 @@
 
 - **备份**
   - 将预设配置保存到模组库文件夹中的 `Presets_Backup.json`。
-  - ⚠️ 此操作会**覆盖**已有的备份文件。
 
 - **恢复**
   - 从 `Presets_Backup.json` 加载数据。
   - ⚠️ 此操作会**覆盖**当前的预设配置。
   - 恢复后，需要将待应用列表中的变更**重新应用到当前预设**，才能使变更生效。
 
-## 自动更新
+## 更新
 
-- 启动应用后稍等片刻。当新版本下载完成时，系统会弹出通知，提示更新将在退出应用后安装。
+- **自动更新**：启动应用后稍等片刻。当新版本下载完成时，系统会弹出通知，提示更新将在退出应用后安装。
+- **手动更新**：前往 [Releases 页面](https://github.com/Tian-W001/PeakyModManager_v3/releases)下载安装包，然后运行并安装。
 
-## 3DMigoto / ZZMI INI 工具
-
-项目中的共享 TypeScript 解析器会保留 INI 文件的原始布局，同时提供对持久化常量、按键绑定、纹理覆盖、
-命令列表、表达式以及当前 ZZMI SlotFix 语法的语义查询。
-
-通过命令行检查一个或多个 INI 文件：
-
-```bash
-npx tsx scripts/inspectThreeDMigoto.ts <file.ini> [more.ini...]
-npx tsx scripts/inspectThreeDMigoto.ts --json <file.ini>
-```
-
-支持的语法、TypeScript API 和当前限制，请参阅 [3DMigoto / ZZMI INI 解析器设计文档（英文）](docs/three-dmigoto-ini-parser.md)。
+应用会随着游戏更新逐步补充角色资源。如果新角色的头像显示为未知头像，请耐心等待后续更新。
 
 ## 界面预览
 

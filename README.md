@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-A lightweight mod manager for **Zenless Zone Zero**.
+A lightweight mod manager for Zenless Zone Zero.
 
 ## Features
 
@@ -14,8 +14,10 @@ A lightweight mod manager for **Zenless Zone Zero**.
   Clean, **Zenless Zone Zero–style** UI design.
 - **Backup & Restore**
   Safely back up and restore preset configurations.
-- **3DMigoto Toggle Editing**
+- **Toggle Editing**
   Inspect and edit persistent toggle states and key bindings directly in supported Mod INI files.
+- **Windows and Linux Support**
+  Built with Electron for Windows and Linux, though correct operation on Linux is not guaranteed.
 
 ## Getting Started
 
@@ -33,6 +35,13 @@ Before using PeakyModManager, you need to configure the required paths:
    Select ZZMI's `d3dx_user.ini` if you want to use **Sync Toggles**. This is not required for editing a Mod's
    own Toggle states or key bindings.
 
+If you are unsure how to set up the paths, you can organize your existing mod folder as follows:
+
+1. Rename the folder currently containing your mods to `ModResources`, and make sure it contains only sub folders and no files.
+2. Create a new, empty `Mods` folder alongside it.
+3. Set **Library Path** to `ModResources`.
+4. Set **Target Path** to the new `Mods` folder.
+
 ---
 
 ### Importing Mods
@@ -44,7 +53,7 @@ Before using PeakyModManager, you need to configure the required paths:
 
 - **Use [PMM-Mod-Importer](https://github.com/Tian-W001/PMM_Mod_Importer)**
 
-  Use the Chrome Extension to import the mod, the app will be opened and start downloading the mod.
+  Use this Chrome extension to import mods from GameBanana. It will open the app and start downloading the mod.
 
 - **Manual Import Notice**
 
@@ -74,10 +83,13 @@ Before using PeakyModManager, you need to configure the required paths:
    - Description
    - Mod Type
    - Character (for Character-type mods)
+   - Outfit (for Character-type mods)
    - Source URL
-3. **Delete**
+   - Cover image (supports dragging and dropping images or image URLs)
+3. Hover over the Character or Outfit row to reveal its avatar or icon on the left. Click it to jump to the corresponding character or outfit view.
+4. **Delete**
    Deletes the **actual mod files** from disk.
-4. **Autofill** will:
+5. **Autofill** will:
    - Automatically set the preview image:
      - Prefers images named `Preview`
      - Falls back to any available image, if present.
@@ -86,7 +98,7 @@ Before using PeakyModManager, you need to configure the required paths:
    - Attempt to match the mod title with a character name:
      - Sets the mod type to **Character**
      - Assigns the matched character
-5. Click **Save** to apply changes.
+6. Click **Save** to apply changes.
 
 ---
 
@@ -104,6 +116,8 @@ These edits only change files inside the Mod. They never modify `d3dx_user.ini`.
 **Sync Toggles** is a separate, one-way operation. It reads runtime persistent values recorded in the configured
 `d3dx_user.ini` and writes matching values back to the Mod's INI files. A constant that is not present in
 `d3dx_user.ini` produces no sync change.
+
+Sync Toggles is not guaranteed to work correctly with every mod.
 
 ---
 
@@ -126,36 +140,23 @@ Located in **Settings**:
 
 - **Backup**
   - Saves preset configurations to: `Presets_Backup.json` inside your Library folder.
-  - ⚠️ This will **overwrite** any existing backup file.
 
 - **Restore**
   - Loads data from `Presets_Backup.json`.
   - ⚠️ This will **overwrite** your current preset configurations.
   - After restoring, you must **re-apply the current preset** from the pending queue to reflect changes.
 
-## Auto Updates
+## Updates
 
-- When you launch the app, wait a few seconds until a system notification pops up, indicating that a new version has been downloaded and will be installed after you quit the app.
+- **Automatic updates**: After launching the app, wait a few seconds. Once a new version has downloaded, a system notification will let you know that it will be installed after you quit the app.
+- **Manual updates**: Download an installer from the [Releases page](https://github.com/Tian-W001/PeakyModManager_v3/releases), then run it to install the update.
 
-## 3DMigoto / ZZMI INI Tools
-
-The shared TypeScript parser preserves the original INI layout while exposing semantic queries for persistent
-constants, key bindings, texture overrides, command lists, expressions, and current ZZMI SlotFix syntax.
-
-Inspect one or more INI files from the command line:
-
-```bash
-npx tsx scripts/inspectThreeDMigoto.ts <file.ini> [more.ini...]
-npx tsx scripts/inspectThreeDMigoto.ts --json <file.ini>
-```
-
-See [3DMigoto / ZZMI INI Parser Design](docs/three-dmigoto-ini-parser.md) for the supported syntax, TypeScript API,
-and current limitations.
+Character resources will be added as the game receives updates. If a new character displays the Unknown avatar, please wait for a future update.
 
 ## Previews
 
-![screenshot_main](images/README/screenshot_main.png)
-![screenshot_main](images/README/screenshot_apply.png)
-![screenshot_main](images/README/screenshot_detailmodal.png)
-![screenshot_main](images/README/screenshot_presetsmodal.png)
-![screenshot_main](images/README/screenshot_settings.png)
+![Main screen](images/README/screenshot_main.png)
+![Apply changes](images/README/screenshot_apply.png)
+![Mod details](images/README/screenshot_detailmodal.png)
+![Preset management](images/README/screenshot_presetsmodal.png)
+![Settings](images/README/screenshot_settings.png)
