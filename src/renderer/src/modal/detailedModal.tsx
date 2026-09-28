@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
@@ -33,17 +33,34 @@ type LabelIconProps = {
   className?: string;
 };
 
-const LabelIcon = ({ src, onClick, className }: LabelIconProps) => (
-  <div
-    className={clsx(
-      className,
-      "hover:border-zzzYellow size-8 overflow-hidden rounded-full border-3 bg-black hover:cursor-pointer"
-    )}
-    onClick={onClick}
-  >
-    <img src={src} alt="" draggable={false} className="size-full object-contain" />
-  </div>
-);
+const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
+  const filterId = useId();
+
+  return (
+    <div className={clsx("size-8", className)} onClick={onClick}>
+      <svg className="pointer-events-none absolute top-0 left-0 h-8 w-13" viewBox="0 0 52 32">
+        <defs>
+          <filter id={filterId} x="-20%" y="-100%" width="140%" height="300%" colorInterpolationFilters="sRGB">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" />
+          </filter>
+        </defs>
+        <g filter={`url(#${filterId})`} fill="black">
+          <circle cx="16" cy="16" r="16" />
+          <rect
+            width="48"
+            height="32"
+            rx="16"
+            className="translate-x-(--field-inset) transition-[translate] duration-(--field-duration) ease-in motion-reduce:transition-none"
+          />
+        </g>
+      </svg>
+      <div className="hover:border-zzzYellow relative size-full cursor-pointer overflow-hidden rounded-full border-3 bg-black">
+        <img src={src} alt="" draggable={false} className="size-full object-contain" />
+      </div>
+    </div>
+  );
+};
 
 const DetailedModal = ({
   modInfo,
@@ -358,7 +375,13 @@ const DetailedModal = ({
                 }
               />
               {localModInfo.modType === "Character" && (
-                <div className="group/field relative flex shrink-0 items-center">
+                <div
+                  className={clsx(
+                    "group/field relative flex shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                    localModInfo.character !== "Unknown" &&
+                      "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
+                  )}
+                >
                   {localModInfo.character !== "Unknown" && (
                     <LabelIcon
                       src={getCharacterAvatar(localModInfo.character)}
@@ -366,13 +389,7 @@ const DetailedModal = ({
                       className="absolute left-0"
                     />
                   )}
-                  <div
-                    className={clsx(
-                      "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
-                      localModInfo.character !== "Unknown" &&
-                        "group-hover/field:pl-9 group-has-data-dropdown-open/field:pl-9"
-                    )}
-                  >
+                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
                     <ZzzField
                       title={t("modDetails.character")}
                       className="pointer-events-auto"
@@ -415,7 +432,13 @@ const DetailedModal = ({
                 </div>
               )}
               {localModInfo.modType === "Character" && localModInfo.character !== "Unknown" && (
-                <div className="group/field relative flex shrink-0 items-center">
+                <div
+                  className={clsx(
+                    "group/field relative flex shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                    localModInfo.outfitId !== 0 &&
+                      "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
+                  )}
+                >
                   {localModInfo.outfitId !== 0 && (
                     <LabelIcon
                       src={getOutfitIcon(localModInfo.character, localModInfo.outfitId) ?? unknownOutfitIcon}
@@ -423,12 +446,7 @@ const DetailedModal = ({
                       className="absolute left-0"
                     />
                   )}
-                  <div
-                    className={clsx(
-                      "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
-                      localModInfo.outfitId !== 0 && "group-hover/field:pl-9 group-has-data-dropdown-open/field:pl-9"
-                    )}
-                  >
+                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
                     <ZzzField
                       title={t("outfits.label")}
                       className="pointer-events-auto"
@@ -470,18 +488,19 @@ const DetailedModal = ({
                   </div>
                 </div>
               )}
-              <div className="group/field relative flex min-w-0 shrink-0 items-center" id="mod-source">
+              <div
+                className={clsx(
+                  "group/field relative flex min-w-0 shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                  localModInfo.source && "hover:[--field-inset:36px]"
+                )}
+                id="mod-source"
+              >
                 {localModInfo.source && (
                   <a href={localModInfo.source} target="_blank" rel="noreferrer" className="absolute left-0">
                     <LabelIcon src={Locate} />
                   </a>
                 )}
-                <div
-                  className={clsx(
-                    "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
-                    localModInfo.source && "group-hover/field:pl-9"
-                  )}
-                >
+                <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
                   <ZzzField
                     title={t("modDetails.source")}
                     className="pointer-events-auto"
@@ -500,7 +519,7 @@ const DetailedModal = ({
               <textarea
                 value={localModInfo.description}
                 placeholder={t("modDetails.description")}
-                className="no-scrollbar field-sizing-content min-h-20 w-full flex-1 resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2] transition-[flex-grow,min-height] duration-300 ease-out peer-focus-within/toggles:min-h-10 peer-focus-within/toggles:grow-0 peer-hover/toggles:min-h-10 peer-hover/toggles:grow-0"
+                className="no-scrollbar field-sizing-content min-h-20 w-full flex-1 resize-none overflow-scroll rounded-2xl bg-black p-2 font-bold wrap-normal whitespace-pre-line text-white shadow-[1px_1px_1px_#fff2] transition-[flex-grow,min-height] duration-150 ease-out peer-focus-within/toggles:min-h-10 peer-focus-within/toggles:grow-0 peer-hover/toggles:min-h-10 peer-hover/toggles:grow-0"
                 onChange={(e) => handleModInfoChange("description", e.target.value)}
               />
             </div>
