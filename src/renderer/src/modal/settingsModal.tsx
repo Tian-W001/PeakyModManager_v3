@@ -23,12 +23,11 @@ import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/sli
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
-import { FaCaretDown } from "react-icons/fa6";
+import { FaCaretUp } from "react-icons/fa6";
 import ZzzField from "@renderer/components/zzzField";
 import Exit from "@renderer/components/Exit";
 import IconHookBig from "@renderer/assets/icons/HookBig.png";
 import ZzzButton from "@renderer/components/zzzButton";
-import Locate from "@renderer/assets/icons/Locate.png";
 import clsx from "clsx";
 
 const wallpaperModules = import.meta.glob("@renderer/assets/wallpapers/*", {
@@ -214,18 +213,6 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
     return;
   }, []);
 
-  const handleOpenLibraryFolder = () => {
-    if (libraryPath) {
-      window.electron.ipcRenderer.invoke("open-mod-folder");
-    }
-  };
-
-  const handleOpenTargetFolder = () => {
-    if (targetPath) {
-      window.electron.ipcRenderer.invoke("open-target-folder");
-    }
-  };
-
   return (
     <>
       <div className={clsx("modal-overlay", className)} id="modal-overlay">
@@ -266,10 +253,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
                       onClick={onClick}
                     >
                       <span className="truncate">{selectedLabel}</span>
-                      <FaCaretDown
-                        size={12}
-                        className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
-                      />
+                      <FaCaretUp size={12} className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")} />
                     </button>
                   )}
                 />
@@ -277,44 +261,32 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
             />
 
             {/* Library Path */}
-            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.libraryPath")}</span>
               <input
-                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
+                className="flex-1 cursor-pointer text-right outline-none"
                 value={libraryPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectLibraryPath}
               />
-              <img
-                src={Locate}
-                alt="Locate"
-                onClick={handleOpenLibraryFolder}
-                className="absolute right-2 h-6 cursor-pointer"
-              />
             </div>
 
             {/* Target Path */}
-            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.targetPath")}</span>
               <input
-                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
+                className="flex-1 cursor-pointer text-right outline-none"
                 value={targetPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectTargetPath}
               />
-              <img
-                src={Locate}
-                alt="Locate"
-                onClick={handleOpenTargetFolder}
-                className="absolute right-2 h-6 cursor-pointer"
-              />
             </div>
 
             {/* d3dx_user.ini Path */}
-            <div className="hover:text-zzzYellow relative flex cursor-pointer flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.d3dxUserPath")}</span>
               <input
-                className="mr-6 flex-1 cursor-[inherit] text-right outline-none"
+                className="flex-1 cursor-pointer text-right outline-none"
                 value={d3dxUserPath || t("settings.clickToSetPath")}
                 readOnly
                 onClick={handleSelectD3dxUserPath}

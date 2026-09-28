@@ -7,7 +7,7 @@ import defaultCover from "@renderer/assets/default_cover.jpg";
 import { Character, characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
-import { FaCaretDown } from "react-icons/fa6";
+import { FaCaretUp } from "react-icons/fa6";
 import ZzzField from "@renderer/components/zzzField";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
@@ -51,7 +51,7 @@ const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
             width="48"
             height="32"
             rx="16"
-            className="translate-x-(--field-inset) transition-[translate] duration-(--field-duration) ease-in motion-reduce:transition-none"
+            className="translate-x-(--field-inset) transition-[translate] duration-(--field-duration) ease-(--field-easing) motion-reduce:transition-none"
           />
         </g>
       </svg>
@@ -350,7 +350,10 @@ const DetailedModal = ({
                 onClick={onClose}
               />
             </div>
-            <div className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4" id="mod-info-section">
+            <div
+              className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4 [--field-duration:360ms] [--field-easing:cubic-bezier(0.22,1,0.36,1)]"
+              id="mod-info-section"
+            >
               <ZzzField
                 title={t("modDetails.modType")}
                 content={
@@ -365,7 +368,7 @@ const DetailedModal = ({
                         onClick={onClick}
                       >
                         <span className="truncate">{selectedLabel}</span>
-                        <FaCaretDown
+                        <FaCaretUp
                           size={12}
                           className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
                         />
@@ -377,7 +380,7 @@ const DetailedModal = ({
               {localModInfo.modType === "Character" && (
                 <div
                   className={clsx(
-                    "group/field relative flex shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)] has-data-dropdown-open:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
                     localModInfo.character !== "Unknown" &&
                       "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
                   )}
@@ -389,7 +392,7 @@ const DetailedModal = ({
                       className="absolute left-0"
                     />
                   )}
-                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
+                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-(--field-easing) motion-reduce:transition-none">
                     <ZzzField
                       title={t("modDetails.character")}
                       className="pointer-events-auto"
@@ -419,7 +422,7 @@ const DetailedModal = ({
                               onClick={onClick}
                             >
                               <span className="truncate">{selectedLabel}</span>
-                              <FaCaretDown
+                              <FaCaretUp
                                 size={12}
                                 className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
                               />
@@ -434,7 +437,7 @@ const DetailedModal = ({
               {localModInfo.modType === "Character" && localModInfo.character !== "Unknown" && (
                 <div
                   className={clsx(
-                    "group/field relative flex shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)] has-data-dropdown-open:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
                     localModInfo.outfitId !== 0 &&
                       "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
                   )}
@@ -446,7 +449,7 @@ const DetailedModal = ({
                       className="absolute left-0"
                     />
                   )}
-                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
+                  <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-(--field-easing) motion-reduce:transition-none">
                     <ZzzField
                       title={t("outfits.label")}
                       className="pointer-events-auto"
@@ -476,7 +479,7 @@ const DetailedModal = ({
                               onClick={onClick}
                             >
                               <span className="truncate">{selectedLabel}</span>
-                              <FaCaretDown
+                              <FaCaretUp
                                 size={12}
                                 className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
                               />
@@ -490,7 +493,7 @@ const DetailedModal = ({
               )}
               <div
                 className={clsx(
-                  "group/field relative flex min-w-0 shrink-0 items-center [--field-duration:250ms] [--field-inset:0px]",
+                  "group/field relative flex min-w-0 shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
                   localModInfo.source && "hover:[--field-inset:36px]"
                 )}
                 id="mod-source"
@@ -500,7 +503,7 @@ const DetailedModal = ({
                     <LabelIcon src={Locate} />
                   </a>
                 )}
-                <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-in motion-reduce:transition-none">
+                <div className="pointer-events-none relative w-full min-w-0 pl-(--field-inset) transition-[padding-left] duration-(--field-duration) ease-(--field-easing) motion-reduce:transition-none">
                   <ZzzField
                     title={t("modDetails.source")}
                     className="pointer-events-auto"
