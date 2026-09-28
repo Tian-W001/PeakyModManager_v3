@@ -1,6 +1,7 @@
 import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
 import ZzzButton from "./zzzButton";
+import ZzzSelect from "./zzzSelect";
 import clsx from "clsx";
 import { useEffect, useCallback, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
@@ -51,7 +52,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     [currentPresetModSet, diffList]
   );
 
-  const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
   const [togglePresetsModalOpen, shouldPresetsModalMount, shouldPresetsModalTransition] = useMountTransition(200);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -172,10 +172,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   };
 
   const handleSwitchPreset = async (name: string) => {
-    if (name === currentPresetName) {
-      togglePresetsMenu(false);
-      return;
-    }
+    if (name === currentPresetName) return;
 
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
@@ -185,7 +182,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     const switchPreset = async () => {
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(setCurrentPreset(name));
-      togglePresetsMenu();
       hideAlert();
     };
     // if diffList is not empty, show alert
@@ -234,40 +230,23 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
         </div>
 
         {/* Preset Dropdown and Add Button */}
-        <div className="absolute right-8 bottom-4 flex flex-col items-end">
-          {shouldPresetsMenuMount && (
-            <div
-              className={clsx(
-                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
-                shouldPresetsMenuTransition
-                  ? "pointer-events-auto translate-y-0 opacity-100"
-                  : "pointer-events-none translate-y-[50%] opacity-0"
-              )}
-            >
-              {allPresetNames.map((name) => (
-                <div
-                  key={name}
-                  className={clsx(
-                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
-                    name === currentPresetName && "text-zzzYellow"
-                  )}
-                  onClick={async () => await handleSwitchPreset(name)}
-                >
-                  {name}
+        <div className="absolute right-8 bottom-4 flex items-center gap-2">
+          <ZzzButton type="Add" onClick={() => togglePresetsModalOpen()} />
+          <ZzzSelect
+            value={currentPresetName}
+            options={allPresetNames.map((name) => ({ value: name, label: name }))}
+            onChange={handleSwitchPreset}
+            placement="top"
+            dropdownClassName="w-max min-w-full max-w-70"
+            renderTrigger={({ onClick, isOpen }) => (
+              <ZzzButton onClick={onClick} className="w-auto max-w-70">
+                <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
+                  <span className="truncate">{currentPresetName}</span>
+                  <FaCaretUp className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")} />
                 </div>
-              ))}
-            </div>
-          )}
-          <div className="flex items-center gap-2">
-            <ZzzButton type="Add" onClick={() => togglePresetsModalOpen()} />
-
-            <ZzzButton onClick={() => togglePresetsMenu()} className="w-auto max-w-70">
-              <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
-                <span className="truncate">{currentPresetName}</span>
-                <FaCaretUp className={`transition-transform ${shouldPresetsMenuMount && "rotate-180"}`} />
-              </div>
-            </ZzzButton>
-          </div>
+              </ZzzButton>
+            )}
+          />
         </div>
         {shouldPresetsModalMount &&
           createPortal(

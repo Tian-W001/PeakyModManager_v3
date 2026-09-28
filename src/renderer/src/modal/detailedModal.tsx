@@ -1,4 +1,4 @@
-import { useState, ReactElement } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
@@ -7,6 +7,8 @@ import defaultCover from "@renderer/assets/default_cover.jpg";
 import { Character, characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "../components/zzzSelect";
+import { FaCaretDown } from "react-icons/fa6";
+import ZzzField from "@renderer/components/zzzField";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import { setSelectedCharacter, setSelectedMenuItem, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
@@ -24,52 +26,24 @@ import { getCharacterAvatar } from "@renderer/utils/characterAvatars";
 import { getOutfitIcon } from "@renderer/utils/outfitAvatars";
 import unknownCharacterIcon from "@renderer/assets/avatars/character_avatars/Unknown.webp";
 import unknownOutfitIcon from "@renderer/assets/outfit_icons/Unknown.webp";
-import styles from "./detailedModal.module.css";
 
-const SelectedLabelIcon = ({
-  icon,
-  onClick,
-  visible,
-}: {
-  icon: ReactElement;
-  onClick: () => void;
-  visible: boolean;
-}) => {
-  const iconKey = icon.key;
-  const [frames, setFrames] = useState({ key: iconKey, current: icon, previous: null as ReactElement | null });
-  if (iconKey !== frames.key) {
-    setFrames({
-      key: iconKey,
-      current: icon,
-      previous: frames.current,
-    });
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={!visible}
-      className={clsx(
-        "hover:bg-zzzYellow relative mr-0 h-8 w-0 shrink-0 cursor-pointer overflow-hidden rounded-full bg-black opacity-0 shadow-[1px_1px_1px_#fff2] transition-[width,margin,opacity,background-color] delay-[1s,1s,1s,0ms] duration-200 disabled:pointer-events-none",
-        visible &&
-          "group-hover/selection:mr-2 group-hover/selection:w-8 group-hover/selection:opacity-100 group-hover/selection:delay-0"
-      )}
-    >
-      <span key={frames.key} className="pointer-events-none relative block size-8">
-        {frames.previous && <span className={clsx(styles.chamber, styles.outgoing)}>{frames.previous}</span>}
-        <span
-          className={clsx(styles.chamber, frames.previous && styles.incoming)}
-          onAnimationEnd={() =>
-            setFrames((current) => (current.key === frames.key ? { ...current, previous: null } : current))
-          }
-        >
-          {frames.current}
-        </span>
-      </span>
-    </button>
-  );
+type LabelIconProps = {
+  src: string;
+  onClick?: () => void;
+  className?: string;
 };
+
+const LabelIcon = ({ src, onClick, className }: LabelIconProps) => (
+  <div
+    className={clsx(
+      className,
+      "hover:border-zzzYellow size-8 overflow-hidden rounded-full border-3 bg-black hover:cursor-pointer"
+    )}
+    onClick={onClick}
+  >
+    <img src={src} alt="" draggable={false} className="size-full object-contain" />
+  </div>
+);
 
 const DetailedModal = ({
   modInfo,
@@ -86,6 +60,12 @@ const DetailedModal = ({
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
   const handleLocateSelectedCharacter = () => {
+    dispatch(setSelectedMenuItem("Character"));
+    dispatch(setSelectedCharacter(localModInfo.character as Character));
+    onClose();
+  };
+
+  const handleLocateSelectedOutfit = () => {
     dispatch(setSelectedMenuItem("Character"));
     dispatch(setSelectedCharacter(localModInfo.character as Character));
     dispatch(setSelectedOutfitId(localModInfo.outfitId ?? 0));
@@ -354,112 +334,167 @@ const DetailedModal = ({
               />
             </div>
             <div className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4" id="mod-info-section">
-              <ZzzSelect
-                label={t("modDetails.modType")}
-                value={localModInfo.modType}
-                options={modTypeList.map((type) => ({ value: type, label: t(`modTypes.${type}`) }))}
-                onChange={(val) => handleModInfoChange("modType", val)}
-                className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+              <ZzzField
+                title={t("modDetails.modType")}
+                content={
+                  <ZzzSelect
+                    value={localModInfo.modType}
+                    options={modTypeList.map((type) => ({ value: type, label: t(`modTypes.${type}`) }))}
+                    onChange={(val) => handleModInfoChange("modType", val)}
+                    renderTrigger={({ onClick, isOpen, selectedLabel }) => (
+                      <button
+                        type="button"
+                        className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
+                        onClick={onClick}
+                      >
+                        <span className="truncate">{selectedLabel}</span>
+                        <FaCaretDown
+                          size={12}
+                          className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
+                        />
+                      </button>
+                    )}
+                  />
+                }
               />
               {localModInfo.modType === "Character" && (
-                <div className="group/selection flex items-center">
-                  <SelectedLabelIcon
-                    visible={localModInfo.character !== "Unknown"}
-                    onClick={handleLocateSelectedCharacter}
-                    icon={
-                      <img
-                        key={localModInfo.character}
-                        src={getCharacterAvatar(localModInfo.character)}
-                        alt=""
-                        draggable={false}
-                        className="size-8 max-w-none rounded-full object-contain p-0.5"
-                      />
-                    }
-                  />
-                  <div className="min-w-0 flex-1">
-                    <ZzzSelect
-                      label={t("modDetails.character")}
-                      value={localModInfo.character}
-                      options={characterNameList.toReversed().map((char) => ({
-                        value: char,
-                        label: t(`characters.fullnames.${char}`),
-                        labelIcon: (
-                          <img
-                            src={getCharacterAvatar(char)}
-                            alt=""
-                            draggable={false}
-                            className="h-6 rounded-full object-contain"
-                            onError={(event) => {
-                              event.currentTarget.src = unknownCharacterIcon;
-                            }}
-                          />
-                        ),
-                      }))}
-                      onChange={(val) => handleModInfoChange("character", val)}
-                      className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+                <div className="group/field relative flex shrink-0 items-center">
+                  {localModInfo.character !== "Unknown" && (
+                    <LabelIcon
+                      src={getCharacterAvatar(localModInfo.character)}
+                      onClick={handleLocateSelectedCharacter}
+                      className="absolute left-0"
+                    />
+                  )}
+                  <div
+                    className={clsx(
+                      "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
+                      localModInfo.character !== "Unknown" &&
+                        "group-hover/field:pl-9 group-has-data-dropdown-open/field:pl-9"
+                    )}
+                  >
+                    <ZzzField
+                      title={t("modDetails.character")}
+                      className="pointer-events-auto"
+                      content={
+                        <ZzzSelect
+                          value={localModInfo.character}
+                          options={characterNameList.toReversed().map((char) => ({
+                            value: char,
+                            label: t(`characters.fullnames.${char}`),
+                            labelIcon: (
+                              <img
+                                src={getCharacterAvatar(char)}
+                                alt=""
+                                draggable={false}
+                                className="h-6 rounded-full object-contain"
+                                onError={(event) => {
+                                  event.currentTarget.src = unknownCharacterIcon;
+                                }}
+                              />
+                            ),
+                          }))}
+                          onChange={(val) => handleModInfoChange("character", val)}
+                          renderTrigger={({ onClick, isOpen, selectedLabel }) => (
+                            <button
+                              type="button"
+                              className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
+                              onClick={onClick}
+                            >
+                              <span className="truncate">{selectedLabel}</span>
+                              <FaCaretDown
+                                size={12}
+                                className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
+                              />
+                            </button>
+                          )}
+                        />
+                      }
                     />
                   </div>
                 </div>
               )}
               {localModInfo.modType === "Character" && localModInfo.character !== "Unknown" && (
-                <div className="group/selection flex items-center">
-                  <SelectedLabelIcon
-                    visible={localModInfo.outfitId !== 0}
-                    onClick={handleLocateSelectedCharacter}
-                    icon={
-                      <img
-                        key={`${localModInfo.character}-${localModInfo.outfitId}`}
-                        src={getOutfitIcon(localModInfo.character, localModInfo.outfitId) ?? unknownOutfitIcon}
-                        alt=""
-                        draggable={false}
-                        className="size-8 max-w-none rounded-full object-contain p-0.5"
-                      />
-                    }
-                  />
-                  <div className="min-w-0 flex-1">
-                    <ZzzSelect
-                      label={t("outfits.label")}
-                      value={String(localModInfo.outfitId)}
-                      options={getOutfitIds(localModInfo.character).map((id) => ({
-                        value: String(id),
-                        label: t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`),
-                        labelIcon: id !== 0 && (
-                          <img
-                            src={getOutfitIcon(localModInfo.character, id)}
-                            alt=""
-                            draggable={false}
-                            className="h-6 rounded-full object-contain"
-                            onError={(event) => {
-                              event.currentTarget.src = unknownOutfitIcon;
-                            }}
-                          />
-                        ),
-                      }))}
-                      onChange={(value) => handleModInfoChange("outfitId", value)}
-                      className="px-4 py-1 shadow-[1px_1px_1px_#fff2]"
+                <div className="group/field relative flex shrink-0 items-center">
+                  {localModInfo.outfitId !== 0 && (
+                    <LabelIcon
+                      src={getOutfitIcon(localModInfo.character, localModInfo.outfitId) ?? unknownOutfitIcon}
+                      onClick={handleLocateSelectedOutfit}
+                      className="absolute left-0"
+                    />
+                  )}
+                  <div
+                    className={clsx(
+                      "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
+                      localModInfo.outfitId !== 0 && "group-hover/field:pl-9 group-has-data-dropdown-open/field:pl-9"
+                    )}
+                  >
+                    <ZzzField
+                      title={t("outfits.label")}
+                      className="pointer-events-auto"
+                      content={
+                        <ZzzSelect
+                          value={String(localModInfo.outfitId)}
+                          options={getOutfitIds(localModInfo.character).map((id) => ({
+                            value: String(id),
+                            label: t(id === 0 ? "outfits.none" : `characters.outfits.${localModInfo.character}.${id}`),
+                            labelIcon: id !== 0 && (
+                              <img
+                                src={getOutfitIcon(localModInfo.character, id)}
+                                alt=""
+                                draggable={false}
+                                className="h-6 rounded-full object-contain"
+                                onError={(event) => {
+                                  event.currentTarget.src = unknownOutfitIcon;
+                                }}
+                              />
+                            ),
+                          }))}
+                          onChange={(value) => handleModInfoChange("outfitId", value)}
+                          renderTrigger={({ onClick, isOpen, selectedLabel }) => (
+                            <button
+                              type="button"
+                              className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
+                              onClick={onClick}
+                            >
+                              <span className="truncate">{selectedLabel}</span>
+                              <FaCaretDown
+                                size={12}
+                                className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
+                              />
+                            </button>
+                          )}
+                        />
+                      }
                     />
                   </div>
                 </div>
               )}
-              <div
-                className="hover:text-zzzYellow relative flex shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black px-3.5 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2]"
-                id="mod-source"
-              >
-                <span>{t("modDetails.source")}</span>
-                <input
-                  className="mr-6 flex-1 text-right font-bold"
-                  placeholder={t("modDetails.unknownSource")}
-                  value={localModInfo.source}
-                  onChange={(e) => handleModInfoChange("source", e.target.value)}
-                />
-                <a
-                  href={`${localModInfo.source}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="absolute right-2 h-[70%] cursor-pointer"
+              <div className="group/field relative flex min-w-0 shrink-0 items-center" id="mod-source">
+                {localModInfo.source && (
+                  <a href={localModInfo.source} target="_blank" rel="noreferrer" className="absolute left-0">
+                    <LabelIcon src={Locate} />
+                  </a>
+                )}
+                <div
+                  className={clsx(
+                    "pointer-events-none relative w-full min-w-0 transition-[padding-left] duration-100",
+                    localModInfo.source && "group-hover/field:pl-9"
+                  )}
                 >
-                  <img src={Locate} alt="Locate" className="h-full" />
-                </a>
+                  <ZzzField
+                    title={t("modDetails.source")}
+                    className="pointer-events-auto"
+                    content={
+                      <input
+                        className="w-full min-w-0 text-right font-bold"
+                        placeholder={t("modDetails.unknownSource")}
+                        value={localModInfo.source}
+                        onChange={(e) => handleModInfoChange("source", e.target.value)}
+                      />
+                    }
+                  />
+                </div>
               </div>
               <ToggleKeyEditor modName={modInfo.name} />
               <textarea

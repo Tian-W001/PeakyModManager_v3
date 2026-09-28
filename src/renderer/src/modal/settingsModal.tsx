@@ -23,6 +23,8 @@ import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/sli
 import { useAlertModal } from "../hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
+import { FaCaretDown } from "react-icons/fa6";
+import ZzzField from "@renderer/components/zzzField";
 import Exit from "@renderer/components/Exit";
 import IconHookBig from "@renderer/assets/icons/HookBig.png";
 import ZzzButton from "@renderer/components/zzzButton";
@@ -244,18 +246,34 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
           </div>
 
           <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-scroll p-6" id="info-container">
-            <ZzzSelect
-              label={t("settings.language")}
-              value={i18n.language}
-              onChange={(val) => {
-                i18n.changeLanguage(val);
-                localStorage.setItem("app_lang", val);
-              }}
-              options={[
-                { value: "en", label: "English" },
-                { value: "zh", label: "中文" },
-              ]}
-              className="px-3 py-1 shadow-[1px_1px_1px_#fff2]"
+            <ZzzField
+              title={t("settings.language")}
+              content={
+                <ZzzSelect
+                  value={i18n.language}
+                  onChange={(val) => {
+                    i18n.changeLanguage(val);
+                    localStorage.setItem("app_lang", val);
+                  }}
+                  options={[
+                    { value: "en", label: "English" },
+                    { value: "zh", label: "中文" },
+                  ]}
+                  renderTrigger={({ onClick, isOpen, selectedLabel }) => (
+                    <button
+                      type="button"
+                      className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
+                      onClick={onClick}
+                    >
+                      <span className="truncate">{selectedLabel}</span>
+                      <FaCaretDown
+                        size={12}
+                        className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
+                      />
+                    </button>
+                  )}
+                />
+              }
             />
 
             {/* Library Path */}
