@@ -180,7 +180,7 @@ const ToggleKeyEditor = ({ modName }: { modName: string }) => {
   return (
     <div className="peer/toggles group/toggles relative z-10 min-h-8 shrink-0 grow-0 basis-8 overflow-hidden transition-[flex-grow] duration-300 ease-out focus-within:grow hover:grow">
       <div className="flex h-full min-h-8 flex-col overflow-hidden rounded-2xl bg-black font-bold text-white shadow-[1px_1px_1px_#fff2]">
-        <div className="hover:text-zzzYellow flex h-8 shrink-0 items-center justify-between gap-4 rounded-full px-3.5 py-1 transition-colors">
+        <div className="hover:text-zzzYellow flex h-8 shrink-0 items-center justify-between gap-4 rounded-full px-3 py-1 transition-colors">
           <span>{t("modDetails.toggles")}</span>
           <span className={clsx("truncate text-right", warnings > 0 && "text-amber-400")} aria-live="polite">
             {t("modDetails.toggleCount", { count: toggles.length })}
