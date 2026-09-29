@@ -351,7 +351,7 @@ const DetailedModal = ({
               />
             </div>
             <div
-              className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4 [--field-duration:360ms] [--field-easing:cubic-bezier(0.22,1,0.36,1)]"
+              className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4 [--field-duration:360ms] [--field-easing-open:cubic-bezier(0.22,1.35,0.36,1)] [--field-easing:cubic-bezier(0.22,1,0.36,1)]"
               id="mod-info-section"
             >
               <ZzzField
@@ -380,10 +380,11 @@ const DetailedModal = ({
               {localModInfo.modType === "Character" && (
                 <div
                   className={clsx(
-                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)] has-data-dropdown-open:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
+                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:var(--field-easing-open)] has-data-dropdown-open:[--field-easing:var(--field-easing-open)]",
                     localModInfo.character !== "Unknown" &&
                       "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
                   )}
+                  id="mod-character"
                 >
                   {localModInfo.character !== "Unknown" && (
                     <LabelIcon
@@ -437,10 +438,11 @@ const DetailedModal = ({
               {localModInfo.modType === "Character" && localModInfo.character !== "Unknown" && (
                 <div
                   className={clsx(
-                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)] has-data-dropdown-open:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
+                    "group/field relative flex shrink-0 items-center [--field-inset:0px] hover:[--field-easing:var(--field-easing-open)] has-data-dropdown-open:[--field-easing:var(--field-easing-open)]",
                     localModInfo.outfitId !== 0 &&
                       "hover:[--field-inset:36px] has-data-dropdown-open:[--field-inset:36px]"
                   )}
+                  id="mod-outfit"
                 >
                   {localModInfo.outfitId !== 0 && (
                     <LabelIcon
@@ -493,7 +495,7 @@ const DetailedModal = ({
               )}
               <div
                 className={clsx(
-                  "group/field relative flex min-w-0 shrink-0 items-center [--field-inset:0px] hover:[--field-easing:cubic-bezier(0.22,1.35,0.36,1)]",
+                  "group/field relative flex min-w-0 shrink-0 items-center [--field-inset:0px] hover:[--field-easing:var(--field-easing-open)]",
                   localModInfo.source && "hover:[--field-inset:36px]"
                 )}
                 id="mod-source"
