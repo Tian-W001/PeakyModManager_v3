@@ -10,7 +10,7 @@ interface ZzzFieldProps {
 const ZzzField = ({ title, content, className }: ZzzFieldProps) => (
   <div
     className={clsx(
-      "hover:text-zzzYellow relative flex min-w-0 items-center justify-between gap-4 rounded-full bg-black px-2 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2] transition-colors",
+      "hover:text-zzzYellow relative flex min-w-0 items-center justify-between gap-4 rounded-full bg-black px-3 py-1 font-bold text-white shadow-[1px_1px_1px_#fff2] transition-colors",
       className
     )}
   >

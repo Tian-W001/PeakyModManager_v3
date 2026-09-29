@@ -50,6 +50,31 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
   const { t, i18n } = useTranslation();
 
   const [wallpapers, setWallpapers] = useState<Record<string, string> | null>(null);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+
+  const handleCheckForUpdates = async () => {
+    if (isCheckingUpdate) return;
+    setIsCheckingUpdate(true);
+    const toastId = toast.custom(() => <ZzzToast message={t("settings.checkingUpdate")} />, {
+      id: "check-for-updates",
+      duration: Infinity,
+    });
+
+    try {
+      const updateAvailable: boolean | null = await window.electron.ipcRenderer.invoke("check-for-updates");
+      const message =
+        updateAvailable === null
+          ? t("settings.updateCheckUnavailable")
+          : updateAvailable
+            ? t("settings.updateAvailable")
+            : t("settings.upToDate");
+      toast.custom(() => <ZzzToast message={message} />, { id: toastId, duration: 4000 });
+    } catch {
+      toast.custom(() => <ZzzToast message={t("settings.updateCheckFailed")} />, { id: toastId, duration: 4000 });
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -341,7 +366,14 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
             {/* App Version */}
             <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
               <span className="truncate">{t("settings.appVersion")}</span>
-              <span className="truncate">{appVersion}</span>
+              <button
+                type="button"
+                className="cursor-pointer truncate disabled:cursor-wait disabled:opacity-50"
+                onClick={handleCheckForUpdates}
+                disabled={isCheckingUpdate}
+              >
+                {appVersion}
+              </button>
             </div>
           </div>
         </div>

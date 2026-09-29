@@ -1,5 +1,11 @@
 import { autoUpdater } from "electron-updater";
 import log from "electron-log/main";
+import { ipcMain } from "electron";
+
+ipcMain.handle("check-for-updates", async (): Promise<boolean | null> => {
+  const result = await autoUpdater.checkForUpdates();
+  return result?.isUpdateAvailable ?? null;
+});
 
 export const setupAutoUpdater = () => {
   autoUpdater.autoDownload = true;
