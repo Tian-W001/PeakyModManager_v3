@@ -15,7 +15,7 @@ type ZzzButtonType =
   | "Info"
   | "Setting"
   | "Track"
-  | "FairyAI"
+  | "Feedback"
   | "Outfit"
   | "FairyWarning";
 type ZzzButtonProps = {

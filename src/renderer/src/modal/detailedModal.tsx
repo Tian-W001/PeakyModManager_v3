@@ -535,7 +535,7 @@ const DetailedModal = ({
             {t("common.delete")}
           </ZzzButton>
           <div className="flex flex-row gap-4">
-            <ZzzButton type="FairyAI" onClick={handleAutofill}>
+            <ZzzButton type="Feedback" onClick={handleAutofill}>
               {t("modDetails.autofill")}
             </ZzzButton>
             <ZzzButton type="Refresh" onClick={handleSyncToggles}>
