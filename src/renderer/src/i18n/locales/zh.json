@@ -55,7 +55,12 @@
     "testAlert": "测试弹窗",
     "testAlertMessage": "这是一个测试弹窗！",
     "wallpaperTooltip": "双击应用新壁纸",
-    "appVersion": "版本号"
+    "appVersion": "版本号",
+    "checkingUpdate": "正在检查更新…",
+    "updateAvailable": "发现新版本，将自动下载。",
+    "upToDate": "当前已是最新版本。",
+    "updateCheckUnavailable": "当前环境暂不支持检查更新。",
+    "updateCheckFailed": "检查更新失败，请稍后重试。"
   },
   "modDetails": {
     "saveFailed": "保存 Mod 信息失败",
