@@ -62,6 +62,18 @@ const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
   );
 };
 
+const getSourceUrl = (source: string): string | null => {
+  const trimmedSource = source.trim();
+  if (!trimmedSource) return null;
+
+  try {
+    const url = new URL(/^https?:\/\//i.test(trimmedSource) ? trimmedSource : `https://${trimmedSource}`);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.href : null;
+  } catch {
+    return null;
+  }
+};
+
 const DetailedModal = ({
   modInfo,
   onClose,
@@ -76,6 +88,7 @@ const DetailedModal = ({
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const [localModInfo, setLocalModInfo] = useState<ModInfo>(modInfo);
   const { t } = useTranslation();
+  const sourceUrl = getSourceUrl(localModInfo.source);
   const handleLocateSelectedCharacter = () => {
     dispatch(setSelectedMenuItem("Character"));
     dispatch(setSelectedCharacter(localModInfo.character as Character));
@@ -496,12 +509,12 @@ const DetailedModal = ({
               <div
                 className={clsx(
                   "group/field relative flex min-w-0 shrink-0 items-center [--field-inset:0px] hover:[--field-easing:var(--field-easing-open)]",
-                  localModInfo.source && "hover:[--field-inset:36px]"
+                  sourceUrl && "hover:[--field-inset:36px]"
                 )}
                 id="mod-source"
               >
-                {localModInfo.source && (
-                  <a href={localModInfo.source} target="_blank" rel="noreferrer" className="absolute left-0">
+                {sourceUrl && (
+                  <a href={sourceUrl} target="_blank" rel="noreferrer" className="absolute left-0">
                     <LabelIcon src={Locate} />
                   </a>
                 )}
