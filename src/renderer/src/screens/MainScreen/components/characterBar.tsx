@@ -1,3 +1,4 @@
+import styles from "./characterBar.module.css";
 import OutfitDropdown from "./outfitDropdown";
 import { memo, useEffect, useRef } from "react";
 import clsx from "clsx";
@@ -17,13 +18,15 @@ const CharacterBarItem = memo(
     char,
     isSelected,
     onSelect,
+    className,
   }: {
     char: Character | "All";
     isSelected: boolean;
     onSelect: (character: Character | "All") => void;
+    className?: string;
   }) => (
     <div
-      className="relative -ml-1.25 aspect-8/3 h-full shrink-0 snap-start -scroll-m-1 overflow-hidden" // images are 160:60
+      className={clsx("relative aspect-8/3 overflow-hidden", className)} // images are 160:60
       onClick={() => onSelect(char)}
       data-character={char}
     >
@@ -117,7 +120,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div className={clsx("flex items-center gap-2", className)}>
+    <div className={clsx(styles.bar, isVisible && styles.visible, className)}>
       <div
         className="flex size-full shrink-0 flex-row items-center justify-between gap-4 overflow-hidden rounded-full border-2 bg-linear-to-b from-[#3a3a3a] to-[#272727] px-4 py-1"
         id="character-bar-container"
@@ -134,6 +137,7 @@ const CharacterBar = ({ className }: { className?: string }) => {
         >
           {characterBarImageList.map((char) => (
             <CharacterBarItem
+              className="-ml-1.25 h-full shrink-0 snap-start -scroll-m-1"
               key={char}
               char={char}
               isSelected={selectedCharacter === char}

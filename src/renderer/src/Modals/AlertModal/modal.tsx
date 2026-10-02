@@ -2,15 +2,15 @@ import ModalOverlay from "../components/ModalOverlay";
 import React from "react";
 
 interface AlertModalProps {
+  isOpen: boolean;
   title: string;
   message?: string;
   children?: React.ReactNode;
-  className?: string;
 }
 
-const AlertModal: React.FC<AlertModalProps> = ({ title, message, children, className }) => {
+const AlertModal: React.FC<AlertModalProps> = ({ isOpen, title, message, children }) => {
   return (
-    <ModalOverlay className={className}>
+    <ModalOverlay isOpen={isOpen} duration={100}>
       <div className="relative h-0.75 w-full bg-white/20" />
       <div className="relative z-5 flex h-[30%] w-full flex-col items-center justify-center gap-4 border-y-4 border-y-black bg-[url('@renderer/assets/wallpapers/zzz_wallpaper_0.jpg')] bg-cover">
         <h1 className="w-full text-center text-3xl text-white">{title}</h1>

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { DragEvent } from "react";
 import { useTranslation } from "react-i18next";
 import defaultCover from "@renderer/assets/default_cover.jpg";
@@ -7,7 +8,9 @@ const CoverEditor = ({
   modName,
   coverImage,
   onCoverChange,
+  className,
 }: {
+  className?: string;
   modName: string;
   coverImage: string;
   onCoverChange: (coverImage: string) => void;
@@ -57,7 +60,7 @@ const CoverEditor = ({
 
   return (
     <div
-      className="relative h-full w-[40%] shrink-0 overflow-hidden p-4"
+      className={clsx("relative overflow-hidden p-3", className)}
       id="left-section"
       onDrop={handleDrop}
       onDragOver={handleDragOver}

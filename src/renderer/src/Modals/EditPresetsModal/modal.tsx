@@ -14,13 +14,13 @@ import IconInfo from "@renderer/assets/icons/Info.png";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import ZzzButton from "@renderer/components/zzzButton";
 
-const EditPresetsModal = ({ onClose, className }: { onClose: () => void; className?: string }) => {
+const EditPresetsModalContent = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const [newPresetName, setNewPresetName] = useState("");
   const { t } = useTranslation();
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { showAlert, hideAlert, alert } = useAlertModal();
 
   const handleAddPreset = () => {
     if (newPresetName.trim()) {
@@ -51,7 +51,7 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
   };
 
   return (
-    <ModalOverlay className={className}>
+    <>
       <div
         className={
           "chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl rounded-tr-lg border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
@@ -83,6 +83,7 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
           <div className="grid grid-cols-3 gap-4 rounded-4xl bg-black/10 p-4" id="presets-list">
             {allPresetNames.map((name) => (
               <PresetCard
+                className="h-16 w-full"
                 key={name}
                 name={name}
                 isCurrent={name === currentPresetName}
@@ -92,9 +93,15 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
           </div>
         </div>
       </div>
-      <RenderAlert />
-    </ModalOverlay>
+      {alert}
+    </>
   );
 };
+
+const EditPresetsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
+  <ModalOverlay isOpen={isOpen}>
+    <EditPresetsModalContent onClose={onClose} />
+  </ModalOverlay>
+);
 
 export default EditPresetsModal;

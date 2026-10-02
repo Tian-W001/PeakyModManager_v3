@@ -31,14 +31,14 @@ import ZzzButton from "@renderer/components/zzzButton";
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
 
-const SettingsModal = ({ onClose, className }: { onClose: () => void; className?: string }) => {
+const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const libraryPath = useAppSelector(selectLibraryPath);
   const targetPath = useAppSelector(selectTargetPath);
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const presets = useAppSelector(selectAllPresets);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { showAlert, hideAlert, alert } = useAlertModal();
   const { t, i18n } = useTranslation();
 
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
@@ -191,91 +191,96 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
 
   return (
     <>
-      <ModalOverlay className={className}>
-        <div
-          className={
-            "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl rounded-tr-md border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
-          }
-          id="modal-container"
-        >
-          <ModalHeader onClose={onClose} className="h-16">
-            <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
-          </ModalHeader>
+      <div
+        className={
+          "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl rounded-tr-md border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
+        }
+        id="modal-container"
+      >
+        <ModalHeader onClose={onClose} className="h-16">
+          <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
+        </ModalHeader>
 
-          <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-scroll p-6" id="info-container">
-            <ZzzField
-              title={t("settings.language")}
-              content={
-                <ZzzSelect
-                  value={i18n.language}
-                  onChange={(val) => {
-                    i18n.changeLanguage(val);
-                    localStorage.setItem("app_lang", val);
-                  }}
-                  options={[
-                    { value: "en", label: "English" },
-                    { value: "zh", label: "中文" },
-                  ]}
-                  renderTrigger={(props) => <SelectTrigger {...props} />}
-                />
-              }
-            />
+        <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-scroll p-6" id="info-container">
+          <ZzzField
+            title={t("settings.language")}
+            content={
+              <ZzzSelect
+                value={i18n.language}
+                onChange={(val) => {
+                  i18n.changeLanguage(val);
+                  localStorage.setItem("app_lang", val);
+                }}
+                options={[
+                  { value: "en", label: "English" },
+                  { value: "zh", label: "中文" },
+                ]}
+                renderTrigger={(props) => <SelectTrigger {...props} />}
+              />
+            }
+          />
 
-            {/* Library Path */}
-            <PathField
-              label={t("settings.libraryPath")}
-              value={libraryPath}
-              placeholder={t("settings.clickToSetPath")}
-              onClick={handleSelectLibraryPath}
-            />
+          {/* Library Path */}
+          <PathField
+            label={t("settings.libraryPath")}
+            value={libraryPath}
+            placeholder={t("settings.clickToSetPath")}
+            onClick={handleSelectLibraryPath}
+          />
 
-            {/* Target Path */}
-            <PathField
-              label={t("settings.targetPath")}
-              value={targetPath}
-              placeholder={t("settings.clickToSetPath")}
-              onClick={handleSelectTargetPath}
-            />
+          {/* Target Path */}
+          <PathField
+            label={t("settings.targetPath")}
+            value={targetPath}
+            placeholder={t("settings.clickToSetPath")}
+            onClick={handleSelectTargetPath}
+          />
 
-            {/* d3dx_user.ini Path */}
-            <PathField
-              label={t("settings.d3dxUserPath")}
-              value={d3dxUserPath}
-              placeholder={t("settings.clickToSetPath")}
-              onClick={handleSelectD3dxUserPath}
-            />
+          {/* d3dx_user.ini Path */}
+          <PathField
+            label={t("settings.d3dxUserPath")}
+            value={d3dxUserPath}
+            placeholder={t("settings.clickToSetPath")}
+            onClick={handleSelectD3dxUserPath}
+          />
 
-            {/* Backup Button */}
-            <div className="flex flex-row items-center gap-4">
-              <ZzzButton type="Save" onClick={handleBackupPresets}>
-                {t("settings.backup")}
-              </ZzzButton>
-              <ZzzButton type="Refresh" onClick={handleRestorePresets}>
-                {t("settings.restore")}
-              </ZzzButton>
-            </div>
+          {/* Backup Button */}
+          <div className="flex flex-row items-center gap-4">
+            <ZzzButton type="Save" onClick={handleBackupPresets}>
+              {t("settings.backup")}
+            </ZzzButton>
+            <ZzzButton type="Refresh" onClick={handleRestorePresets}>
+              {t("settings.restore")}
+            </ZzzButton>
+          </div>
 
-            {/* Wallpaper Selection */}
-            <WallpaperPicker />
+          {/* Wallpaper Selection */}
+          <WallpaperPicker />
 
-            {/* App Version */}
-            <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="truncate">{t("settings.appVersion")}</span>
-              <button
-                type="button"
-                className="cursor-pointer truncate disabled:cursor-wait disabled:opacity-50"
-                onClick={handleCheckForUpdates}
-                disabled={isCheckingUpdate}
-              >
-                {appVersion}
-              </button>
-            </div>
+          {/* App Version */}
+          <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
+            <span className="truncate">{t("settings.appVersion")}</span>
+            <button
+              type="button"
+              className="cursor-pointer truncate disabled:cursor-wait disabled:opacity-50"
+              onClick={handleCheckForUpdates}
+              disabled={isCheckingUpdate}
+            >
+              {appVersion}
+            </button>
           </div>
         </div>
-      </ModalOverlay>
-      <RenderAlert />
+      </div>
+
+      {alert}
     </>
   );
 };
+
+const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
+  <ModalOverlay isOpen={isOpen}>
+    <SettingsModalContent onClose={onClose} />
+  </ModalOverlay>
+);
 
 export default SettingsModal;

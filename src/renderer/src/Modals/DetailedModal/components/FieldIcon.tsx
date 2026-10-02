@@ -1,13 +1,13 @@
 import { useId } from "react";
 import clsx from "clsx";
 
-type LabelIconProps = {
+type FieldIconProps = {
   src: string;
   onClick?: () => void;
   className?: string;
 };
 
-const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
+const FieldIcon = ({ src, onClick, className }: FieldIconProps) => {
   const filterId = useId();
 
   return (
@@ -36,4 +36,4 @@ const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
   );
 };
 
-export default LabelIcon;
+export default FieldIcon;

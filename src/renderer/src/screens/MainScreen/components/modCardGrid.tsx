@@ -3,7 +3,7 @@ import ModCard from "./modCard";
 import ZzzButton from "@renderer/components/zzzButton";
 import ZzzSelect from "@renderer/components/zzzSelect";
 import clsx from "clsx";
-import { useEffect, useCallback, useMemo, useRef } from "react";
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   applyMods,
@@ -14,7 +14,6 @@ import {
   selectDiffList,
   setCurrentPreset,
 } from "@renderer/redux/slices/presetsSlice";
-import { createPortal } from "react-dom";
 import EditPresetsModal from "@renderer/Modals/EditPresetsModal/modal";
 import { addModInfo, editModInfo } from "@renderer/redux/slices/librarySlice";
 import {
@@ -28,7 +27,6 @@ import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
-import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import { ModState } from "@shared/modState";
@@ -54,7 +52,7 @@ const ModCardGrid = ({ className }: { className?: string }) => {
     [currentPresetModSet, diffList]
   );
 
-  const [togglePresetsModalOpen, shouldPresetsModalMount, shouldPresetsModalTransition] = useMountTransition(200);
+  const [isPresetsOpen, setPresetsOpen] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
@@ -65,7 +63,7 @@ const ModCardGrid = ({ className }: { className?: string }) => {
     ref.current?.scrollTo(0, 0);
   }, [selectedMenuItem, selectedCharacter, selectedOutfitId]);
 
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { showAlert, hideAlert, alert } = useAlertModal();
 
   const importMod = useCallback(
     async (filePath: string) => {
@@ -215,7 +213,7 @@ const ModCardGrid = ({ className }: { className?: string }) => {
   };
   return (
     <>
-      <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
+      <div className={clsx("relative", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
         <div
           ref={ref}
           className="flex size-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
@@ -226,14 +224,19 @@ const ModCardGrid = ({ className }: { className?: string }) => {
             </div>
           ) : (
             selectedModInfos.map((modInfo) => (
-              <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
+              <ModCard
+                className="h-87.5"
+                key={modInfo.name}
+                modInfo={modInfo}
+                currentModState={getModState(modInfo.name)}
+              />
             ))
           )}
         </div>
 
         {/* Preset Dropdown and Add Button */}
         <div className="absolute right-8 bottom-4 flex items-center gap-2">
-          <ZzzButton type="Add" onClick={() => togglePresetsModalOpen()} />
+          <ZzzButton type="Add" onClick={() => setPresetsOpen(true)} />
           <ZzzSelect
             value={currentPresetName}
             options={allPresetNames.map((name) => ({ value: name, label: name }))}
@@ -250,16 +253,9 @@ const ModCardGrid = ({ className }: { className?: string }) => {
             )}
           />
         </div>
-        {shouldPresetsModalMount &&
-          createPortal(
-            <EditPresetsModal
-              className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldPresetsModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
-              onClose={() => togglePresetsModalOpen()}
-            />,
-            document.body
-          )}
+        <EditPresetsModal isOpen={isPresetsOpen} onClose={() => setPresetsOpen(false)} />
       </div>
-      <RenderAlert />
+      {alert}
     </>
   );
 };

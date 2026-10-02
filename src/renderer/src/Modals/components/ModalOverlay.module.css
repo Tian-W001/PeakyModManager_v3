@@ -3,5 +3,10 @@
 @layer components {
   .overlay {
     @apply fixed inset-0 z-50 flex size-full flex-col items-center justify-center overflow-hidden bg-[repeating-linear-gradient(40deg,transparent_0_5px,rgba(255,255,255,.07)_5px_10px)] backdrop-brightness-20;
+    @apply pointer-events-none scale-y-0 opacity-0 transition-[opacity_scale] ease-in-out;
+  }
+
+  .visible {
+    @apply pointer-events-auto scale-y-100 opacity-100;
   }
 }

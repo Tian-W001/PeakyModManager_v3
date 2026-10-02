@@ -26,9 +26,7 @@ const MainScreen: React.FC = () => {
         <div className="flex min-h-0 flex-1 flex-row" id="content-area">
           <Menu className="w-70" />
           <div className="relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
-            <CharacterBar
-              className={`absolute top-0 left-0 z-10 mt-4 h-14 w-full max-w-[80%] transition-[opacity_translate] duration-150 ease-out ${isCharacterMenu ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-[calc(100%+16px)] opacity-0"}`}
-            />
+            <CharacterBar className="absolute top-0 left-0 z-10 mt-(--character-bar-offset) h-14 w-full max-w-[80%] [--character-bar-offset:1rem]" />
             <ModCardGrid
               className={`min-h-0 w-full flex-1 transition-[margin] duration-300 ease-out ${isCharacterMenu ? "mt-18" : "mt-0"}`}
             />
