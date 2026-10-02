@@ -1,4 +1,4 @@
-import MainScreen from "./screens/mainScreen";
+import MainScreen from "@renderer/screens/MainScreen/screen";
 import { Toaster } from "react-hot-toast";
 import { useModDownloadEvents } from "./hooks/useModDownloadEvents";
 

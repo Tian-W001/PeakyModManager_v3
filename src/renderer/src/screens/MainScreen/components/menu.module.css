@@ -1,0 +1,7 @@
+@reference "../../../assets/global.css";
+
+@layer components {
+  .button {
+    @apply flex h-8 w-[97%] items-center justify-center rounded-full bg-[#333] inset-shadow-[1px_1px_0_#fff2] *:drop-shadow-[1px_2px_0_#fff1] hover:text-white;
+  }
+}

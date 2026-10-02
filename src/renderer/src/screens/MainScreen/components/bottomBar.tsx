@@ -3,12 +3,12 @@ import { loadLibrary } from "@renderer/redux/slices/librarySlice";
 import { clsx } from "clsx";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import SettingsModal from "../modal/settingsModal";
+import SettingsModal from "@renderer/Modals/SettingsModal/modal";
 import { useTranslation } from "react-i18next";
 import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
-import ZzzButton from "./zzzButton";
+import ZzzButton from "@renderer/components/zzzButton";
 import useMountTransition from "@renderer/hooks/useMountTransition";
-import ZzzToast from "./zzzToast";
+import ZzzToast from "@renderer/components/zzzToast";
 import toast from "react-hot-toast";
 
 const BottomBar = ({ className }: { className?: string }) => {

@@ -1,3 +1,4 @@
+import styles from "./zzzButton.module.css";
 import clsx from "clsx";
 
 const getIconUrl = (name: string) => {
@@ -31,7 +32,8 @@ const ZzzButton = ({ type, onClick, className, iconClassName, children }: ZzzBut
     <>
       <button
         className={clsx(
-          "group/zzz-button hover:bg-zzzYellow relative flex h-11 cursor-pointer items-center overflow-hidden rounded-full bg-[#111] font-bold ring-2 ring-black transition-colors not-hover:bg-size-[4px_4px] not-hover:text-white hover:animate-[box-shadow-pulse_0.8s_cubic-bezier(0.25,0.1,0.75,1)_infinite] hover:text-black",
+          styles.button,
+          "group/zzz-button hover:bg-zzzYellow relative flex h-11 cursor-pointer items-center overflow-hidden rounded-full bg-[#111] font-bold ring-2 ring-black transition-colors not-hover:bg-size-[4px_4px] not-hover:text-white hover:text-black",
           children ? "w-50" : "aspect-square",
           className
         )}

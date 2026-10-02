@@ -1,6 +1,9 @@
+import WallpaperPicker from "./components/WallpaperPicker";
+import PathField from "./components/PathField";
+import SelectTrigger from "../components/SelectTrigger";
+import ModalOverlay from "../components/ModalOverlay";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { useEffect, useRef, useState } from "react";
-import IconInfo from "@renderer/assets/icons/Info.png";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import {
@@ -19,22 +22,12 @@ import {
   setCurrentPreset,
   clearDiffList,
 } from "@renderer/redux/slices/presetsSlice";
-import { selectCurrentWallpaper, setCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
-import { useAlertModal } from "../hooks/useAlertModal";
+import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
-import { FaCaretUp } from "react-icons/fa6";
 import ZzzField from "@renderer/components/zzzField";
-import Exit from "@renderer/components/Exit";
-import IconHookBig from "@renderer/assets/icons/HookBig.png";
+import ModalHeader from "../components/ModalHeader";
 import ZzzButton from "@renderer/components/zzzButton";
-import clsx from "clsx";
-
-const wallpaperModules = import.meta.glob("@renderer/assets/wallpapers/*", {
-  eager: false,
-  query: "?url",
-  import: "default",
-});
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
 
@@ -45,11 +38,9 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
   const d3dxUserPath = useAppSelector(selectD3dxUserPath);
   const presets = useAppSelector(selectAllPresets);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
-  const currentWallpaper = useAppSelector(selectCurrentWallpaper);
   const { showAlert, hideAlert, RenderAlert } = useAlertModal();
   const { t, i18n } = useTranslation();
 
-  const [wallpapers, setWallpapers] = useState<Record<string, string> | null>(null);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
 
   const handleCheckForUpdates = async () => {
@@ -74,27 +65,6 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
     } finally {
       setIsCheckingUpdate(false);
     }
-  };
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const entries = Object.entries(wallpaperModules);
-      const urls = await Promise.all(entries.map(([, loader]) => loader() as Promise<string>));
-      if (cancelled) return;
-      const result: Record<string, string> = {};
-      entries.forEach(([path], i) => {
-        result[path] = urls[i];
-      });
-      setWallpapers(result);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const handleSaveWallpaper = (selectedWallpaper: string) => {
-    dispatch(setCurrentWallpaper(selectedWallpaper));
   };
 
   const handleSelectLibraryPath = async () => {
@@ -219,43 +189,18 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
     );
   };
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const handleWheel = (e: WheelEvent) => {
-        if (e.deltaY !== 0) {
-          e.preventDefault();
-          container.scrollLeft += e.deltaY;
-        }
-      };
-      container.addEventListener("wheel", handleWheel, { passive: false });
-      return () => {
-        container.removeEventListener("wheel", handleWheel);
-      };
-    }
-    return;
-  }, []);
-
   return (
     <>
-      <div className={clsx("modal-overlay", className)} id="modal-overlay">
+      <ModalOverlay className={className}>
         <div
           className={
             "chess-background flex size-[70%] flex-col overflow-hidden rounded-2xl rounded-tr-md border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
           }
           id="modal-container"
         >
-          <div className="flex h-16 items-center justify-between bg-black/20 px-4 py-2" id="modal-header">
-            <div className="title-decorator flex min-w-0 items-center gap-2" id="title-wrapper">
-              <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
-            </div>
-            <Exit
-              className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
-              onClick={onClose}
-            />
-          </div>
+          <ModalHeader onClose={onClose} className="h-16">
+            <p className="text-2xl font-bold text-white italic">{t("settings.title")}</p>
+          </ModalHeader>
 
           <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-scroll p-6" id="info-container">
             <ZzzField
@@ -271,52 +216,34 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
                     { value: "en", label: "English" },
                     { value: "zh", label: "中文" },
                   ]}
-                  renderTrigger={({ onClick, isOpen, selectedLabel }) => (
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
-                      onClick={onClick}
-                    >
-                      <span className="truncate">{selectedLabel}</span>
-                      <FaCaretUp size={12} className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")} />
-                    </button>
-                  )}
+                  renderTrigger={(props) => <SelectTrigger {...props} />}
                 />
               }
             />
 
             {/* Library Path */}
-            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="truncate">{t("settings.libraryPath")}</span>
-              <input
-                className="flex-1 cursor-pointer text-right outline-none"
-                value={libraryPath || t("settings.clickToSetPath")}
-                readOnly
-                onClick={handleSelectLibraryPath}
-              />
-            </div>
+            <PathField
+              label={t("settings.libraryPath")}
+              value={libraryPath}
+              placeholder={t("settings.clickToSetPath")}
+              onClick={handleSelectLibraryPath}
+            />
 
             {/* Target Path */}
-            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="truncate">{t("settings.targetPath")}</span>
-              <input
-                className="flex-1 cursor-pointer text-right outline-none"
-                value={targetPath || t("settings.clickToSetPath")}
-                readOnly
-                onClick={handleSelectTargetPath}
-              />
-            </div>
+            <PathField
+              label={t("settings.targetPath")}
+              value={targetPath}
+              placeholder={t("settings.clickToSetPath")}
+              onClick={handleSelectTargetPath}
+            />
 
             {/* d3dx_user.ini Path */}
-            <div className="hover:text-zzzYellow relative flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
-              <span className="truncate">{t("settings.d3dxUserPath")}</span>
-              <input
-                className="flex-1 cursor-pointer text-right outline-none"
-                value={d3dxUserPath || t("settings.clickToSetPath")}
-                readOnly
-                onClick={handleSelectD3dxUserPath}
-              />
-            </div>
+            <PathField
+              label={t("settings.d3dxUserPath")}
+              value={d3dxUserPath}
+              placeholder={t("settings.clickToSetPath")}
+              onClick={handleSelectD3dxUserPath}
+            />
 
             {/* Backup Button */}
             <div className="flex flex-row items-center gap-4">
@@ -329,39 +256,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
             </div>
 
             {/* Wallpaper Selection */}
-            <div className="flex flex-col gap-1">
-              <div
-                ref={scrollContainerRef}
-                className="no-scrollbar flex flex-row items-center gap-2 overflow-x-scroll rounded-3xl border-8 bg-black shadow-[1px_1px_1px_#fff2]"
-              >
-                {!wallpapers
-                  ? Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="aspect-video w-48 shrink-0 animate-pulse rounded-2xl bg-white/5" />
-                    ))
-                  : Object.entries(wallpapers).map(([path, url]) => {
-                      const filename = path.split("/").pop() || "";
-                      const isCurrent = currentWallpaper === filename;
-                      return (
-                        <div
-                          key={path}
-                          className={`hover:border-zzzYellow relative aspect-video w-48 shrink-0 cursor-pointer overflow-hidden rounded-2xl border-3 transition-colors`}
-                          onDoubleClick={() => handleSaveWallpaper(filename)}
-                        >
-                          <img src={url} alt={filename} className="size-full object-cover" />
-                          {isCurrent && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                              <img src={IconHookBig} className="h-12 w-12" />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-              </div>
-              <p className="flex items-center gap-1 pl-3 text-sm text-[#999]">
-                <img src={IconInfo} alt="Info" className="mr-1 inline-block h-4 w-4" />
-                {t("settings.wallpaperTooltip")}
-              </p>
-            </div>
+            <WallpaperPicker />
 
             {/* App Version */}
             <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
@@ -377,7 +272,7 @@ const SettingsModal = ({ onClose, className }: { onClose: () => void; className?
             </div>
           </div>
         </div>
-      </div>
+      </ModalOverlay>
       <RenderAlert />
     </>
   );

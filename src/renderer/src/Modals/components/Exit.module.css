@@ -1,0 +1,28 @@
+@reference "../../assets/global.css";
+
+@layer components {
+  .exit {
+    @apply hover:fill-zzzYellow shrink-0 cursor-pointer fill-[#c42209] transition-[fill_transform] hover:scale-110;
+  }
+
+  @media (hover: hover) {
+    .exit:hover {
+      animation: scale-pulse 0.8s cubic-bezier(0.25, 0.1, 0.75, 1) infinite;
+    }
+  }
+}
+
+@keyframes scale-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.1);
+  }
+  60% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

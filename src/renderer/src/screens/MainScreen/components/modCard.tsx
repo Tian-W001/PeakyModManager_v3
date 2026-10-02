@@ -1,10 +1,10 @@
 import { ModInfo } from "@shared/modInfo";
-import DetailedModal from "../modal/detailedModal";
+import DetailedModal from "@renderer/Modals/DetailedModal/modal";
 import { createPortal } from "react-dom";
 import { ModState } from "@shared/modState";
 import { useAppDispatch } from "@renderer/redux/hooks";
 import { addToDiffList } from "@renderer/redux/slices/presetsSlice";
-import SmoothCornerPatch from "./CurvePatch";
+import SmoothCornerPatch from "@renderer/components/CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
@@ -18,7 +18,7 @@ const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
     return getCharacterAvatar(character ?? "Unknown");
   } else {
-    return new URL(`../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
+    return new URL(`../../../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
   }
 };
 

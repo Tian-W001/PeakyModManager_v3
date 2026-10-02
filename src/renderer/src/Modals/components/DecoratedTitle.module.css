@@ -1,0 +1,18 @@
+@reference "../../assets/global.css";
+
+@layer components {
+  .title::before,
+  .title::after {
+    @apply block h-[1em] shrink-0 bg-contain bg-no-repeat content-[''];
+  }
+
+  .title::before {
+    @apply aspect-27/36;
+    background-image: url("../../assets/prefix_decorator.png");
+  }
+
+  .title::after {
+    @apply aspect-55/32;
+    background-image: url("../../assets/suffix_decorator.png");
+  }
+}

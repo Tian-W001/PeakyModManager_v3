@@ -1,5 +1,12 @@
 # AGENTS.md
 
+## Main branch policy
+
+- Do not make code changes on `main` unless the user explicitly authorizes `main` for the current task. Create a separate branch or worktree before editing code.
+- Documentation-only and configuration-only changes may be made on `main`.
+- Permission to use `main` for one task does not carry over to another task.
+- Do not commit or push to `main` unless the user explicitly requests that action for the current task. Permission to edit on `main` is not permission to push.
+
 ## Quick commands
 
 ```bash

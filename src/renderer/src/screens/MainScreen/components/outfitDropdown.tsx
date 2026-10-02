@@ -2,11 +2,17 @@ import { useTranslation } from "react-i18next";
 import { getOutfitIds } from "@shared/outfit";
 import { getOutfitIcon } from "@renderer/utils/outfitAvatars";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { selectSelectedCharacter, selectSelectedOutfitId, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
-import ZzzButton from "./zzzButton";
-import ZzzSelect from "./zzzSelect";
+import {
+  selectSelectedMenuItem,
+  selectSelectedCharacter,
+  selectSelectedOutfitId,
+  setSelectedOutfitId,
+} from "@renderer/redux/slices/uiSlice";
+import ZzzButton from "@renderer/components/zzzButton";
+import ZzzSelect from "@renderer/components/zzzSelect";
 
-const OutfitDropdown = ({ isVisible }: { isVisible: boolean }) => {
+const OutfitDropdown = () => {
+  const isVisible = useAppSelector(selectSelectedMenuItem) === "Character";
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import AlertModal from "../modal/alertModal";
+import AlertModal from "@renderer/Modals/AlertModal/modal";
 import useMountTransition from "./useMountTransition";
 
 export const useAlertModal = () => {

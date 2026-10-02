@@ -1,66 +1,34 @@
-import { useId, useState } from "react";
+import SelectTrigger from "../components/SelectTrigger";
+import LabelIcon from "./components/LabelIcon";
+import CoverEditor from "./components/CoverEditor";
+import DecoratedTitle from "../components/DecoratedTitle";
+import ModalOverlay from "../components/ModalOverlay";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { editModInfo, selectLibraryPath, removeModInfo, selectD3dxUserPath } from "@renderer/redux/slices/librarySlice";
 import { ModInfo } from "@shared/modInfo";
 import { ModType, modTypeList } from "@shared/modType";
-import defaultCover from "@renderer/assets/default_cover.jpg";
 import { Character, characterNameList } from "@shared/character";
 import { useTranslation } from "react-i18next";
-import ZzzSelect from "../components/zzzSelect";
-import { FaCaretUp } from "react-icons/fa6";
+import ZzzSelect from "@renderer/components/zzzSelect";
 import ZzzField from "@renderer/components/zzzField";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { removeModFromAllPresets } from "@renderer/redux/slices/presetsSlice";
 import { setSelectedCharacter, setSelectedMenuItem, setSelectedOutfitId } from "@renderer/redux/slices/uiSlice";
-import Exit from "@renderer/components/Exit";
+import Exit from "../components/Exit";
 import ZzzButton from "@renderer/components/zzzButton";
 import Locate from "@renderer/assets/icons/Locate.png";
 import Track from "@renderer/assets/icons/Track.png";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
-import ToggleKeyEditor from "@renderer/components/ToggleKeyEditor";
+import ToggleKeyEditor from "./components/ToggleKeyEditor";
 import { SyncTogglesResult } from "@shared/threeDMigoto";
 import { getOutfitIds } from "@shared/outfit";
 import { getCharacterAvatar } from "@renderer/utils/characterAvatars";
 import { getOutfitIcon } from "@renderer/utils/outfitAvatars";
 import unknownCharacterIcon from "@renderer/assets/avatars/character_avatars/Unknown.webp";
 import unknownOutfitIcon from "@renderer/assets/outfit_icons/Unknown.webp";
-
-type LabelIconProps = {
-  src: string;
-  onClick?: () => void;
-  className?: string;
-};
-
-const LabelIcon = ({ src, onClick, className }: LabelIconProps) => {
-  const filterId = useId();
-
-  return (
-    <div className={clsx("size-8", className)} onClick={onClick}>
-      <svg className="pointer-events-none absolute top-0 left-0 h-8 w-13" viewBox="0 0 52 32">
-        <defs>
-          <filter id={filterId} x="-20%" y="-100%" width="140%" height="300%" colorInterpolationFilters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
-            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" />
-          </filter>
-        </defs>
-        <g filter={`url(#${filterId})`} fill="black">
-          <circle cx="16" cy="16" r="16" />
-          <rect
-            width="48"
-            height="32"
-            rx="16"
-            className="translate-x-(--field-inset) transition-[translate] duration-(--field-duration) ease-(--field-easing) motion-reduce:transition-none"
-          />
-        </g>
-      </svg>
-      <div className="hover:border-zzzYellow relative size-full cursor-pointer overflow-hidden rounded-full border-3 bg-black">
-        <img src={src} alt="" draggable={false} className="size-full object-contain" />
-      </div>
-    </div>
-  );
-};
 
 const getSourceUrl = (source: string): string | null => {
   const trimmedSource = source.trim();
@@ -170,48 +138,6 @@ const DetailedModal = ({
     );
   };
 
-  const saveCover = async (imageSource: string) => {
-    const newCoverName = await window.electron.ipcRenderer.invoke("import-mod-cover", modInfo.name, imageSource);
-    if (newCoverName) {
-      handleModInfoChange("coverImage", newCoverName);
-    }
-  };
-
-  const handleViewCover = async () => {
-    await window.electron.ipcRenderer.invoke("view-cover", modInfo.name, localModInfo.coverImage);
-  };
-
-  const handleSetCover = async () => {
-    const imagePath = await window.electron.ipcRenderer.invoke("select-cover", modInfo.name);
-    if (imagePath) {
-      await saveCover(imagePath);
-    }
-  };
-
-  const handleRemoveCover = async () => {
-    handleModInfoChange("coverImage", "");
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const url = (e.dataTransfer.getData("text/uri-list") || e.dataTransfer.getData("text/plain")).trim();
-    const file = e.dataTransfer.files[0];
-    const filePath = file ? window.api.getFilePath(file) : null;
-
-    if (/^https?:\/\//i.test(url)) {
-      await saveCover(url);
-    } else if (file?.type.startsWith("image/") && filePath) {
-      await saveCover(filePath);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   const handleAutofill = async () => {
     const result = (await window.electron.ipcRenderer.invoke("autofill-modinfo", modInfo.name)) as {
       description: string | null;
@@ -291,50 +217,16 @@ const DetailedModal = ({
 
   return (
     <>
-      <div className={clsx("modal-overlay gap-2", className)} id="modal-overlay">
+      <ModalOverlay className={clsx("gap-2", className)}>
         <div
           className="chess-background flex size-[70%] flex-row overflow-hidden rounded-4xl rounded-tr-xl border-4 border-black bg-[#333] inset-shadow-[1px_1px_2px_#fff2,-1px_-1px_2px_#0009]"
           id="modal-container"
         >
-          <div
-            className="relative h-full w-[40%] shrink-0 overflow-hidden p-4"
-            id="left-section"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          >
-            <div
-              id="cover-image-container"
-              className="group hover:border-zzzYellow relative size-full overflow-hidden rounded-2xl border-3 border-black bg-black shadow-[1px_1px_1px_#fff2] hover:border-2"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-[filter] duration-300 group-hover:blur-sm"
-                style={{
-                  backgroundImage: localModInfo.coverImage
-                    ? `url("mod-image://local/${modInfo.name}/${localModInfo.coverImage}")`
-                    : `url("${defaultCover}")`,
-                }}
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                {localModInfo.coverImage ? (
-                  <>
-                    <ZzzButton onClick={handleRemoveCover} className="w-40">
-                      {t("modDetails.removeCover")}
-                    </ZzzButton>
-                    <ZzzButton onClick={handleViewCover} className="w-40">
-                      {t("modDetails.viewCover")}
-                    </ZzzButton>
-                    <ZzzButton onClick={handleSetCover} className="w-40">
-                      {t("modDetails.changeCover")}
-                    </ZzzButton>
-                  </>
-                ) : (
-                  <ZzzButton onClick={handleSetCover} className="w-40">
-                    {t("modDetails.setCover")}
-                  </ZzzButton>
-                )}
-              </div>
-            </div>
-          </div>
+          <CoverEditor
+            modName={modInfo.name}
+            coverImage={localModInfo.coverImage}
+            onCoverChange={(coverImage) => handleModInfoChange("coverImage", coverImage)}
+          />
           <div className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden" id="right-section">
             <div
               className="box-border flex h-14 min-w-0 items-center justify-between overflow-hidden py-2 pr-4"
@@ -347,7 +239,7 @@ const DetailedModal = ({
                   className="h-[80%] transition-transform hover:scale-120 hover:cursor-pointer"
                   onClick={handleOpenModFolder}
                 />
-                <div className="title-decorator flex h-10 min-w-0 items-center justify-between overflow-hidden">
+                <DecoratedTitle className="flex h-10 min-w-0 items-center justify-between overflow-hidden">
                   <textarea
                     value={localModInfo.title ?? "No Title"}
                     onChange={(e) => handleModInfoChange("title", e.target.value)}
@@ -356,12 +248,9 @@ const DetailedModal = ({
                   >
                     {modInfo.title}
                   </textarea>
-                </div>
+                </DecoratedTitle>
               </div>
-              <Exit
-                className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
-                onClick={onClose}
-              />
+              <Exit onClick={onClose} />
             </div>
             <div
               className="flex flex-1 flex-col gap-2 overflow-hidden py-2 pr-4 [--field-duration:360ms] [--field-easing-open:cubic-bezier(0.22,1.35,0.36,1)] [--field-easing:cubic-bezier(0.22,1,0.36,1)]"
@@ -374,19 +263,7 @@ const DetailedModal = ({
                     value={localModInfo.modType}
                     options={modTypeList.map((type) => ({ value: type, label: t(`modTypes.${type}`) }))}
                     onChange={(val) => handleModInfoChange("modType", val)}
-                    renderTrigger={({ onClick, isOpen, selectedLabel }) => (
-                      <button
-                        type="button"
-                        className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
-                        onClick={onClick}
-                      >
-                        <span className="truncate">{selectedLabel}</span>
-                        <FaCaretUp
-                          size={12}
-                          className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
-                        />
-                      </button>
-                    )}
+                    renderTrigger={(props) => <SelectTrigger {...props} />}
                   />
                 }
               />
@@ -429,19 +306,7 @@ const DetailedModal = ({
                             ),
                           }))}
                           onChange={(val) => handleModInfoChange("character", val)}
-                          renderTrigger={({ onClick, isOpen, selectedLabel }) => (
-                            <button
-                              type="button"
-                              className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
-                              onClick={onClick}
-                            >
-                              <span className="truncate">{selectedLabel}</span>
-                              <FaCaretUp
-                                size={12}
-                                className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
-                              />
-                            </button>
-                          )}
+                          renderTrigger={(props) => <SelectTrigger {...props} />}
                         />
                       }
                     />
@@ -487,19 +352,7 @@ const DetailedModal = ({
                             ),
                           }))}
                           onChange={(value) => handleModInfoChange("outfitId", value)}
-                          renderTrigger={({ onClick, isOpen, selectedLabel }) => (
-                            <button
-                              type="button"
-                              className="flex w-full cursor-pointer items-center justify-end gap-2 text-right"
-                              onClick={onClick}
-                            >
-                              <span className="truncate">{selectedLabel}</span>
-                              <FaCaretUp
-                                size={12}
-                                className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")}
-                              />
-                            </button>
-                          )}
+                          renderTrigger={(props) => <SelectTrigger {...props} />}
                         />
                       }
                     />
@@ -559,7 +412,7 @@ const DetailedModal = ({
             </ZzzButton>
           </div>
         </div>
-      </div>
+      </ModalOverlay>
       <RenderAlert />
     </>
   );

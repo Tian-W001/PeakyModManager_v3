@@ -1,12 +1,16 @@
 import OutfitDropdown from "./outfitDropdown";
 import { memo, useEffect, useRef } from "react";
 import clsx from "clsx";
-import { Character } from "../../../shared/character";
+import { Character } from "@shared/character";
 import charActiveMask from "@renderer/assets/character_active_mask.png";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { selectSelectedCharacter, setSelectedCharacter } from "@renderer/redux/slices/uiSlice";
+import { selectSelectedCharacter, setSelectedCharacter, selectSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { TiChevronLeft, TiChevronRight } from "react-icons/ti";
-import { characterBarImageList, getCharacterImagePath } from "@renderer/utils/characterImages";
+import {
+  characterBarImageList,
+  getCharacterImagePath,
+  preloadCharacterBarImages,
+} from "@renderer/utils/characterImages";
 
 const CharacterBarItem = memo(
   ({
@@ -45,7 +49,14 @@ const CharacterBarItem = memo(
 );
 CharacterBarItem.displayName = "CharacterBarItem";
 
-const CharacterBar = ({ className, isVisible }: { className?: string; isVisible: boolean }) => {
+const CharacterBar = ({ className }: { className?: string }) => {
+  const isVisible = useAppSelector(selectSelectedMenuItem) === "Character";
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      preloadCharacterBarImages();
+    }, 500);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
   const dispatch = useAppDispatch();
   const selectedCharacter = useAppSelector(selectSelectedCharacter);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -135,7 +146,7 @@ const CharacterBar = ({ className, isVisible }: { className?: string; isVisible:
           className="hover:text-zzzYellow h-full scale-200 text-[#111] drop-shadow-[1px_0px_0px_#ffffff19] transition-colors"
         />
       </div>
-      <OutfitDropdown isVisible={isVisible} />
+      <OutfitDropdown />
     </div>
   );
 };

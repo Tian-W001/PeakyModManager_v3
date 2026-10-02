@@ -1,7 +1,7 @@
 import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
-import ZzzButton from "./zzzButton";
-import ZzzSelect from "./zzzSelect";
+import ZzzButton from "@renderer/components/zzzButton";
+import ZzzSelect from "@renderer/components/zzzSelect";
 import clsx from "clsx";
 import { useEffect, useCallback, useMemo, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
@@ -15,7 +15,7 @@ import {
   setCurrentPreset,
 } from "@renderer/redux/slices/presetsSlice";
 import { createPortal } from "react-dom";
-import EditPresetsModal from "../modal/editPresetsModal";
+import EditPresetsModal from "@renderer/Modals/EditPresetsModal/modal";
 import { addModInfo, editModInfo } from "@renderer/redux/slices/librarySlice";
 import {
   selectSelectedCharacter,
@@ -30,10 +30,12 @@ import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
-import ZzzToast from "./zzzToast";
+import ZzzToast from "@renderer/components/zzzToast";
 import { ModState } from "@shared/modState";
+import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
 
-const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
+const ModCardGrid = ({ className }: { className?: string }) => {
+  const selectedModInfos = useAppSelector(selectModTypeFilteredModCards);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const currentPresetName = useAppSelector(selectCurrentPresetName);
@@ -218,12 +220,12 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
           ref={ref}
           className="flex size-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
         >
-          {modInfos.length === 0 ? (
+          {selectedModInfos.length === 0 ? (
             <div className="flex size-full items-center justify-center">
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
-            modInfos.map((modInfo) => (
+            selectedModInfos.map((modInfo) => (
               <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
             ))
           )}
