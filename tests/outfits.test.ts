@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import characters from "../scripts/characters.json";
-import en from "../src/renderer/src/i18n/locales/en.json";
-import zh from "../src/renderer/src/i18n/locales/zh.json";
-import { getOutfitCount, getOutfitIds } from "../src/shared/outfit";
+import en from "@renderer/i18n/locales/en.json";
+import zh from "@renderer/i18n/locales/zh.json";
+import { getOutfitCount, getOutfitIds } from "@shared/outfit";
 
 describe("generated outfit catalog", () => {
   it("does not generate a default outfit for Unknown", () => {

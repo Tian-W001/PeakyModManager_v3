@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ModInfo } from "@shared/modInfo";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
-import { RootState } from "../store";
+import { RootState } from "@renderer/redux/store";
 import { ModType } from "@shared/modType";
 import { Character } from "@shared/character";
 

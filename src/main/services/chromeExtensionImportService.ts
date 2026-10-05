@@ -3,10 +3,10 @@ import { app } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import log from "electron-log/main";
-import { ModInfo } from "../../shared/modInfo";
-import { Character } from "../../shared/character";
-import { isZippedFile, unzipFile } from "../utils";
-import { getMainWindow } from "../services/windowService";
+import { ModInfo } from "@shared/modInfo";
+import { Character } from "@shared/character";
+import { isZippedFile, unzipFile } from "@main/utils";
+import { getMainWindow } from "@main/services/windowService";
 
 export interface ExplorerImportPayload {
   modName: string;

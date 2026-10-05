@@ -23,7 +23,7 @@ const withSavingId = (current: ReadonlySet<string>, id: string, saving: boolean)
   return next;
 };
 
-const ToggleKeyEditor = ({ modName }: { modName: string }) => {
+const ToggleKeyEditor = ({ modName, className }: { modName: string; className?: string }) => {
   const { t } = useTranslation();
   const [toggles, setToggles] = useState<EditableToggle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -178,7 +178,7 @@ const ToggleKeyEditor = ({ modName }: { modName: string }) => {
   if (loading || loadError || toggles.length === 0) return null;
 
   return (
-    <div className="peer/toggles group/toggles relative z-10 min-h-8 shrink-0 grow-0 basis-8 overflow-hidden transition-[flex-grow] duration-300 ease-out focus-within:grow hover:grow">
+    <div className={clsx("group/toggles overflow-hidden", className)}>
       <div className="flex h-full min-h-8 flex-col overflow-hidden rounded-2xl bg-black font-bold text-white shadow-[1px_1px_1px_#fff2]">
         <div className="hover:text-zzzYellow flex h-8 shrink-0 items-center justify-between gap-4 rounded-full px-3 py-1 transition-colors">
           <span>{t("modDetails.toggles")}</span>

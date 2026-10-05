@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { RootState } from "../store";
+import { RootState } from "@renderer/redux/store";
 
 export interface PresetsState {
   presets: Record<string, string[]>; //<presetName, modNames[]>

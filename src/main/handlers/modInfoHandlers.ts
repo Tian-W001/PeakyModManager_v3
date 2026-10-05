@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import { ModInfo } from "../../shared/modInfo";
-import { getLibraryPath } from "../services/storeService";
-import { createModInfoFile, validateModInfo, autofillModInfo } from "../domain/modInfo";
+import { ModInfo } from "@shared/modInfo";
+import { getLibraryPath } from "@main/services/storeService";
+import { createModInfoFile, validateModInfo, autofillModInfo } from "@main/domain/modInfo";
 
 export const registerModInfoHandlers = () => {
   ipcMain.handle("edit-mod-info", async (_event, modName: string, newModInfo: ModInfo) => {

@@ -25,10 +25,10 @@ import libraryReducer, {
   selectModByCharacter,
   refreshLibraryAfterUpdate,
   setLibraryPath,
-} from "../src/renderer/src/redux/slices/librarySlice";
-import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
-import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
-import { ModInfo } from "../src/shared/modInfo";
+} from "@renderer/redux/slices/librarySlice";
+import uiReducer from "@renderer/redux/slices/uiSlice";
+import presetsReducer from "@renderer/redux/slices/presetsSlice";
+import { ModInfo } from "@shared/modInfo";
 
 const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
   ({

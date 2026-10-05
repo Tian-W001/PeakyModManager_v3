@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { validateModInfo, createModInfoFile } from "../src/main/domain/modInfo";
+import { validateModInfo, createModInfoFile } from "@main/domain/modInfo";
 
 describe("validateModInfo", () => {
   it.each([undefined, null])("defaults missing outfit %s to None", (outfitId) => {

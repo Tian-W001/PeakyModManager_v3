@@ -1,11 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
-import libraryReducer, {
-  addModInfo,
-  removeModInfo,
-  selectModInfos,
-} from "../src/renderer/src/redux/slices/librarySlice";
-import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
+import libraryReducer, { addModInfo, removeModInfo, selectModInfos } from "@renderer/redux/slices/librarySlice";
+import uiReducer from "@renderer/redux/slices/uiSlice";
 import presetsReducer, {
   addPreset,
   setCurrentPreset,
@@ -16,8 +12,8 @@ import presetsReducer, {
   selectAllPresets,
   selectCurrentPresetMods,
   selectDiffList,
-} from "../src/renderer/src/redux/slices/presetsSlice";
-import { ModInfo } from "../src/shared/modInfo";
+} from "@renderer/redux/slices/presetsSlice";
+import { ModInfo } from "@shared/modInfo";
 
 const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
   ({

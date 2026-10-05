@@ -7,8 +7,8 @@ import {
   getModToggleControls,
   IniSyncDeps,
   syncToggles,
-} from "../src/main/domain/iniSync";
-import { threeDMigotoParser } from "../src/shared/threeDMigoto";
+} from "@main/domain/iniSync";
+import { threeDMigotoParser } from "@shared/threeDMigoto";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

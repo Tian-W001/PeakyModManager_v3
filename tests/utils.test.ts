@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import path from "path";
-import { escapeRegExp, isPathInside, isZippedFile, resolveInside } from "../src/main/utils";
+import { escapeRegExp, isPathInside, isZippedFile, resolveInside } from "@main/utils";
 
 describe("escapeRegExp", () => {
   it("should escape special regex characters", () => {

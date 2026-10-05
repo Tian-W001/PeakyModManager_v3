@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
-import libraryReducer, { addModInfo } from "../src/renderer/src/redux/slices/librarySlice";
+import libraryReducer, { addModInfo } from "@renderer/redux/slices/librarySlice";
 import uiReducer, {
   setSelectedMenuItem,
   setSelectedCharacter,
   setSelectedOutfitId,
-} from "../src/renderer/src/redux/slices/uiSlice";
-import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
-import { selectModTypeFilteredModCards } from "../src/renderer/src/redux/selectors/ModCardsSelector";
-import { ModInfo } from "../src/shared/modInfo";
+} from "@renderer/redux/slices/uiSlice";
+import presetsReducer from "@renderer/redux/slices/presetsSlice";
+import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
+import { ModInfo } from "@shared/modInfo";
 
 const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
   ({

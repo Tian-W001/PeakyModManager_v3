@@ -1,24 +1,23 @@
+import clsx from "clsx";
 import { ModInfo } from "@shared/modInfo";
-import DetailedModal from "../modal/detailedModal";
-import { createPortal } from "react-dom";
+import DetailedModal from "@renderer/Modals/DetailedModal/modal";
 import { ModState } from "@shared/modState";
 import { useAppDispatch } from "@renderer/redux/hooks";
 import { addToDiffList } from "@renderer/redux/slices/presetsSlice";
-import SmoothCornerPatch from "./CurvePatch";
+import SmoothCornerPatch from "@renderer/components/CurvePatch";
 import defaultCover from "@renderer/assets/default_cover.jpg";
 import { useTranslation } from "react-i18next";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { ModType } from "@shared/modType";
 import { Character } from "@shared/character";
-import useMountTransition from "@renderer/hooks/useMountTransition";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { getCharacterAvatar } from "@renderer/utils/characterAvatars";
 
 const getAvatarUrl = (modType: ModType, character?: Character) => {
   if (modType === "Character") {
     return getCharacterAvatar(character ?? "Unknown");
   } else {
-    return new URL(`../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
+    return new URL(`../../../assets/avatars/modType_avatars/${modType}.webp`, import.meta.url).href;
   }
 };
 
@@ -40,10 +39,18 @@ const getBorderStyle = (modState: ModState) => {
   }
 };
 
-const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModState: ModState }) => {
+const ModCard = ({
+  modInfo,
+  currentModState,
+  className,
+}: {
+  modInfo: ModInfo;
+  currentModState: ModState;
+  className?: string;
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [toggleModal, shouldModalMount, shouldModalTransition] = useMountTransition(200);
+  const [isDetailsOpen, setDetailsOpen] = useState(false);
 
   const [ref, entry] = useIntersectionObserver({
     threshold: 0,
@@ -53,7 +60,7 @@ const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModSta
 
   const handleOnRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    toggleModal(true);
+    setDetailsOpen(true);
   };
 
   const handleOnClick = () => {
@@ -71,7 +78,11 @@ const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModSta
         ref={ref}
         onClick={handleOnClick}
         onContextMenu={handleOnRightClick}
-        className={`${getBorderStyle(currentModState)} flex aspect-2/3 h-87.5 flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333] hover:[&>div]:h-[21%]`}
+        className={clsx(
+          getBorderStyle(currentModState),
+          "flex aspect-2/3 flex-col items-center overflow-hidden rounded-[30px_0] bg-[#333] hover:[&>div]:h-[21%]",
+          className
+        )}
       >
         {entry?.isIntersecting && (
           <>
@@ -119,15 +130,7 @@ const ModCard = ({ modInfo, currentModState }: { modInfo: ModInfo; currentModSta
           </>
         )}
       </div>
-      {shouldModalMount &&
-        createPortal(
-          <DetailedModal
-            modInfo={modInfo}
-            onClose={() => toggleModal()}
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
-          />,
-          document.body
-        )}
+      <DetailedModal isOpen={isDetailsOpen} modInfo={modInfo} onClose={() => setDetailsOpen(false)} />
     </>
   );
 };

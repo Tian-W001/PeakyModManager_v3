@@ -1,3 +1,4 @@
+import ModalOverlay from "@renderer/Modals/components/ModalOverlay";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
@@ -7,20 +8,19 @@ import {
   selectCurrentPresetName,
 } from "@renderer/redux/slices/presetsSlice";
 import { useTranslation } from "react-i18next";
-import Exit from "@renderer/components/Exit";
-import IconHook from "@renderer/assets/icons/Hook.png";
+import ModalHeader from "@renderer/Modals/components/ModalHeader";
+import PresetCard from "./components/PresetCard";
 import IconInfo from "@renderer/assets/icons/Info.png";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import ZzzButton from "@renderer/components/zzzButton";
-import clsx from "clsx";
 
-const EditPresetsModal = ({ onClose, className }: { onClose: () => void; className?: string }) => {
+const EditPresetsModalContent = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const allPresetNames = useAppSelector(selectAllPresetNames);
   const currentPresetName = useAppSelector(selectCurrentPresetName);
   const [newPresetName, setNewPresetName] = useState("");
   const { t } = useTranslation();
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { showAlert, hideAlert, alert } = useAlertModal();
 
   const handleAddPreset = () => {
     if (newPresetName.trim()) {
@@ -51,21 +51,15 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
   };
 
   return (
-    <div className={clsx("modal-overlay", className)} id="modal-overlay">
+    <>
       <div
         className={
           "chess-background flex size-[60%] flex-col overflow-hidden rounded-2xl rounded-tr-lg border-4 border-black bg-[#333] inset-shadow-[1px_-1px_2px_#fff3,-1px_-1px_2px_#0009]"
         }
       >
-        <div className="flex items-center justify-between bg-black/20 px-4 py-2" id="modal-header">
-          <div className="title-decorator flex min-w-0 items-center gap-2" id="title-wrapper">
-            <p className="text-2xl font-bold text-white italic">{t("presets.managePresets")}</p>
-          </div>
-          <Exit
-            className="hover:fill-zzzYellow shrink-0 fill-[#c42209] transition-[fill_transform] hover:scale-110"
-            onClick={onClose}
-          />
-        </div>
+        <ModalHeader onClose={onClose}>
+          <p className="text-2xl font-bold text-white italic">{t("presets.managePresets")}</p>
+        </ModalHeader>
 
         <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto p-4" id="info-container">
           <div className="flex flex-col items-start justify-between gap-1 px-3 py-1 font-bold text-white">
@@ -88,27 +82,26 @@ const EditPresetsModal = ({ onClose, className }: { onClose: () => void; classNa
 
           <div className="grid grid-cols-3 gap-4 rounded-4xl bg-black/10 p-4" id="presets-list">
             {allPresetNames.map((name) => (
-              <div
+              <PresetCard
+                className="h-16 w-full"
                 key={name}
-                className="group relative flex h-16 w-full items-center justify-center rounded-3xl bg-[#333] p-2 ring inset-shadow-[1px_1px_0px_#fff2,0_0_0_3px_#666]"
-              >
-                {name === currentPresetName && (
-                  <img src={IconHook} alt="Current" className="absolute -top-1 -right-1 size-6" />
-                )}
-                <span className="truncate font-bold text-white">{name}</span>
-                {name !== "Default Preset" && (
-                  <div className="absolute flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                    <ZzzButton type="Cancel" onClick={() => handleRemovePreset(name)} />
-                  </div>
-                )}
-              </div>
+                name={name}
+                isCurrent={name === currentPresetName}
+                onRemove={() => handleRemovePreset(name)}
+              />
             ))}
           </div>
         </div>
       </div>
-      <RenderAlert />
-    </div>
+      {alert}
+    </>
   );
 };
+
+const EditPresetsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => (
+  <ModalOverlay isOpen={isOpen}>
+    <EditPresetsModalContent onClose={onClose} />
+  </ModalOverlay>
+);
 
 export default EditPresetsModal;

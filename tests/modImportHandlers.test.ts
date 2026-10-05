@@ -2,9 +2,9 @@ import path from "path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ipcMain } from "electron";
 import fs from "fs-extra";
-import { importMod } from "../src/main/domain/modImport";
-import { getLibraryPath } from "../src/main/services/storeService";
-import { registerImportHandlers } from "../src/main/handlers/modImportHandlers";
+import { importMod } from "@main/domain/modImport";
+import { getLibraryPath } from "@main/services/storeService";
+import { registerImportHandlers } from "@main/handlers/modImportHandlers";
 
 vi.mock("electron", () => ({
   app: { getPath: () => path.resolve("test-user-data") },
@@ -12,9 +12,9 @@ vi.mock("electron", () => ({
   net: {},
 }));
 vi.mock("fs-extra", () => ({ default: { remove: vi.fn() } }));
-vi.mock("../src/main/domain/modImport", () => ({ importMod: vi.fn(), importModCover: vi.fn() }));
-vi.mock("../src/main/services/storeService", () => ({ getLibraryPath: vi.fn() }));
-vi.mock("../src/main/services/windowService", () => ({ getMainWindow: vi.fn() }));
+vi.mock("@main/domain/modImport", () => ({ importMod: vi.fn(), importModCover: vi.fn() }));
+vi.mock("@main/services/storeService", () => ({ getLibraryPath: vi.fn() }));
+vi.mock("@main/services/windowService", () => ({ getMainWindow: vi.fn() }));
 
 describe("extension import temporary directory cleanup", () => {
   const tempDir = path.resolve("test-user-data", "Mods", "TestMod");
