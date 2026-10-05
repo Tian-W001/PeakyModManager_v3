@@ -1,6 +1,10 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { selectSelectedCharacter, selectSelectedMenuItem, selectSelectedOutfitId } from "../slices/uiSlice";
-import { selectModInfos } from "../slices/librarySlice";
+import {
+  selectSelectedCharacter,
+  selectSelectedMenuItem,
+  selectSelectedOutfitId,
+} from "@renderer/redux/slices/uiSlice";
+import { selectModInfos } from "@renderer/redux/slices/librarySlice";
 
 export const selectModTypeFilteredModCards = createSelector(
   [selectSelectedMenuItem, selectSelectedCharacter, selectSelectedOutfitId, selectModInfos],

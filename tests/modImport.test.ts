@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { importMod, flattenSingleRootFolder, importModCover } from "../src/main/domain/modImport";
-import { ModImportDeps, ModCoverDeps } from "../src/main/domain/modImport";
-import { ModInfo } from "../src/shared/modInfo";
+import { importMod, flattenSingleRootFolder, importModCover } from "@main/domain/modImport";
+import { ModImportDeps, ModCoverDeps } from "@main/domain/modImport";
+import { ModInfo } from "@shared/modInfo";
 
 const sampleModInfo: ModInfo = {
   name: "MyMod",

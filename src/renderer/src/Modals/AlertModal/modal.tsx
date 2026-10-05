@@ -1,4 +1,4 @@
-import ModalOverlay from "../components/ModalOverlay";
+import ModalOverlay from "@renderer/Modals/components/ModalOverlay";
 import React from "react";
 
 interface AlertModalProps {

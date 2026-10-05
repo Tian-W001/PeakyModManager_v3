@@ -1,4 +1,4 @@
-import { ModInfo } from "../../shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import { processModInfo } from "./modLibrary";
 
 export interface ModImportDeps {

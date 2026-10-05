@@ -1,7 +1,7 @@
 import WallpaperPicker from "./components/WallpaperPicker";
 import PathField from "./components/PathField";
-import SelectTrigger from "../components/SelectTrigger";
-import ModalOverlay from "../components/ModalOverlay";
+import SelectTrigger from "@renderer/Modals/components/SelectTrigger";
+import ModalOverlay from "@renderer/Modals/components/ModalOverlay";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -26,7 +26,7 @@ import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import ZzzSelect from "@renderer/components/zzzSelect";
 import ZzzField from "@renderer/components/zzzField";
-import ModalHeader from "../components/ModalHeader";
+import ModalHeader from "@renderer/Modals/components/ModalHeader";
 import ZzzButton from "@renderer/components/zzzButton";
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");

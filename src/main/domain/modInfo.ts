@@ -1,6 +1,6 @@
 import path from "path";
-import { defaultModInfo, ModInfo } from "../../shared/modInfo";
-import { Character } from "../../shared/character";
+import { defaultModInfo, ModInfo } from "@shared/modInfo";
+import { Character } from "@shared/character";
 
 export const createModInfoFile = async (modPath: string, deps: ModInfoFileWriter): Promise<ModInfo> => {
   const modInfo: ModInfo = {

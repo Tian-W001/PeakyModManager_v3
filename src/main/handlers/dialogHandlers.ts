@@ -1,8 +1,8 @@
 import path from "path";
 import fs from "fs-extra";
 import { dialog, ipcMain, shell } from "electron";
-import { getLibraryPath } from "../services/storeService";
-import { getMainWindow } from "../services/windowService";
+import { getLibraryPath } from "@main/services/storeService";
+import { getMainWindow } from "@main/services/windowService";
 
 export const registerDialogHandlers = () => {
   ipcMain.handle("select-path", async () => {

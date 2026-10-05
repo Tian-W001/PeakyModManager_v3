@@ -3,8 +3,8 @@ import fs from "fs-extra";
 import path from "path";
 import mime from "mime-types";
 import log from "electron-log/main";
-import { fetchRemoteCoverImage } from "../domain/modImport";
-import { getMainWindow } from "../services/windowService";
+import { fetchRemoteCoverImage } from "@main/domain/modImport";
+import { getMainWindow } from "@main/services/windowService";
 import {
   downloadMod,
   unzipMod,
@@ -12,7 +12,7 @@ import {
   parseExplorerImportUrl,
   getExplorerImportKey,
   removeDownloadedMod,
-} from "../services/chromeExtensionImportService";
+} from "@main/services/chromeExtensionImportService";
 
 export const explorerImportProtocolScheme: Electron.CustomScheme = {
   scheme: "peakymodmanager",

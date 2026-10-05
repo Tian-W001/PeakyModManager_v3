@@ -1,4 +1,4 @@
-@reference "../../../assets/global.css";
+@reference "@renderer/assets/global.css";
 
 @layer components {
   .bar {

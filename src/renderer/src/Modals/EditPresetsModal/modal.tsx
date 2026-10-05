@@ -1,4 +1,4 @@
-import ModalOverlay from "../components/ModalOverlay";
+import ModalOverlay from "@renderer/Modals/components/ModalOverlay";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
@@ -8,7 +8,7 @@ import {
   selectCurrentPresetName,
 } from "@renderer/redux/slices/presetsSlice";
 import { useTranslation } from "react-i18next";
-import ModalHeader from "../components/ModalHeader";
+import ModalHeader from "@renderer/Modals/components/ModalHeader";
 import PresetCard from "./components/PresetCard";
 import IconInfo from "@renderer/assets/icons/Info.png";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";

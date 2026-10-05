@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ipcMain, type IpcMainInvokeEvent } from "electron";
 import fs from "fs-extra";
-import { registerModInfoHandlers } from "../src/main/handlers/modInfoHandlers";
+import { registerModInfoHandlers } from "@main/handlers/modInfoHandlers";
 
 const fileMocks = vi.hoisted(() => ({
   pathExists: vi.fn<() => Promise<boolean>>(),
@@ -10,7 +10,7 @@ const fileMocks = vi.hoisted(() => ({
 
 vi.mock("electron", () => ({ ipcMain: { handle: vi.fn() } }));
 vi.mock("fs-extra", () => ({ default: fileMocks }));
-vi.mock("../src/main/services/storeService", () => ({ getLibraryPath: () => "/qa-library" }));
+vi.mock("@main/services/storeService", () => ({ getLibraryPath: () => "/qa-library" }));
 
 describe("edit-mod-info IPC", () => {
   beforeEach(() => {
