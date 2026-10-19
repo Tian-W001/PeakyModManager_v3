@@ -3,8 +3,8 @@ import path from "path";
 import log from "electron-log";
 import mime from "mime-types";
 import fs from "fs-extra";
-import { getLibraryPath } from "../services/storeService";
-import { resolveInside } from "../utils";
+import { getLibraryPath } from "@main/services/storeService";
+import { resolveInside } from "@main/utils";
 
 export const modImageProtocolScheme: Electron.CustomScheme = {
   scheme: "mod-image",

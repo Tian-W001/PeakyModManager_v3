@@ -14,9 +14,6 @@
     "settings": "设置",
     "apply": "应用",
     "select": "选择",
-    "multiSelect": "批量操作",
-    "selectAll": "全选",
-    "selectNone": "全不选",
     "applyModsError": "{{count}} 个Mod应用失败"
   },
   "outfits": {
@@ -58,7 +55,12 @@
     "testAlert": "测试弹窗",
     "testAlertMessage": "这是一个测试弹窗！",
     "wallpaperTooltip": "双击应用新壁纸",
-    "appVersion": "版本号"
+    "appVersion": "版本号",
+    "checkingUpdate": "正在检查更新…",
+    "updateAvailable": "发现新版本，将自动下载。",
+    "upToDate": "当前已是最新版本。",
+    "updateCheckUnavailable": "当前环境暂不支持检查更新。",
+    "updateCheckFailed": "检查更新失败，请稍后重试。"
   },
   "modDetails": {
     "saveFailed": "保存 Mod 信息失败",
@@ -247,9 +249,7 @@
       "Severian": "赛维里安"
     },
     "outfits": {
-      "Unknown": {
-        "1": "默认时装"
-      },
+      "Unknown": {},
       "Belle": {
         "1": "元气店长",
         "2": "曦色玲珑",

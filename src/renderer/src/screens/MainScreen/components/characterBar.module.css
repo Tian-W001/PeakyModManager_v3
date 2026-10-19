@@ -1,0 +1,12 @@
+@reference "@renderer/assets/global.css";
+
+@layer components {
+  .bar {
+    @apply flex items-center gap-2 transition-[opacity_translate] duration-150 ease-out;
+    @apply pointer-events-none -translate-y-[calc(100%+var(--character-bar-offset))] opacity-0;
+  }
+
+  .visible {
+    @apply pointer-events-auto translate-y-0 opacity-100;
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import ZzzToast from "../components/zzzToast";
+import ZzzToast from "@renderer/components/zzzToast";
 
 export const useModDownloadEvents = () => {
   const { t } = useTranslation();

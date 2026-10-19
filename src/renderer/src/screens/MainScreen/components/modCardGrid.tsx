@@ -1,8 +1,9 @@
 import { ModInfo } from "@shared/modInfo";
 import ModCard from "./modCard";
-import ZzzButton from "./zzzButton";
+import ZzzButton from "@renderer/components/zzzButton";
+import ZzzSelect from "@renderer/components/zzzSelect";
 import clsx from "clsx";
-import { useEffect, useCallback, useMemo, useRef } from "react";
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import {
   applyMods,
@@ -13,8 +14,7 @@ import {
   selectDiffList,
   setCurrentPreset,
 } from "@renderer/redux/slices/presetsSlice";
-import { createPortal } from "react-dom";
-import EditPresetsModal from "../modal/editPresetsModal";
+import EditPresetsModal from "@renderer/Modals/EditPresetsModal/modal";
 import { addModInfo, editModInfo } from "@renderer/redux/slices/librarySlice";
 import {
   selectSelectedCharacter,
@@ -27,12 +27,13 @@ import { FaCaretUp } from "react-icons/fa6";
 import { useAlertModal } from "@renderer/hooks/useAlertModal";
 import { useTranslation } from "react-i18next";
 import BangbooLoading from "@renderer/assets/bangboo_loading.gif";
-import useMountTransition from "@renderer/hooks/useMountTransition";
 import { toast } from "react-hot-toast";
-import ZzzToast from "./zzzToast";
+import ZzzToast from "@renderer/components/zzzToast";
 import { ModState } from "@shared/modState";
+import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
 
-const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?: string }) => {
+const ModCardGrid = ({ className }: { className?: string }) => {
+  const selectedModInfos = useAppSelector(selectModTypeFilteredModCards);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const currentPresetName = useAppSelector(selectCurrentPresetName);
@@ -51,8 +52,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     [currentPresetModSet, diffList]
   );
 
-  const [togglePresetsMenu, shouldPresetsMenuMount, shouldPresetsMenuTransition] = useMountTransition(200);
-  const [togglePresetsModalOpen, shouldPresetsModalMount, shouldPresetsModalTransition] = useMountTransition(200);
+  const [isPresetsOpen, setPresetsOpen] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
@@ -63,7 +63,7 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     ref.current?.scrollTo(0, 0);
   }, [selectedMenuItem, selectedCharacter, selectedOutfitId]);
 
-  const { showAlert, hideAlert, RenderAlert } = useAlertModal();
+  const { showAlert, hideAlert, alert } = useAlertModal();
 
   const importMod = useCallback(
     async (filePath: string) => {
@@ -172,6 +172,8 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   };
 
   const handleSwitchPreset = async (name: string) => {
+    if (name === currentPresetName) return;
+
     const applyChanges = async () => {
       dispatch(applyMods(diffList));
       //no need to call ipc here, as this preset will be switched right after
@@ -180,7 +182,6 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
     const switchPreset = async () => {
       await window.electron.ipcRenderer.invoke("clear-target-path");
       dispatch(setCurrentPreset(name));
-      togglePresetsMenu();
       hideAlert();
     };
     // if diffList is not empty, show alert
@@ -212,68 +213,49 @@ const ModCardGrid = ({ modInfos, className }: { modInfos: ModInfo[]; className?:
   };
   return (
     <>
-      <div className={clsx("relative h-full", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
+      <div className={clsx("relative", className)} onDrop={handleDrop} onDragOver={handleDragOver}>
         <div
           ref={ref}
           className="flex size-full flex-wrap items-start justify-start gap-8 overflow-x-hidden overflow-y-auto p-4 [scrollbar-color:#fff_#0000] [scrollbar-gutter:stable]"
         >
-          {modInfos.length === 0 ? (
+          {selectedModInfos.length === 0 ? (
             <div className="flex size-full items-center justify-center">
               <img src={BangbooLoading} alt="Loading..." className="h-32 w-32 object-contain" />
             </div>
           ) : (
-            modInfos.map((modInfo) => (
-              <ModCard key={modInfo.name} modInfo={modInfo} currentModState={getModState(modInfo.name)} />
+            selectedModInfos.map((modInfo) => (
+              <ModCard
+                className="h-87.5"
+                key={modInfo.name}
+                modInfo={modInfo}
+                currentModState={getModState(modInfo.name)}
+              />
             ))
           )}
         </div>
 
         {/* Preset Dropdown and Add Button */}
-        <div className="absolute right-8 bottom-4 flex flex-col items-end">
-          {shouldPresetsMenuMount && (
-            <div
-              className={clsx(
-                "mb-2 flex max-h-40 w-full flex-col gap-2 overflow-x-hidden overflow-y-auto rounded-2xl bg-[#222] p-2 transition-[opacity_translate] duration-200 ease-in-out",
-                shouldPresetsMenuTransition
-                  ? "pointer-events-auto translate-y-0 opacity-100"
-                  : "pointer-events-none translate-y-[50%] opacity-0"
-              )}
-            >
-              {allPresetNames.map((name) => (
-                <div
-                  key={name}
-                  className={clsx(
-                    "hover:bg-zzzYellow flex h-10 cursor-pointer items-center justify-end overflow-hidden rounded-xl p-2 whitespace-nowrap text-white hover:text-black",
-                    name === currentPresetName && "text-zzzYellow"
-                  )}
-                  onClick={async () => await handleSwitchPreset(name)}
-                >
-                  {name}
+        <div className="absolute right-8 bottom-4 flex items-center gap-2">
+          <ZzzButton type="Add" onClick={() => setPresetsOpen(true)} />
+          <ZzzSelect
+            value={currentPresetName}
+            options={allPresetNames.map((name) => ({ value: name, label: name }))}
+            onChange={handleSwitchPreset}
+            placement="top"
+            dropdownClassName="w-max min-w-full max-w-70"
+            renderTrigger={({ onClick, isOpen }) => (
+              <ZzzButton onClick={onClick} className="w-auto max-w-70">
+                <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
+                  <span className="truncate">{currentPresetName}</span>
+                  <FaCaretUp className={clsx("shrink-0 transition-transform", isOpen && "rotate-180")} />
                 </div>
-              ))}
-            </div>
-          )}
-          <div className="flex items-center gap-2">
-            <ZzzButton type="Add" onClick={() => togglePresetsModalOpen()} />
-
-            <ZzzButton onClick={() => togglePresetsMenu()} className="w-auto max-w-70">
-              <div className="flex size-full flex-row items-center justify-center gap-2 overflow-hidden">
-                <span className="truncate">{currentPresetName}</span>
-                <FaCaretUp className={`transition-transform ${shouldPresetsMenuMount && "rotate-180"}`} />
-              </div>
-            </ZzzButton>
-          </div>
+              </ZzzButton>
+            )}
+          />
         </div>
-        {shouldPresetsModalMount &&
-          createPortal(
-            <EditPresetsModal
-              className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldPresetsModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
-              onClose={() => togglePresetsModalOpen()}
-            />,
-            document.body
-          )}
+        <EditPresetsModal isOpen={isPresetsOpen} onClose={() => setPresetsOpen(false)} />
       </div>
-      <RenderAlert />
+      {alert}
     </>
   );
 };

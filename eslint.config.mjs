@@ -28,7 +28,7 @@ export default defineConfig(
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
       ...eslintPluginReactRefresh.configs.vite.rules,
-      "prettier/prettier": ["warn", { semi: true, endOfLine: "auto" }],
+      "prettier/prettier": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "max-len": ["warn", { code: 120 }],

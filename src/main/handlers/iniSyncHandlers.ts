@@ -2,11 +2,11 @@ import { ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import { randomUUID } from "crypto";
-import { changeKeyBinding, changeToggleState, getModToggleControls, syncToggles } from "../domain/iniSync";
-import { getLibraryPath, getD3dxUserPath } from "../services/storeService";
-import { escapeRegExp, isPathInside, resolveInside } from "../utils";
-import { IniSyncDeps } from "../domain/iniSync";
-import { ChangeKeyBindingRequest, ChangeToggleStateRequest } from "../../shared/threeDMigoto";
+import { changeKeyBinding, changeToggleState, getModToggleControls, syncToggles } from "@main/domain/iniSync";
+import { getLibraryPath, getD3dxUserPath } from "@main/services/storeService";
+import { escapeRegExp, isPathInside, resolveInside } from "@main/utils";
+import { IniSyncDeps } from "@main/domain/iniSync";
+import { ChangeKeyBindingRequest, ChangeToggleStateRequest } from "@shared/threeDMigoto";
 
 const replaceFile = async (filePath: string, content: string): Promise<void> => {
   const temporaryPath = `${filePath}.${process.pid}.${randomUUID()}.pmm-tmp`;

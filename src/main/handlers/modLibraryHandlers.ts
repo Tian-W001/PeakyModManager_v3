@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import { loadLibrary, deleteMod } from "../domain/modLibrary";
-import { getLibraryPath, getTargetPath } from "../services/storeService";
-import { ModLibraryDeps } from "../domain/modLibrary";
+import { loadLibrary, deleteMod } from "@main/domain/modLibrary";
+import { getLibraryPath, getTargetPath } from "@main/services/storeService";
+import { ModLibraryDeps } from "@main/domain/modLibrary";
 
 const deps: ModLibraryDeps = {
   getLibraryPath,

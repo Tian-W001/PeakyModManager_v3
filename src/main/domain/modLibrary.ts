@@ -1,5 +1,5 @@
 import path from "path";
-import { ModInfo } from "../../shared/modInfo";
+import { ModInfo } from "@shared/modInfo";
 import { validateModInfo, createModInfoFile } from "./modInfo";
 
 export interface ModLibraryDeps {

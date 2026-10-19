@@ -61,7 +61,7 @@ async function main() {
     }
 
     // Count actual outfits only, excluding None-Outfit (ID 0). An omitted list implies one default outfit.
-    const outfitCounts = characters.map((c) => `  ${JSON.stringify(c.id)}: ${Math.max(1, c.outfits?.length ?? 0)},`);
+    const outfitCounts = characters.map((c) => `  ${JSON.stringify(c.id)}: ${c.outfits?.length ?? 1},`);
     await fs.writeFile(
       characterOutfitsPath,
       await format(
@@ -101,7 +101,7 @@ async function main() {
       characters.forEach((c) => {
         content.characters.nicknames[c.id] = c.nicknames[lang];
         content.characters.fullnames[c.id] = c.fullnames[lang];
-        const outfits = c.outfits?.length ? c.outfits : [{ en: "Default Outfit", zh: "默认时装" }];
+        const outfits = c.outfits ?? [{ en: "Default Outfit", zh: "默认时装" }];
         content.characters.outfits[c.id] = Object.fromEntries(
           outfits.map((outfit, index) => [index + 1, outfit[lang]])
         );

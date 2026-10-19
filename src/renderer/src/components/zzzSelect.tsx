@@ -1,22 +1,73 @@
 import useMountTransition from "@renderer/hooks/useMountTransition";
 import clsx from "clsx";
 import { useRef, useEffect, ReactNode } from "react";
-import { FaCaretDown } from "react-icons/fa6";
 
 export interface Option {
   value: string;
   label: ReactNode;
+  labelIcon?: ReactNode;
 }
 
-interface CustomSelectProps {
-  label: string;
+interface ZzzSelectDropdownProps {
   value: string;
   options: Option[];
   onChange: (value: string) => void;
+  isTransitioning: boolean;
+  placement: "top" | "bottom";
   className?: string;
 }
 
-const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectProps) => {
+const ZzzSelectDropdown = ({
+  value,
+  options,
+  onChange,
+  isTransitioning,
+  placement,
+  className,
+}: ZzzSelectDropdownProps) => (
+  <div
+    className={clsx(
+      "no-scrollbar absolute right-0 z-50 max-h-50 overflow-auto rounded-3xl bg-[#222] p-2 shadow-xl transition-[opacity_translate] duration-200 ease-in-out",
+      placement === "top" ? "bottom-full mb-2" : "top-full mt-2",
+      isTransitioning
+        ? "pointer-events-auto translate-y-0 opacity-100"
+        : ["pointer-events-none opacity-0", placement === "top" ? "translate-y-[50%]" : "-translate-y-[50%]"],
+      className
+    )}
+  >
+    {options.map((option) => (
+      <div
+        key={option.value}
+        className={clsx(
+          "hover:bg-zzzYellow flex min-w-0 cursor-pointer items-center justify-end gap-2 rounded-lg px-4 py-2 text-right font-bold text-white transition-colors hover:text-black",
+          option.value === value && "text-zzzYellow"
+        )}
+        onClick={() => onChange(option.value)}
+      >
+        <div className="min-w-0 truncate">{option.label}</div>
+        {option.labelIcon && <div className="shrink-0">{option.labelIcon}</div>}
+      </div>
+    ))}
+  </div>
+);
+
+interface ZzzSelectProps {
+  value: string;
+  options: Option[];
+  onChange: (value: string) => void;
+  placement?: "top" | "bottom";
+  dropdownClassName?: string;
+  renderTrigger: (props: { onClick: () => void; isOpen: boolean; selectedLabel: ReactNode }) => ReactNode;
+}
+
+const ZzzSelect = ({
+  value,
+  options,
+  onChange,
+  placement = "bottom",
+  dropdownClassName = "left-0",
+  renderTrigger,
+}: ZzzSelectProps) => {
   const [toggleOpen, shouldMountDropdown, shouldDropdownTransition] = useMountTransition(200);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -36,41 +87,25 @@ const ZzzSelect = ({ label, value, options, onChange, className }: CustomSelectP
   }, [toggleOpen]);
 
   return (
-    <div className={"relative"} ref={containerRef}>
-      <div
-        className={clsx(
-          className,
-          "hover:text-zzzYellow flex cursor-pointer flex-row items-center justify-between gap-4 overflow-hidden rounded-full bg-black font-bold text-white transition-colors"
-        )}
-        onClick={() => toggleOpen()}
-      >
-        <span className="truncate">{label}</span>
-        <div className="flex flex-1 items-center justify-end gap-2">
-          <div className="h-full truncate">{selectedOption ? selectedOption.label : value}</div>
-          <FaCaretDown size={12} className={`transition-transform ${shouldMountDropdown && "rotate-180"}`} />
-        </div>
-      </div>
+    <div className="relative min-w-0" ref={containerRef} data-dropdown-open={shouldMountDropdown ? "" : undefined}>
+      {renderTrigger({
+        onClick: () => toggleOpen(),
+        isOpen: shouldMountDropdown,
+        selectedLabel: selectedOption ? selectedOption.label : value,
+      })}
 
       {shouldMountDropdown && (
-        <div
-          className={`no-scrollbar ${shouldDropdownTransition ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-[50%] opacity-0"} absolute top-full right-0 left-0 z-50 mt-2 max-h-50 overflow-auto rounded-3xl border-2 bg-[#111] p-2 shadow-xl transition-[opacity_translate] duration-200 ease-in-out`}
-        >
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={clsx(
-                "hover:bg-zzzYellow cursor-pointer rounded-lg px-4 py-2 text-right font-bold text-white transition-colors hover:text-black",
-                option.value === value && "text-zzzYellow"
-              )}
-              onClick={() => {
-                onChange(option.value);
-                toggleOpen(false);
-              }}
-            >
-              {option.label}
-            </div>
-          ))}
-        </div>
+        <ZzzSelectDropdown
+          value={value}
+          options={options}
+          isTransitioning={shouldDropdownTransition}
+          placement={placement}
+          className={dropdownClassName}
+          onChange={(value) => {
+            onChange(value);
+            toggleOpen(false);
+          }}
+        />
       )}
     </div>
   );

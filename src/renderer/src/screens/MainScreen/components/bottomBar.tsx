@@ -2,19 +2,17 @@ import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { loadLibrary } from "@renderer/redux/slices/librarySlice";
 import { clsx } from "clsx";
 import { useState } from "react";
-import { createPortal } from "react-dom";
-import SettingsModal from "../modal/settingsModal";
+import SettingsModal from "@renderer/Modals/SettingsModal/modal";
 import { useTranslation } from "react-i18next";
 import { applyMods, clearDiffList, selectDiffList } from "@renderer/redux/slices/presetsSlice";
-import ZzzButton from "./zzzButton";
-import useMountTransition from "@renderer/hooks/useMountTransition";
-import ZzzToast from "./zzzToast";
+import ZzzButton from "@renderer/components/zzzButton";
+import ZzzToast from "@renderer/components/zzzToast";
 import toast from "react-hot-toast";
 
 const BottomBar = ({ className }: { className?: string }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const [toggleSettingsModalOpen, shouldSettingsModalMount, shouldSettingsModalTransition] = useMountTransition(200);
+  const [isSettingsOpen, setSettingsOpen] = useState(false);
   const diffList = useAppSelector(selectDiffList);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -58,7 +56,7 @@ const BottomBar = ({ className }: { className?: string }) => {
     <>
       <div className={clsx("flex items-center justify-between gap-8 bg-black px-8 py-3.5", className)} id="bottom-bar">
         <div className="flex justify-center gap-4">
-          <ZzzButton type="Setting" onClick={() => toggleSettingsModalOpen()}>
+          <ZzzButton type="Setting" onClick={() => setSettingsOpen(true)}>
             {t("common.settings")}
           </ZzzButton>
         </div>
@@ -71,14 +69,7 @@ const BottomBar = ({ className }: { className?: string }) => {
           </ZzzButton>
         </div>
       </div>
-      {shouldSettingsModalMount &&
-        createPortal(
-          <SettingsModal
-            className={`transition-[opacity_scale] duration-200 ease-in-out ${shouldSettingsModalTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
-            onClose={() => toggleSettingsModalOpen()}
-          />,
-          document.body
-        )}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
   );
 };

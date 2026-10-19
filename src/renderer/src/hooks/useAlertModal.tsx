@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-import { createPortal } from "react-dom";
-import AlertModal from "../modal/alertModal";
-import useMountTransition from "./useMountTransition";
+import AlertModal from "@renderer/Modals/AlertModal/modal";
 
 export const useAlertModal = () => {
   const [alertConfig, setAlertConfig] = useState<{
@@ -10,33 +8,22 @@ export const useAlertModal = () => {
     children?: React.ReactNode;
   } | null>(null);
 
-  const [toggleAlert, shouldMount, shouldTransition] = useMountTransition(100);
+  const [isOpen, setIsOpen] = useState(false);
 
   const hideAlert = useCallback(() => {
-    toggleAlert(false);
-  }, [toggleAlert]);
+    setIsOpen(false);
+  }, []);
 
-  const showAlert = useCallback(
-    (title: string, message: string | undefined, children: React.ReactNode) => {
-      setAlertConfig({ title, message, children });
-      toggleAlert(true);
-    },
-    [toggleAlert]
+  const showAlert = useCallback((title: string, message: string | undefined, children: React.ReactNode) => {
+    setAlertConfig({ title, message, children });
+    setIsOpen(true);
+  }, []);
+
+  const alert = alertConfig && (
+    <AlertModal isOpen={isOpen} title={alertConfig.title} message={alertConfig.message}>
+      {alertConfig.children}
+    </AlertModal>
   );
 
-  const RenderAlert = () => {
-    if (!shouldMount || !alertConfig) return null;
-    return createPortal(
-      <AlertModal
-        title={alertConfig.title}
-        message={alertConfig.message}
-        className={`transition-[opacity_scale] duration-100 ease-in-out ${shouldTransition ? "pointer-events-auto scale-y-100 opacity-100" : "pointer-events-none scale-y-0 opacity-0"}`}
-      >
-        {alertConfig.children}
-      </AlertModal>,
-      document.body
-    );
-  };
-
-  return { showAlert, hideAlert, RenderAlert };
+  return { showAlert, hideAlert, alert };
 };

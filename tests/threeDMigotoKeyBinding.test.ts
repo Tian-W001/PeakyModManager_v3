@@ -3,7 +3,7 @@ import {
   isNumericToggleState,
   KeyboardChordEvent,
   toThreeDMigotoKeyBinding,
-} from "../src/renderer/src/utils/threeDMigotoKeyBinding";
+} from "@renderer/utils/threeDMigotoKeyBinding";
 
 const keyboardEvent = (overrides: Partial<KeyboardChordEvent>): KeyboardChordEvent => ({
   code: "KeyA",

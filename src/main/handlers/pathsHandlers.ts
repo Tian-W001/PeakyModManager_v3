@@ -9,8 +9,8 @@ import {
   setTargetPath,
   getD3dxUserPath,
   setD3dxUserPath,
-} from "../services/storeService";
-import { resolveInside } from "../utils";
+} from "@main/services/storeService";
+import { resolveInside } from "@main/utils";
 
 export const registerPathsHandlers = () => {
   ipcMain.handle("get-library-path", async () => getLibraryPath());

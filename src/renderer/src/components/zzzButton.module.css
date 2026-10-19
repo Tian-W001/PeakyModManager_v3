@@ -1,0 +1,24 @@
+@reference "@renderer/assets/global.css";
+
+@layer components {
+  @media (hover: hover) {
+    .button:hover {
+      animation: box-shadow-pulse 0.8s cubic-bezier(0.25, 0.1, 0.75, 1) infinite;
+    }
+  }
+}
+
+@keyframes box-shadow-pulse {
+  0% {
+    box-shadow: 0 0 0 0 #d9fa00;
+  }
+  40% {
+    box-shadow: 0 0 0 8px #d9fa00;
+  }
+  60% {
+    box-shadow: 0 0 0 0 #d9fa00;
+  }
+  100% {
+    box-shadow: 0 0 0 0 #d9fa00;
+  }
+}

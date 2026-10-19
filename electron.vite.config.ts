@@ -9,6 +9,13 @@ export default defineConfig(({ command }) => {
 
   return {
     main: {
+      resolve: {
+        alias: {
+          "@main": resolve("src/main"),
+          "@shared": resolve("src/shared"),
+          "@resources": resolve("resources"),
+        },
+      },
       plugins: [externalizeDepsPlugin()],
       esbuild,
     },

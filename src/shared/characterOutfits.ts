@@ -2,7 +2,7 @@
 import type { Character } from "./character";
 
 export const characterOutfitCounts: Record<Character, number> = {
-  Unknown: 1,
+  Unknown: 0,
   Belle: 4,
   Wise: 4,
   Anby: 1,

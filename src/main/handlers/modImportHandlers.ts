@@ -2,12 +2,12 @@ import { app, ipcMain, net } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import mime from "mime-types";
-import { importMod, importModCover } from "../domain/modImport";
-import { processModInfo } from "../domain/modLibrary";
-import { getLibraryPath } from "../services/storeService";
-import { getMainWindow } from "../services/windowService";
-import { isPathInside, isZippedFile, unzipFile } from "../utils";
-import { ModImportDeps, ModCoverDeps } from "../domain/modImport";
+import { importMod, importModCover } from "@main/domain/modImport";
+import { processModInfo } from "@main/domain/modLibrary";
+import { getLibraryPath } from "@main/services/storeService";
+import { getMainWindow } from "@main/services/windowService";
+import { isPathInside, isZippedFile, unzipFile } from "@main/utils";
+import { ModImportDeps, ModCoverDeps } from "@main/domain/modImport";
 
 const importDeps: ModImportDeps = {
   getLibraryPath,

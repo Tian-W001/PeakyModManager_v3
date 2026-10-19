@@ -1,8 +1,10 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { selectSelectedCharacter, selectSelectedMenuItem, selectSelectedOutfitId } from "../slices/uiSlice";
-import { selectModInfos } from "../slices/librarySlice";
-import { normalizeOutfitId } from "@shared/outfit";
-import { getOutfitCount } from "@shared/outfit";
+import {
+  selectSelectedCharacter,
+  selectSelectedMenuItem,
+  selectSelectedOutfitId,
+} from "@renderer/redux/slices/uiSlice";
+import { selectModInfos } from "@renderer/redux/slices/librarySlice";
 
 export const selectModTypeFilteredModCards = createSelector(
   [selectSelectedMenuItem, selectSelectedCharacter, selectSelectedOutfitId, selectModInfos],
@@ -14,9 +16,7 @@ export const selectModTypeFilteredModCards = createSelector(
       return modInfos.filter(
         (mod) =>
           mod.modType === "Character" &&
-          (char === "All" ||
-            (mod.character === char &&
-              (getOutfitCount(char) === 1 || outfitId === "All" || normalizeOutfitId(char, mod.outfitId) === outfitId)))
+          (char === "All" || (mod.character === char && (outfitId === "All" || (mod.outfitId ?? 0) === outfitId)))
       );
     }
     return modInfos.filter((mod) => mod.modType === menuItem);

@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import fs from "fs-extra";
 import path from "path";
-import { backupPresets, restorePresets } from "../domain/presets";
-import { getLibraryPath } from "../services/storeService";
-import { PresetsDeps } from "../domain/presets";
+import { backupPresets, restorePresets } from "@main/domain/presets";
+import { getLibraryPath } from "@main/services/storeService";
+import { PresetsDeps } from "@main/domain/presets";
 
 const deps: PresetsDeps = {
   getLibraryPath,

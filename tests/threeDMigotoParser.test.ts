@@ -9,7 +9,7 @@ import {
   replaceThreeDMigotoPropertyValue,
   replaceThreeDMigotoSectionPropertyValues,
   threeDMigotoParser,
-} from "../src/shared/threeDMigoto";
+} from "@shared/threeDMigoto";
 
 const collectBinaryOperators = (expression: ExpressionNode | undefined): BinaryOperator[] => {
   if (!expression) return [];

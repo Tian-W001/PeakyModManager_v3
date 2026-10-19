@@ -21,7 +21,7 @@ import {
   SyncTogglesResult,
   ThreeDMigotoTextEdit,
   threeDMigotoParser,
-} from "../../shared/threeDMigoto";
+} from "@shared/threeDMigoto";
 
 export interface IniSyncDeps {
   getD3dxUserPath: () => string | null;

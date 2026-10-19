@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
-import libraryReducer from "../src/renderer/src/redux/slices/librarySlice";
-import uiReducer from "../src/renderer/src/redux/slices/uiSlice";
+import libraryReducer from "@renderer/redux/slices/librarySlice";
+import uiReducer from "@renderer/redux/slices/uiSlice";
 import presetsReducer, {
   addPreset,
   removePreset,
@@ -19,7 +19,7 @@ import presetsReducer, {
   selectModIsEnabled,
   selectDiffList,
   selectModDiffState,
-} from "../src/renderer/src/redux/slices/presetsSlice";
+} from "@renderer/redux/slices/presetsSlice";
 
 function createPresetStore() {
   return configureStore({

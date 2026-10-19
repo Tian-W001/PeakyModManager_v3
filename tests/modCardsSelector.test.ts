@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { configureStore } from "@reduxjs/toolkit";
-import libraryReducer, { addModInfo } from "../src/renderer/src/redux/slices/librarySlice";
+import libraryReducer, { addModInfo } from "@renderer/redux/slices/librarySlice";
 import uiReducer, {
   setSelectedMenuItem,
   setSelectedCharacter,
   setSelectedOutfitId,
-} from "../src/renderer/src/redux/slices/uiSlice";
-import presetsReducer from "../src/renderer/src/redux/slices/presetsSlice";
-import { selectModTypeFilteredModCards } from "../src/renderer/src/redux/selectors/ModCardsSelector";
-import { ModInfo } from "../src/shared/modInfo";
+} from "@renderer/redux/slices/uiSlice";
+import presetsReducer from "@renderer/redux/slices/presetsSlice";
+import { selectModTypeFilteredModCards } from "@renderer/redux/selectors/ModCardsSelector";
+import { ModInfo } from "@shared/modInfo";
 
 const makeMod = (overrides: Partial<ModInfo> = {}): ModInfo =>
   ({
@@ -38,6 +38,19 @@ function createStore() {
 }
 
 describe("selectModTypeFilteredModCards", () => {
+  it("preserves and filters outfit IDs absent from the catalog", () => {
+    const store = createStore();
+    store.dispatch(addModInfo(makeMod({ name: "Future", modType: "Character", character: "Belle", outfitId: 999 })));
+    store.dispatch(addModInfo(makeMod({ name: "None", modType: "Character", character: "Belle", outfitId: 0 })));
+    store.dispatch(setSelectedMenuItem("Character"));
+    store.dispatch(setSelectedCharacter("Belle"));
+    store.dispatch(setSelectedOutfitId(999));
+    expect(store.getState().ui.selectedOutfitId).toBe(999);
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Future"]);
+    store.dispatch(setSelectedOutfitId(0));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["None"]);
+  });
+
   let store: ReturnType<typeof createStore>;
 
   beforeEach(() => {
@@ -93,6 +106,19 @@ describe("selectModTypeFilteredModCards", () => {
     expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Alternate"]);
     store.dispatch(setSelectedOutfitId("All"));
     expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(3);
+  });
+
+  it("filters default and none outfits for characters with only one catalog outfit", () => {
+    store.dispatch(addModInfo(makeMod({ name: "Legacy", modType: "Character", character: "Anby" })));
+    store.dispatch(addModInfo(makeMod({ name: "None", modType: "Character", character: "Anby", outfitId: 0 })));
+    store.dispatch(addModInfo(makeMod({ name: "Default", modType: "Character", character: "Anby", outfitId: 1 })));
+    store.dispatch(setSelectedMenuItem("Character"));
+    store.dispatch(setSelectedCharacter("Anby"));
+    expect(selectModTypeFilteredModCards(store.getState())).toHaveLength(3);
+    store.dispatch(setSelectedOutfitId(1));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["Default"]);
+    store.dispatch(setSelectedOutfitId(0));
+    expect(selectModTypeFilteredModCards(store.getState()).map((mod) => mod.name)).toEqual(["None", "Legacy"]);
   });
 
   it("resets outfit filtering when switching characters or categories", () => {

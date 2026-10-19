@@ -14,9 +14,6 @@
     "settings": "Settings",
     "apply": "Apply",
     "select": "Select",
-    "multiSelect": "Multi-Select",
-    "selectAll": "Select All",
-    "selectNone": "Select None",
     "applyModsError": "{{count}} mod(s) failed to apply"
   },
   "outfits": {
@@ -58,7 +55,12 @@
     "testAlert": "Test Alert",
     "testAlertMessage": "This is a test alert!",
     "wallpaperTooltip": "Double-click to apply new wallpaper",
-    "appVersion": "App Version"
+    "appVersion": "App Version",
+    "checkingUpdate": "Checking for updates...",
+    "updateAvailable": "A new version is available and will download automatically.",
+    "upToDate": "You're up to date.",
+    "updateCheckUnavailable": "Update checks are unavailable in this environment.",
+    "updateCheckFailed": "Failed to check for updates. Please try again later."
   },
   "modDetails": {
     "saveFailed": "Failed to save mod details",
@@ -247,9 +249,7 @@
       "Severian": "Severian"
     },
     "outfits": {
-      "Unknown": {
-        "1": "Default Outfit"
-      },
+      "Unknown": {},
       "Belle": {
         "1": "Vibrant Store Manager",
         "2": "Delicate Sunlight",

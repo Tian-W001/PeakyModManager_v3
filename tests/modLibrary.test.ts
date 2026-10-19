@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { processModInfo, loadLibrary, deleteMod } from "../src/main/domain/modLibrary";
-import { ModLibraryDeps } from "../src/main/domain/modLibrary";
+import { processModInfo, loadLibrary, deleteMod } from "@main/domain/modLibrary";
+import { ModLibraryDeps } from "@main/domain/modLibrary";
 
 const makeDeps = (overrides: Partial<ModLibraryDeps> = {}): ModLibraryDeps => ({
   getLibraryPath: () => "/library",

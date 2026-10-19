@@ -1,5 +1,12 @@
 # AGENTS.md
 
+## Main branch policy
+
+- Do not make code changes on `main` unless the user explicitly authorizes `main` for the current task. Create a separate branch or worktree before editing code.
+- Documentation-only and configuration-only changes may be made on `main`.
+- Permission to use `main` for one task does not carry over to another task.
+- Do not commit or push to `main` unless the user explicitly requests that action for the current task. Permission to edit on `main` is not permission to push.
+
 ## Quick commands
 
 ```bash
@@ -131,3 +138,15 @@ npx vitest              # watch mode
 ## Node / TypeScript version
 
 - CI builds with Node 24. TypeScript 5.9. `package-lock.json` is used (npm, not pnpm/yarn).
+
+## Implementation style
+
+- Keep implementations direct and scoped to the current requirement. Extract helpers or components only when they have a distinct responsibility or meaningful reuse; simple JSX can stay inline.
+- Keep business-specific UI and navigation in the owning screen or modal. Shared components provide composable structure and accept caller-provided content without assuming icon styles.
+- Prefer a stable DOM structure and native flex layout (`flex-1`, `min-w-0`, `shrink-0`, `gap`) over conditional branches that switch entire layouts.
+- Prefer CSS transitions and keyframes for visual animation. Keep React state only for necessary lifecycle information, such as retaining outgoing content during a transition.
+- Use precise types for actual inputs instead of broad types followed by redundant runtime checks. Check a condition once at the appropriate boundary.
+- Preserve supplied IDs rather than normalizing them against the current resource catalog. Handle missing resources with an Unknown fallback at the display/loading layer; do not add unknown IDs to selectable options just to display the current value.
+- Keep callbacks and props direct. Do not introduce extra behavior, configuration switches, or state without a concrete requirement.
+- Do not add `aria-*` attributes. Do not use the HTML `title` attribute to create tooltips for text.
+

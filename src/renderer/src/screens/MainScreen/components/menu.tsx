@@ -1,5 +1,6 @@
+import styles from "./menu.module.css";
 import clsx from "clsx";
-import { ModType, modTypeList } from "../../../shared/modType";
+import { ModType, modTypeList } from "@shared/modType";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
 import { selectSelectedMenuItem, setSelectedMenuItem } from "@renderer/redux/slices/uiSlice";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
@@ -22,7 +23,7 @@ const Menu = ({ className }: { className?: string }) => {
         className="flex w-full flex-col items-center justify-between rounded-[30px] border-4 border-[#fff3] bg-black px-1 py-2"
         id="menu-container"
       >
-        <div className="menuButton" id="menu-upper-button">
+        <div className={styles.button} id="menu-upper-button">
           <FaCaretUp className="h-full translate-y-px scale-x-200" color="#000" />
         </div>
         <div
@@ -42,7 +43,7 @@ const Menu = ({ className }: { className?: string }) => {
             );
           })}
         </div>
-        <div className="menuButton" id="menu-lower-button">
+        <div className={styles.button} id="menu-lower-button">
           <FaCaretDown className="h-full -translate-y-px scale-x-200" color="#000" />
         </div>
       </div>

@@ -1,0 +1,16 @@
+@reference "@renderer/assets/global.css";
+
+@layer components {
+  .toggles {
+    @apply relative z-10 min-h-8 shrink-0 grow-0 basis-8 transition-[flex-grow] duration-300 ease-out focus-within:grow hover:grow;
+  }
+
+  .description {
+    @apply min-h-20 flex-1 transition-[flex-grow,min-height] duration-150 ease-out;
+  }
+
+  .toggles:hover ~ .description,
+  .toggles:focus-within ~ .description {
+    @apply min-h-10 grow-0;
+  }
+}
