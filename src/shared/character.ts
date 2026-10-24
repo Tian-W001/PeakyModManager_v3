@@ -65,6 +65,11 @@ const characterNameList = [
   "Roxy",
   "Phoenix",
   "Severian",
+  "Dracaene",
+  "Lindverne",
+  "Eldreda",
+  "Kafka",
+  "Robin",
   // AUTO-GENERATED-END
 ] as const;
 

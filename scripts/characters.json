@@ -1226,5 +1226,102 @@
         "zh": "庄严无瑕"
       }
     ]
+  },
+  {
+    "id": "Dracaene",
+    "nicknames": {
+      "en": "Dracaene",
+      "zh": "德蕾琪娜"
+    },
+    "fullnames": {
+      "en": "Deacaene SunBringer",
+      "zh": "德蕾琪娜·挽昼"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      },
+      {
+        "en": "Outfit 1",
+        "zh": "时装1"
+      }
+    ]
+  },
+  {
+    "id": "Lindverne",
+    "nicknames": {
+      "en": "Lindverne",
+      "zh": "林德薇恩"
+    },
+    "fullnames": {
+      "en": "Lindverne SunBringer",
+      "zh": "林德薇恩·挽昼"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      },
+      {
+        "en": "Outfit 1",
+        "zh": "时装1"
+      }
+    ]
+  },
+  {
+    "id": "Eldreda",
+    "nicknames": {
+      "en": "Eldreda",
+      "zh": "艾尔妲"
+    },
+    "fullnames": {
+      "en": "Eldreda SunBringer",
+      "zh": "艾尔妲·挽昼"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      },
+      {
+        "en": "Outfit 1",
+        "zh": "时装1"
+      }
+    ]
+  },
+  {
+    "id": "Kafka",
+    "nicknames": {
+      "en": "Kafka",
+      "zh": "卡芙卡"
+    },
+    "fullnames": {
+      "en": "Kafka",
+      "zh": "Kafka"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      }
+    ]
+  },
+  {
+    "id": "Robin",
+    "nicknames": {
+      "en": "Robin",
+      "zh": "知更鸟"
+    },
+    "fullnames": {
+      "en": "Robin",
+      "zh": "知更鸟"
+    },
+    "outfits": [
+      {
+        "en": "Default outfit",
+        "zh": "默认服装"
+      }
+    ]
   }
 ]
