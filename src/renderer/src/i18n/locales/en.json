@@ -37,6 +37,8 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
+    "analytics": "Anonymous usage statistics",
+    "analyticsDescription": "Send anonymous startup statistics, including app version, system and language, to help estimate usage. Changes take effect on the next launch.",
     "wallpaper": "Wallpaper",
     "libraryPath": "Library Path",
     "targetPath": "Target Path",

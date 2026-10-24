@@ -27,3 +27,11 @@ export const getD3dxUserPath = (): string | null => {
 export const setD3dxUserPath = (d3dxUserPath: string | null): void => {
   store.set("d3dxUserPath", d3dxUserPath);
 };
+
+export const getAnalyticsEnabled = (): boolean => {
+  return (store.get("analyticsEnabled") as boolean) ?? true;
+};
+
+export const setAnalyticsEnabled = (enabled: boolean): void => {
+  store.set("analyticsEnabled", enabled);
+};
