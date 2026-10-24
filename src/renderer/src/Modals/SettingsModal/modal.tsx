@@ -3,7 +3,7 @@ import PathField from "./components/PathField";
 import SelectTrigger from "@renderer/Modals/components/SelectTrigger";
 import ModalOverlay from "@renderer/Modals/components/ModalOverlay";
 import { useAppDispatch, useAppSelector } from "@renderer/redux/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ZzzToast from "@renderer/components/zzzToast";
 import {
@@ -28,6 +28,10 @@ import ZzzSelect from "@renderer/components/zzzSelect";
 import ZzzField from "@renderer/components/zzzField";
 import ModalHeader from "@renderer/Modals/components/ModalHeader";
 import ZzzButton from "@renderer/components/zzzButton";
+import IconHook from "@renderer/assets/icons/Hook.png";
+import IconHookEmpty from "@renderer/assets/icons/HookEmpty.png";
+import IconInfo from "@renderer/assets/icons/Info.png";
+import { getAnalyticsEnabled, selectAnalyticsEnabled, setAnalyticsEnabled } from "@renderer/redux/slices/uiSlice";
 
 const appVersion = await window.electron.ipcRenderer.invoke("get-app-version");
 
@@ -42,6 +46,11 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
   const { t, i18n } = useTranslation();
 
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const analyticsEnabled = useAppSelector(selectAnalyticsEnabled);
+
+  useEffect(() => {
+    dispatch(getAnalyticsEnabled());
+  }, [dispatch]);
 
   const handleCheckForUpdates = async () => {
     if (isCheckingUpdate) return;
@@ -256,6 +265,30 @@ const SettingsModalContent = ({ onClose }: { onClose: () => void }) => {
 
           {/* Wallpaper Selection */}
           <WallpaperPicker />
+
+          <div className="flex flex-col gap-1">
+            <ZzzField
+              title={t("settings.analytics")}
+              content={
+                <button
+                  type="button"
+                  className="flex w-full cursor-pointer justify-end"
+                  onClick={() => dispatch(setAnalyticsEnabled(!analyticsEnabled))}
+                >
+                  <img
+                    src={analyticsEnabled ? IconHook : IconHookEmpty}
+                    alt={t("settings.analytics")}
+                    className="size-6"
+                    draggable={false}
+                  />
+                </button>
+              }
+            />
+            <p className="flex items-center gap-1 pl-3 text-sm text-[#999]">
+              <img src={IconInfo} alt="Info" className="mr-1 inline-block h-4 w-4" />
+              {t("settings.analyticsDescription")}
+            </p>
+          </div>
 
           {/* App Version */}
           <div className="hover:text-zzzYellow flex flex-row items-center justify-between gap-4 rounded-full bg-black px-3 py-1 text-white shadow-[1px_1px_1px_#fff2]">
