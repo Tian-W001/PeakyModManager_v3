@@ -1193,8 +1193,16 @@
     },
     "outfits": [
       {
-        "en": "Default outfit",
-        "zh": "默认服装"
+        "en": "Undying Blessing",
+        "zh": "不死祝福"
+      },
+      {
+        "en": "Daydream Complex",
+        "zh": "空想症候"
+      },
+      {
+        "en": "The Illness Called Life",
+        "zh": "病名为生"
       }
     ]
   },
@@ -1212,6 +1220,10 @@
       {
         "en": "Default outfit",
         "zh": "默认服装"
+      },
+      {
+        "en": "Solemnly Impeccable",
+        "zh": "庄严无瑕"
       }
     ]
   }
