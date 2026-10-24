@@ -37,6 +37,8 @@
   "settings": {
     "title": "设置",
     "language": "语言",
+    "analytics": "匿名使用统计",
+    "analyticsDescription": "发送匿名启动统计（含应用版本、系统和语言信息），帮助估算使用情况。更改将在下次启动时生效。",
     "wallpaper": "壁纸",
     "libraryPath": "库路径",
     "targetPath": "目标路径",

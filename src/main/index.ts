@@ -7,6 +7,7 @@ import { modImageProtocolScheme } from "./protocols/modImageProtocol";
 import { ipcMain } from "electron/main";
 import { getMainWindow } from "./services/windowService";
 import { createWindow } from "./window";
+import { trackAppStartup } from "./services/analyticsService";
 import installExtensions from "./extensions";
 
 import "./handlers";
@@ -17,6 +18,8 @@ const gotlock = app.requestSingleInstanceLock();
 if (!gotlock) {
   app.quit();
 } else {
+  void trackAppStartup();
+
   app.on("second-instance", () => {
     const win = getMainWindow();
     if (win) {
