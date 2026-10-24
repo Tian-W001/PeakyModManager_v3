@@ -466,10 +466,13 @@
         "1": "Midnight Craft"
       },
       "Phoenix": {
-        "1": "Default outfit"
+        "1": "Undying Blessing",
+        "2": "Daydream Complex",
+        "3": "The Illness Called Life"
       },
       "Severian": {
-        "1": "Default outfit"
+        "1": "Default outfit",
+        "2": "Solemnly Impeccable"
       }
     }
   }
