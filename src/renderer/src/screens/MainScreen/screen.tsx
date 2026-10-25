@@ -5,6 +5,7 @@ import ModCardGrid from "./components/modCardGrid";
 import CharacterBar from "./components/characterBar";
 import { selectSelectedMenuItem, selectCurrentWallpaper } from "@renderer/redux/slices/uiSlice";
 import InvertedBWFilter from "@renderer/components/invertedBWFilter";
+import proxyCheering from "@renderer/assets/proxy_cheering.png";
 
 const MainScreen: React.FC = () => {
   const selectedMenuItem = useAppSelector(selectSelectedMenuItem);
@@ -25,10 +26,15 @@ const MainScreen: React.FC = () => {
         />
         <div className="flex min-h-0 flex-1 flex-row" id="content-area">
           <Menu className="w-70" />
-          <div className="relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
+          <div className="group relative flex h-full flex-1 flex-col overflow-hidden" id="card-grid-area">
             <CharacterBar className="absolute top-0 left-0 z-10 mt-(--character-bar-offset) h-14 w-full max-w-[80%] [--character-bar-offset:1rem]" />
             <ModCardGrid
               className={`min-h-0 w-full flex-1 transition-[margin] duration-300 ease-out ${isCharacterMenu ? "mt-18" : "mt-0"}`}
+            />
+            <img
+              src={proxyCheering}
+              alt="Proxy Cheering"
+              className="absolute right-4 bottom-0 z-10 transition-all duration-300 ease-out group-hover:translate-y-43"
             />
           </div>
         </div>
