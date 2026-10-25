@@ -181,7 +181,12 @@
       "Claret": "Claret Flint",
       "Roxy": "Roxy Ifrita Pryce",
       "Phoenix": "Phoenix Reffaella",
-      "Severian": "Severian Lowell"
+      "Severian": "Severian Lowell",
+      "Dracaene": "Deacaene SunBringer",
+      "Lindverne": "Lindverne SunBringer",
+      "Eldreda": "Eldreda SunBringer",
+      "Robin": "Robin",
+      "Kafka": "Kafka"
     },
     "nicknames": {
       "Unknown": "Unknown",
@@ -248,7 +253,12 @@
       "Claret": "Claret",
       "Roxy": "Roxy",
       "Phoenix": "Phoenix",
-      "Severian": "Severian"
+      "Severian": "Severian",
+      "Dracaene": "Dracaene",
+      "Lindverne": "Lindverne",
+      "Eldreda": "Eldreda",
+      "Robin": "Robin",
+      "Kafka": "Kafka"
     },
     "outfits": {
       "Unknown": {},
@@ -475,6 +485,24 @@
       "Severian": {
         "1": "Default outfit",
         "2": "Solemnly Impeccable"
+      },
+      "Dracaene": {
+        "1": "Default outfit",
+        "2": "Outfit 1"
+      },
+      "Lindverne": {
+        "1": "Default outfit",
+        "2": "Outfit 1"
+      },
+      "Eldreda": {
+        "1": "Default outfit",
+        "2": "Outfit 1"
+      },
+      "Robin": {
+        "1": "Default outfit"
+      },
+      "Kafka": {
+        "1": "Default outfit"
       }
     }
   }

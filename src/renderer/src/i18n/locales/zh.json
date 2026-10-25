@@ -181,7 +181,12 @@
       "Claret": "克拉蕾·弗林特",
       "Roxy": "洛克茜·伊芙莉塔·普莱斯",
       "Phoenix": "菲欧妮·蕾法爱菈",
-      "Severian": "赛维里安·洛威尔"
+      "Severian": "赛维里安·洛威尔",
+      "Dracaene": "德蕾琪娜·挽昼",
+      "Lindverne": "林德薇恩·挽昼",
+      "Eldreda": "艾尔妲·挽昼",
+      "Robin": "知更鸟",
+      "Kafka": "Kafka"
     },
     "nicknames": {
       "Unknown": "未知角色",
@@ -248,7 +253,12 @@
       "Claret": "克拉蕾",
       "Roxy": "洛克茜",
       "Phoenix": "菲欧妮",
-      "Severian": "赛维里安"
+      "Severian": "赛维里安",
+      "Dracaene": "德蕾琪娜",
+      "Lindverne": "林德薇恩",
+      "Eldreda": "艾尔妲",
+      "Robin": "知更鸟",
+      "Kafka": "卡芙卡"
     },
     "outfits": {
       "Unknown": {},
@@ -475,6 +485,24 @@
       "Severian": {
         "1": "默认服装",
         "2": "庄严无瑕"
+      },
+      "Dracaene": {
+        "1": "默认服装",
+        "2": "时装1"
+      },
+      "Lindverne": {
+        "1": "默认服装",
+        "2": "时装1"
+      },
+      "Eldreda": {
+        "1": "默认服装",
+        "2": "时装1"
+      },
+      "Robin": {
+        "1": "默认服装"
+      },
+      "Kafka": {
+        "1": "默认服装"
       }
     }
   }
