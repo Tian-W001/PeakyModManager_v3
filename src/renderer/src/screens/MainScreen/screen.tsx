@@ -34,7 +34,7 @@ const MainScreen: React.FC = () => {
             <img
               src={proxyCheering}
               alt="Proxy Cheering"
-              className="absolute right-4 bottom-0 z-10 w-80 transition-all duration-300 ease-out group-hover:translate-y-44"
+              className="absolute right-4 bottom-0 z-10 transition-all duration-300 ease-out group-hover:translate-y-43"
             />
           </div>
         </div>
