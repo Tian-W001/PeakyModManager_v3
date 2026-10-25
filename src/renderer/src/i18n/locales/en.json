@@ -185,8 +185,8 @@
       "Dracaene": "Deacaene SunBringer",
       "Lindverne": "Lindverne SunBringer",
       "Eldreda": "Eldreda SunBringer",
-      "Kafka": "Kafka",
-      "Robin": "Robin"
+      "Robin": "Robin",
+      "Kafka": "Kafka"
     },
     "nicknames": {
       "Unknown": "Unknown",
@@ -257,8 +257,8 @@
       "Dracaene": "Dracaene",
       "Lindverne": "Lindverne",
       "Eldreda": "Eldreda",
-      "Kafka": "Kafka",
-      "Robin": "Robin"
+      "Robin": "Robin",
+      "Kafka": "Kafka"
     },
     "outfits": {
       "Unknown": {},
@@ -498,10 +498,10 @@
         "1": "Default outfit",
         "2": "Outfit 1"
       },
-      "Kafka": {
+      "Robin": {
         "1": "Default outfit"
       },
-      "Robin": {
+      "Kafka": {
         "1": "Default outfit"
       }
     }

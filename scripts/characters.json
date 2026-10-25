@@ -1291,14 +1291,14 @@
     ]
   },
   {
-    "id": "Kafka",
+    "id": "Robin",
     "nicknames": {
-      "en": "Kafka",
-      "zh": "卡芙卡"
+      "en": "Robin",
+      "zh": "知更鸟"
     },
     "fullnames": {
-      "en": "Kafka",
-      "zh": "Kafka"
+      "en": "Robin",
+      "zh": "知更鸟"
     },
     "outfits": [
       {
@@ -1308,14 +1308,14 @@
     ]
   },
   {
-    "id": "Robin",
+    "id": "Kafka",
     "nicknames": {
-      "en": "Robin",
-      "zh": "知更鸟"
+      "en": "Kafka",
+      "zh": "卡芙卡"
     },
     "fullnames": {
-      "en": "Robin",
-      "zh": "知更鸟"
+      "en": "Kafka",
+      "zh": "Kafka"
     },
     "outfits": [
       {

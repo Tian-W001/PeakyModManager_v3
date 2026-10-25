@@ -185,8 +185,8 @@
       "Dracaene": "德蕾琪娜·挽昼",
       "Lindverne": "林德薇恩·挽昼",
       "Eldreda": "艾尔妲·挽昼",
-      "Kafka": "Kafka",
-      "Robin": "知更鸟"
+      "Robin": "知更鸟",
+      "Kafka": "Kafka"
     },
     "nicknames": {
       "Unknown": "未知角色",
@@ -257,8 +257,8 @@
       "Dracaene": "德蕾琪娜",
       "Lindverne": "林德薇恩",
       "Eldreda": "艾尔妲",
-      "Kafka": "卡芙卡",
-      "Robin": "知更鸟"
+      "Robin": "知更鸟",
+      "Kafka": "卡芙卡"
     },
     "outfits": {
       "Unknown": {},
@@ -498,10 +498,10 @@
         "1": "默认服装",
         "2": "时装1"
       },
-      "Kafka": {
+      "Robin": {
         "1": "默认服装"
       },
-      "Robin": {
+      "Kafka": {
         "1": "默认服装"
       }
     }

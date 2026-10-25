@@ -68,8 +68,8 @@ const characterNameList = [
   "Dracaene",
   "Lindverne",
   "Eldreda",
-  "Kafka",
   "Robin",
+  "Kafka",
   // AUTO-GENERATED-END
 ] as const;
 

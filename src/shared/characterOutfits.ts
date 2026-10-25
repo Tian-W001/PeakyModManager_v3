@@ -70,6 +70,6 @@ export const characterOutfitCounts: Record<Character, number> = {
   Dracaene: 2,
   Lindverne: 2,
   Eldreda: 2,
-  Kafka: 1,
   Robin: 1,
+  Kafka: 1,
 };
