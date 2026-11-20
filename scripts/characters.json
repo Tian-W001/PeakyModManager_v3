@@ -1243,8 +1243,8 @@
         "zh": "默认服装"
       },
       {
-        "en": "Outfit 1",
-        "zh": "时装1"
+        "en": "Moonlit Promenade",
+        "zh": "晴夜闲游"
       }
     ]
   },
@@ -1264,8 +1264,8 @@
         "zh": "默认服装"
       },
       {
-        "en": "Outfit 1",
-        "zh": "时装1"
+        "en": "Moonlit Promenade",
+        "zh": "晴夜闲游"
       }
     ]
   },
@@ -1285,8 +1285,8 @@
         "zh": "默认服装"
       },
       {
-        "en": "Outfit 1",
-        "zh": "时装1"
+        "en": "Moonlit Promenade",
+        "zh": "晴夜闲游"
       }
     ]
   },
@@ -1304,6 +1304,10 @@
       {
         "en": "Default outfit",
         "zh": "默认服装"
+      },
+      {
+        "en": "Cosmic Beat",
+        "zh": "银河律动"
       }
     ]
   },
